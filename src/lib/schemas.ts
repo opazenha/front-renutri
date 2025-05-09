@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 export const PatientSchema = z.object({
@@ -56,5 +57,89 @@ export const AnthropometricSchema = z.object({
 
   labExams: z.array(LabExamSchema).optional(),
 });
-
 export type AnthropometricFormData = z.infer<typeof AnthropometricSchema>;
+
+
+// Energy Expenditure Schemas
+const ActivityDetailSchema = z.object({
+  id: z.string().optional(),
+  type: z.string().min(1, "Tipo de atividade é obrigatório."),
+  duration: z.string().min(1, "Duração é obrigatória."),
+  mets: z.coerce.number().positive("METS deve ser um número positivo.").optional(),
+  intensity: z.enum(["Leve", "Moderada", "Intensa"]).optional(),
+});
+export type ActivityDetailFormData = z.infer<typeof ActivityDetailSchema>;
+
+const WorkActivityDetailSchema = z.object({
+  id: z.string().optional(),
+  description: z.string().min(1, "Descrição da atividade principal é obrigatória."),
+  timeSpent: z.string().min(1, "Tempo gasto é obrigatório."),
+  mets: z.coerce.number().positive("METS deve ser um número positivo.").optional(),
+  occupationalActivityFactor: z.string().optional(),
+});
+export type WorkActivityDetailFormData = z.infer<typeof WorkActivityDetailSchema>;
+
+export const EnergyExpenditureSchema = z.object({
+  consultationDate: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data da consulta inválida." }),
+  weightKg: z.coerce.number().positive("Peso deve ser positivo.").optional(),
+  restingEnergyExpenditure: z.coerce.number().positive("GER deve ser positivo.").optional(),
+  gerFormula: z.string().optional(),
+  sleepDuration: z.string().optional().refine(val => !val || /^\d+(\.\d+)?$/.test(val), { message: "Duração do sono deve ser um número (ex: 7.5)." }),
+  physicalActivities: z.array(ActivityDetailSchema).optional(),
+  workActivity: WorkActivityDetailSchema.optional(),
+  otherActivities: z.array(ActivityDetailSchema).optional(),
+});
+export type EnergyExpenditureFormData = z.infer<typeof EnergyExpenditureSchema>;
+
+
+// Macronutrient Plan Schemas
+export const MacronutrientPlanSchema = z.object({
+  date: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data do plano inválida." }),
+  totalEnergyExpenditure: z.coerce.number().positive("GET deve ser positivo.").optional(),
+  caloricObjective: z.enum(["Manutenção", "Perda de Peso", "Ganho de Massa"], { required_error: "Objetivo calórico é obrigatório." }),
+  caloricAdjustment: z.coerce.number().optional(),
+  proteinPercentage: z.coerce.number().min(0).max(100, "Percentual deve ser entre 0 e 100.").optional(),
+  carbohydratePercentage: z.coerce.number().min(0).max(100, "Percentual deve ser entre 0 e 100.").optional(),
+  lipidPercentage: z.coerce.number().min(0).max(100, "Percentual deve ser entre 0 e 100.").optional(),
+  proteinGramsPerKg: z.coerce.number().min(0, "Gramas por Kg deve ser positivo.").optional(),
+  carbohydrateGramsPerKg: z.coerce.number().min(0).optional(), // Less common to set directly
+  lipidGramsPerKg: z.coerce.number().min(0).optional(), // Less common to set directly
+  weightForCalculation: z.coerce.number().positive("Peso para cálculo deve ser positivo.").optional(),
+  activityFactor: z.coerce.number().positive("Fator atividade deve ser positivo.").optional(),
+  injuryStressFactor: z.coerce.number().positive("Fator injúria/estresse deve ser positivo.").optional(),
+  specificConsiderations: z.string().optional(),
+}).refine(data => {
+  if (data.proteinPercentage && data.carbohydratePercentage && data.lipidPercentage) {
+    const totalPercentage = data.proteinPercentage + data.carbohydratePercentage + data.lipidPercentage;
+    // Allow for slight floating point inaccuracies, e.g., 99.9 to 100.1
+    return totalPercentage > 99 && totalPercentage < 101;
+  }
+  return true;
+}, {
+  message: "A soma dos percentuais de macronutrientes deve ser aproximadamente 100%.",
+  path: ["proteinPercentage"], // You can point to a specific field or the root
+});
+export type MacronutrientPlanFormData = z.infer<typeof MacronutrientPlanSchema>;
+
+
+// Micronutrient Recommendation Schemas
+const MicronutrientDetailSchema = z.object({
+  id: z.string().optional(),
+  nutrientName: z.string().min(1, "Nome do micronutriente é obrigatório."),
+  specificRecommendation: z.string().optional(),
+  prescribedSupplementation: z.object({
+    dose: z.string().optional(),
+    frequency: z.string().optional(),
+    duration: z.string().optional(),
+  }).optional(),
+});
+export type MicronutrientDetailFormData = z.infer<typeof MicronutrientDetailSchema>;
+
+export const MicronutrientRecommendationSchema = z.object({
+  date: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data da recomendação inválida." }),
+  ageAtTimeOfRec: z.coerce.number().int().positive("Idade deve ser um número positivo.").optional(),
+  sexAtTimeOfRec: z.enum(["male", "female", "other"]).optional(),
+  specialConditions: z.array(z.string()).optional(),
+  recommendations: z.array(MicronutrientDetailSchema).optional(),
+});
+export type MicronutrientRecommendationFormData = z.infer<typeof MicronutrientRecommendationSchema>;

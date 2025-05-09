@@ -1,16 +1,19 @@
 
 "use client";
 
-import type { Patient, AnthropometricRecord, LabExamRecord } from "@/types";
-import type { AnthropometricFormData, LabExamFormData } from "@/lib/schemas";
+import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail } from "@/types";
+import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData } from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 
 interface PatientContextType {
   patients: Patient[];
-  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData">) => Patient;
+  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
   updatePatientAnthropometry: (patientId: string, data: AnthropometricFormData) => void;
+  updatePatientEnergyExpenditure: (patientId: string, data: EnergyExpenditureFormData) => void;
+  updatePatientMacronutrientPlan: (patientId: string, data: MacronutrientPlanFormData) => void;
+  updatePatientMicronutrientRecommendation: (patientId: string, data: MicronutrientRecommendationFormData) => void;
   isLoading: boolean;
 }
 
@@ -44,12 +47,15 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [patients, isLoading]);
 
-  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData">) => {
+  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations">) => {
     const newPatient: Patient = {
       ...patientData,
       id: uuidv4(),
       registrationDate: new Date().toISOString(),
       anthropometricData: [],
+      energyExpenditureRecords: [],
+      macronutrientPlans: [],
+      micronutrientRecommendations: [],
     };
     setPatients((prevPatients) => [...prevPatients, newPatient]);
     return newPatient;
@@ -97,12 +103,10 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
             assessmentObjective: data.assessmentObjective,
             labExams: data.labExams?.map((exam: LabExamFormData) => ({
               ...exam,
-              id: exam.id || uuidv4(), // Ensure ID is present
-              result: exam.result as number, // Already coerced by Zod
+              id: exam.id || uuidv4(), 
+              result: exam.result as number, 
             } as LabExamRecord)) || [],
           };
-
-          // Add new record and sort by date descending
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           return { ...p, anthropometricData: updatedAnthropometricData };
         }
@@ -111,8 +115,90 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const updatePatientEnergyExpenditure = (patientId: string, data: EnergyExpenditureFormData) => {
+    setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newRecord: EnergyExpenditureRecord = {
+          id: uuidv4(),
+          consultationDate: data.consultationDate,
+          weightKg: data.weightKg,
+          restingEnergyExpenditure: data.restingEnergyExpenditure,
+          gerFormula: data.gerFormula,
+          sleepDuration: data.sleepDuration,
+          physicalActivities: data.physicalActivities?.map((act: ActivityDetailFormData) => ({ ...act, id: act.id || uuidv4() } as ActivityDetail)) || [],
+          workActivity: data.workActivity ? { ...data.workActivity, id: data.workActivity.id || uuidv4() } as WorkActivityDetail : undefined,
+          otherActivities: data.otherActivities?.map((act: ActivityDetailFormData) => ({ ...act, id: act.id || uuidv4() } as ActivityDetail)) || [],
+        };
+        const updatedRecords = [...(p.energyExpenditureRecords || []), newRecord].sort((a,b) => new Date(b.consultationDate).getTime() - new Date(a.consultationDate).getTime());
+        return { ...p, energyExpenditureRecords: updatedRecords };
+      }
+      return p;
+    }));
+  };
+
+  const updatePatientMacronutrientPlan = (patientId: string, data: MacronutrientPlanFormData) => {
+     setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newPlan: MacronutrientPlan = {
+          id: uuidv4(),
+          date: data.date,
+          totalEnergyExpenditure: data.totalEnergyExpenditure,
+          caloricObjective: data.caloricObjective,
+          caloricAdjustment: data.caloricAdjustment,
+          proteinPercentage: data.proteinPercentage,
+          carbohydratePercentage: data.carbohydratePercentage,
+          lipidPercentage: data.lipidPercentage,
+          proteinGramsPerKg: data.proteinGramsPerKg,
+          carbohydrateGramsPerKg: data.carbohydrateGramsPerKg,
+          lipidGramsPerKg: data.lipidGramsPerKg,
+          weightForCalculation: data.weightForCalculation,
+          activityFactor: data.activityFactor,
+          injuryStressFactor: data.injuryStressFactor,
+          specificConsiderations: data.specificConsiderations,
+        };
+        const updatedPlans = [...(p.macronutrientPlans || []), newPlan].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        return { ...p, macronutrientPlans: updatedPlans };
+      }
+      return p;
+    }));
+  };
+  
+  const updatePatientMicronutrientRecommendation = (patientId: string, data: MicronutrientRecommendationFormData) => {
+    setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newRecommendation: MicronutrientRecommendation = {
+          id: uuidv4(),
+          date: data.date,
+          ageAtTimeOfRec: data.ageAtTimeOfRec,
+          sexAtTimeOfRec: data.sexAtTimeOfRec,
+          specialConditions: data.specialConditions || [],
+          recommendations: data.recommendations?.map((rec: MicronutrientDetailFormData) => ({ 
+            ...rec, 
+            id: rec.id || uuidv4(),
+            prescribedSupplementation: rec.prescribedSupplementation || {}
+          } as MicronutrientDetail)) || [],
+        };
+        const updatedRecommendations = [...(p.micronutrientRecommendations || []), newRecommendation].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        return { ...p, micronutrientRecommendations: updatedRecommendations };
+      }
+      return p;
+    }));
+  };
+
+
+  const getPatientById = (id: string) => patients.find((p) => p.id === id);
+
   return (
-    <PatientContext.Provider value={{ patients, addPatient, getPatientById, updatePatientAnthropometry, isLoading }}>
+    <PatientContext.Provider value={{ 
+      patients, 
+      addPatient, 
+      getPatientById, 
+      updatePatientAnthropometry, 
+      updatePatientEnergyExpenditure,
+      updatePatientMacronutrientPlan,
+      updatePatientMicronutrientRecommendation,
+      isLoading 
+    }}>
       {children}
     </PatientContext.Provider>
   );

@@ -1,10 +1,14 @@
+
 "use client";
 
 import type { Patient } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnthropometrySection } from "@/components/anthropometry/anthropometry-section";
+import { EnergyExpenditureSection } from "@/components/energy-expenditure/energy-expenditure-section";
+import { MacronutrientPlanSection } from "@/components/macronutrients/macronutrient-plan-section";
+import { MicronutrientRecommendationSection } from "@/components/micronutrients/micronutrient-recommendation-section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale } from "lucide-react";
+import { User, Scale, Flame, Target, Leaf } from "lucide-react";
 import { calculateAge } from "@/types";
 import { Badge } from "@/components/ui/badge";
 
@@ -15,9 +19,12 @@ interface PatientDetailClientProps {
 export function PatientDetailClient({ patient }: PatientDetailClientProps) {
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
+      <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-6">
         <TabsTrigger value="overview"><User className="mr-2 h-4 w-4 sm:inline hidden" />Visão Geral</TabsTrigger>
-        <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Avaliação Clínica</TabsTrigger>
+        <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Aval. Clínica</TabsTrigger>
+        <TabsTrigger value="energy-expenditure"><Flame className="mr-2 h-4 w-4 sm:inline hidden" />Gasto Energético</TabsTrigger>
+        <TabsTrigger value="macronutrient-plan"><Target className="mr-2 h-4 w-4 sm:inline hidden" />Plano Macros</TabsTrigger>
+        <TabsTrigger value="micronutrient-recommendations"><Leaf className="mr-2 h-4 w-4 sm:inline hidden" />Recom. Micros</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview">
@@ -41,6 +48,9 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
              <div className="mt-6 border-t pt-4">
                 <h4 className="font-semibold mb-2 text-primary">Dados Resumidos</h4>
                 <p>Registros Antropométricos: {patient.anthropometricData.length}</p>
+                <p>Registros de Gasto Energético: {patient.energyExpenditureRecords?.length || 0}</p>
+                <p>Planos de Macronutrientes: {patient.macronutrientPlans?.length || 0}</p>
+                <p>Recomendações de Micronutrientes: {patient.micronutrientRecommendations?.length || 0}</p>
             </div>
           </CardContent>
         </Card>
@@ -48,6 +58,18 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
 
       <TabsContent value="anthropometry">
         <AnthropometrySection patient={patient} />
+      </TabsContent>
+
+      <TabsContent value="energy-expenditure">
+        <EnergyExpenditureSection patient={patient} />
+      </TabsContent>
+
+      <TabsContent value="macronutrient-plan">
+        <MacronutrientPlanSection patient={patient} />
+      </TabsContent>
+
+      <TabsContent value="micronutrient-recommendations">
+        <MicronutrientRecommendationSection patient={patient} />
       </TabsContent>
     </Tabs>
   );
