@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import { VariantProps, cva } from "class-variance-authority"
+import type { VariantProps} from "class-variance-authority";
+import { cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -260,29 +261,51 @@ const Sidebar = React.forwardRef<
 Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef<
-  React.ElementRef<typeof Button>,
+  HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+>(({ className, onClick, children: childrenFromProps, ...props }, ref) => {
+  const { toggleSidebar } = useSidebar();
+
+  const effectiveOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    toggleSidebar();
+  };
+
+  // Default props for the Button when not using `asChild`
+  const defaultButtonProps = {
+    variant: "ghost",
+    size: "icon",
+    className: cn("h-7 w-7", className), // `className` here is the one passed to SidebarTrigger
+  };
+
+  // Determine props for the underlying Button component
+  // If `asChild` is true, specific defaults like variant/size are omitted to let the child control them.
+  // The `className` passed to SidebarTrigger is applied directly.
+  // If not `asChild`, defaultButtonProps are used.
+  // Any props in `...props` (like a variant or size passed directly to SidebarTrigger) will override these.
+  const buttonBaseProps = props.asChild
+    ? { className } // Only apply SidebarTrigger's own className if asChild
+    : defaultButtonProps;
+
+  const buttonProps = {
+    ref,
+    "data-sidebar": "trigger",
+    onClick: effectiveOnClick,
+    ...buttonBaseProps, // Apply base props (either defaults or just className for asChild)
+    ...props,          // Spread all other props from SidebarTrigger, including asChild and any overrides
+  };
 
   return (
-    <Button
-      ref={ref}
-      data-sidebar="trigger"
-      variant="ghost"
-      size="icon"
-      className={cn("h-7 w-7", className)}
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
-      {...props}
-    >
-      <PanelLeft />
-      <span className="sr-only">Toggle Sidebar</span>
+    <Button {...buttonProps}>
+      {props.asChild ? childrenFromProps : (
+        <>
+          <PanelLeft />
+          <span className="sr-only">Toggle Sidebar</span>
+        </>
+      )}
     </Button>
-  )
-})
+  );
+});
 SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarRail = React.forwardRef<
