@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { MacronutrientRecommendationFormInputData } from "@/lib/schemas";
@@ -8,7 +9,7 @@ import { usePatientContext } from "@/contexts/patient-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -194,7 +195,7 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                   <FormItem>
                     <FormLabel>Total Daily Energy Expenditure (GET/TDEE in Calories)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 2000" {...field} />
+                      <Input type="number" placeholder="e.g., 2000" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -313,3 +314,5 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
     </div>
   );
 }
+
+    
