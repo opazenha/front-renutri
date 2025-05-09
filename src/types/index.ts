@@ -17,9 +17,68 @@ export interface Patient {
 export interface AnthropometricRecord {
   id: string;
   date: string; // YYYY-MM-DD ISO String
-  weightKg: number;
-  heightCm: number;
+  weightKg?: number; // Current Weight
+  heightCm?: number;
   bmi?: number; // Calculated
+
+  // New Anthropometric fields
+  usualWeightKg?: number;
+  desiredWeightKg?: number;
+
+  // Habits
+  smokingStatus?: "yes" | "no" | "exSmoker";
+  smokingStartDate?: string;
+  smokingProductType?: string;
+  smokingQuantityPerDay?: string;
+  smokingStopTime?: string;
+
+  alcoholConsumptionStatus?: "yes" | "no" | "exConsumer";
+  alcoholStartDate?: string;
+  alcoholMainBeverageType?: string;
+  alcoholMainBeverageFrequency?: string;
+  alcoholMainBeverageQuantity?: string;
+  alcoholMainBeverageUnit?: string;
+  alcoholMainBeverageContent?: number;
+  alcoholOtherBeveragesNotes?: string;
+  alcoholStopTime?: string;
+  
+  physicalActivityStatus?: "yes" | "no";
+  physicalActivities?: string;
+  physicalActivityFrequency?: string;
+  physicalActivityDuration?: string;
+  physicalActivityIntensity?: "light" | "moderate" | "intense";
+  
+  stressLevel?: "low" | "moderate" | "high";
+  perceivedQualityOfLife?: string;
+
+  // Circumferences (cm)
+  relaxedArmCircumference?: number;
+  contractedArmCircumference?: number;
+  waistCircumference?: number;
+  abdomenCircumference?: number;
+  hipCircumference?: number;
+  proximalThighCircumference?: number;
+  medialThighCircumference?: number;
+  calfCircumference?: number;
+  neckCircumference?: number;
+  wristCircumference?: number;
+
+  // Skinfolds (mm)
+  bicepsSkinfold?: number;
+  tricepsSkinfold?: number;
+  subscapularSkinfold?: number;
+  pectoralSkinfold?: number;
+  midaxillarySkinfold?: number;
+  suprailiacSkinfold?: number;
+  abdominalSkinfold?: number;
+  thighSkinfold?: number;
+  medialCalfSkinfold?: number;
+
+  // Bone Diameters (cm)
+  humerusBiepicondylarDiameter?: number;
+  femurBiepicondylarDiameter?: number;
+
+  assessmentObjective?: string;
 }
 
 // Helper to calculate age from DOB string

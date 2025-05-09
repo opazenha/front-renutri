@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -24,6 +25,12 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
     if (isValueControlledType && propValue === undefined) {
       currentValue = "";
     }
+    
+    // For type="number", if currentValue is an empty string, it might cause issues.
+    // However, react-hook-form handles coercion, so an empty string for number input
+    // usually results in `undefined` or `NaN` after coercion by Zod, which is often desired.
+    // If we explicitly convert "" to undefined here for number, it might interfere with RHF's default value handling.
+    // So, we'll let "" pass for number types, and rely on schema validation for correctness.
 
     return (
       <input

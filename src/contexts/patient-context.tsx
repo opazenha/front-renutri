@@ -1,6 +1,8 @@
+
 "use client";
 
 import type { Patient, AnthropometricRecord } from "@/types";
+import type { AnthropometricFormData } from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 
@@ -8,7 +10,7 @@ interface PatientContextType {
   patients: Patient[];
   addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
-  updatePatientAnthropometry: (patientId: string, data: Omit<AnthropometricRecord, "id" | "bmi">) => void;
+  updatePatientAnthropometry: (patientId: string, data: AnthropometricFormData) => void;
   isLoading: boolean;
 }
 
@@ -57,12 +59,68 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     return patients.find((p) => p.id === id);
   };
 
-  const updatePatientAnthropometry = (patientId: string, data: Omit<AnthropometricRecord, "id" | "bmi">) => {
+  const updatePatientAnthropometry = (patientId: string, data: AnthropometricFormData) => {
     setPatients((prevPatients) =>
       prevPatients.map((p) => {
         if (p.id === patientId) {
-          const bmi = data.weightKg / ((data.heightCm / 100) ** 2);
-          const newRecord: AnthropometricRecord = { ...data, id: uuidv4(), bmi: parseFloat(bmi.toFixed(2)) };
+          let bmi: number | undefined = undefined;
+          if (data.weightKg && data.heightCm && data.heightCm > 0) {
+            const calculatedBmi = data.weightKg / ((data.heightCm / 100) ** 2);
+            bmi = parseFloat(calculatedBmi.toFixed(2));
+          }
+          
+          const newRecord: AnthropometricRecord = { 
+            ...data, // Spread all form data
+            id: uuidv4(), 
+            bmi: bmi,
+            // Ensure all optional fields from schema are included, even if undefined
+            usualWeightKg: data.usualWeightKg,
+            desiredWeightKg: data.desiredWeightKg,
+            smokingStatus: data.smokingStatus,
+            smokingStartDate: data.smokingStartDate,
+            smokingProductType: data.smokingProductType,
+            smokingQuantityPerDay: data.smokingQuantityPerDay,
+            smokingStopTime: data.smokingStopTime,
+            alcoholConsumptionStatus: data.alcoholConsumptionStatus,
+            alcoholStartDate: data.alcoholStartDate,
+            alcoholMainBeverageType: data.alcoholMainBeverageType,
+            alcoholMainBeverageFrequency: data.alcoholMainBeverageFrequency,
+            alcoholMainBeverageQuantity: data.alcoholMainBeverageQuantity,
+            alcoholMainBeverageUnit: data.alcoholMainBeverageUnit,
+            alcoholMainBeverageContent: data.alcoholMainBeverageContent,
+            alcoholOtherBeveragesNotes: data.alcoholOtherBeveragesNotes,
+            alcoholStopTime: data.alcoholStopTime,
+            physicalActivityStatus: data.physicalActivityStatus,
+            physicalActivities: data.physicalActivities,
+            physicalActivityFrequency: data.physicalActivityFrequency,
+            physicalActivityDuration: data.physicalActivityDuration,
+            physicalActivityIntensity: data.physicalActivityIntensity,
+            stressLevel: data.stressLevel,
+            perceivedQualityOfLife: data.perceivedQualityOfLife,
+            relaxedArmCircumference: data.relaxedArmCircumference,
+            contractedArmCircumference: data.contractedArmCircumference,
+            waistCircumference: data.waistCircumference,
+            abdomenCircumference: data.abdomenCircumference,
+            hipCircumference: data.hipCircumference,
+            proximalThighCircumference: data.proximalThighCircumference,
+            medialThighCircumference: data.medialThighCircumference,
+            calfCircumference: data.calfCircumference,
+            neckCircumference: data.neckCircumference,
+            wristCircumference: data.wristCircumference,
+            bicepsSkinfold: data.bicepsSkinfold,
+            tricepsSkinfold: data.tricepsSkinfold,
+            subscapularSkinfold: data.subscapularSkinfold,
+            pectoralSkinfold: data.pectoralSkinfold,
+            midaxillarySkinfold: data.midaxillarySkinfold,
+            suprailiacSkinfold: data.suprailiacSkinfold,
+            abdominalSkinfold: data.abdominalSkinfold,
+            thighSkinfold: data.thighSkinfold,
+            medialCalfSkinfold: data.medialCalfSkinfold,
+            humerusBiepicondylarDiameter: data.humerusBiepicondylarDiameter,
+            femurBiepicondylarDiameter: data.femurBiepicondylarDiameter,
+            assessmentObjective: data.assessmentObjective,
+          };
+
           // Add new record and sort by date descending
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           return { ...p, anthropometricData: updatedAnthropometricData };
