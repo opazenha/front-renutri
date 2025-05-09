@@ -9,7 +9,7 @@ interface PatientContextType {
   addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "foodAssessment" | "recommendations">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
   updatePatientAnthropometry: (patientId: string, data: Omit<AnthropometricRecord, "id" | "bmi">) => void;
-  updatePatientFoodAssessment: (patientId: string, data: FoodAssessment) => void;
+  updatePatientFoodAssessment: (patientId: string, data: Omit<FoodAssessment, 'lastUpdated'>) => void;
   addMacronutrientRecommendation: (patientId: string, input: MacronutrientAiInput, output: Omit<MacronutrientRecommendation, keyof MacronutrientAiInput | "id" | "dateGenerated">) => void;
   isLoading: boolean;
 }
@@ -95,7 +95,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
             id: uuidv4(),
             dateGenerated: new Date().toISOString(),
           };
-          return { ...p, recommendations: [...p.recommendations, newRecommendation].sort((a,b) => new Date(b.dateGenerated).getTime() - new Date(a.dateGenerated).getTime()) };
+          return { ...p, recommendations: [newRecommendation, ...p.recommendations].sort((a,b) => new Date(b.dateGenerated).getTime() - new Date(a.dateGenerated).getTime()) };
         }
         return p;
       })

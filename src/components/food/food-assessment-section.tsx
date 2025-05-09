@@ -34,13 +34,13 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
     try {
       updatePatientFoodAssessment(patient.id, data);
       toast({
-        title: "Food Assessment Updated",
-        description: "Patient's food preferences and habits have been saved.",
+        title: "Avaliação Alimentar Atualizada",
+        description: "As preferências e hábitos alimentares do paciente foram salvos.",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update food assessment. Please try again.",
+        title: "Erro",
+        description: "Falha ao atualizar a avaliação alimentar. Por favor, tente novamente.",
         variant: "destructive",
       });
     }
@@ -49,8 +49,8 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="text-xl flex items-center"><Utensils className="mr-2 h-6 w-6 text-primary" /> Food Assessment</CardTitle>
-        <CardDescription>Record {patient.name}'s dietary habits, preferences, and restrictions.</CardDescription>
+        <CardTitle className="text-xl flex items-center"><Utensils className="mr-2 h-6 w-6 text-primary" /> Avaliação Alimentar</CardTitle>
+        <CardDescription>Registre os hábitos alimentares, preferências e restrições de {patient.name}.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -60,10 +60,10 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
               name="dietaryPreferences"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dietary Preferences</FormLabel>
+                  <FormLabel>Preferências Alimentares</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., Vegetarian, enjoys spicy food, prefers whole grains..."
+                      placeholder="ex: Vegetariano, gosta de comida apimentada, prefere grãos integrais..."
                       className="min-h-[100px]"
                       {...field}
                     />
@@ -77,10 +77,10 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
               name="foodRestrictions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Food Restrictions / Allergies</FormLabel>
+                  <FormLabel>Restrições Alimentares / Alergias</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., Lactose intolerant, allergic to peanuts, avoids red meat..."
+                      placeholder="ex: Intolerante à lactose, alérgico a amendoim, evita carne vermelha..."
                       className="min-h-[100px]"
                       {...field}
                     />
@@ -94,10 +94,10 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
               name="typicalMealPatterns"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Typical Meal Patterns</FormLabel>
+                  <FormLabel>Padrões Típicos de Refeição</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., Breakfast: Oatmeal with fruits. Lunch: Salad with chicken. Dinner: Fish with vegetables. Snacks: Yogurt, nuts..."
+                      placeholder="ex: Café da manhã: Aveia com frutas. Almoço: Salada com frango. Jantar: Peixe com vegetais. Lanches: Iogurte, nozes..."
                       className="min-h-[120px]"
                       {...field}
                     />
@@ -106,12 +106,12 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit">Save Food Assessment</Button>
+            <Button type="submit">Salvar Avaliação Alimentar</Button>
           </form>
         </Form>
          {patient.foodAssessment.lastUpdated && (
           <p className="text-sm text-muted-foreground mt-4">
-            Last updated: {new Date(patient.foodAssessment.lastUpdated).toLocaleDateString()}
+            Última atualização: {new Date(patient.foodAssessment.lastUpdated).toLocaleDateString('pt-BR')}
           </p>
         )}
       </CardContent>

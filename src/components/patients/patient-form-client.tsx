@@ -19,6 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Patient } from "@/types";
@@ -55,9 +56,9 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>Nome Completo</FormLabel>
               <FormControl>
-                <Input placeholder="Enter patient's full name" {...field} />
+                <Input placeholder="Digite o nome completo do paciente" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -69,7 +70,7 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
           name="dob"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of Birth</FormLabel>
+              <FormLabel>Data de Nascimento</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -81,9 +82,9 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
                       )}
                     >
                       {field.value ? (
-                        format(new Date(field.value), "PPP")
+                        format(new Date(field.value), "PPP", { locale: ptBR })
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Escolha uma data</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -98,6 +99,7 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
                       date > new Date() || date < new Date("1900-01-01")
                     }
                     initialFocus
+                    locale={ptBR}
                   />
                 </PopoverContent>
               </Popover>
@@ -111,17 +113,17 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
           name="gender"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Gender</FormLabel>
+              <FormLabel>Gênero</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select patient's gender" />
+                    <SelectValue placeholder="Selecione o gênero do paciente" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="male">Masculino</SelectItem>
+                  <SelectItem value="female">Feminino</SelectItem>
+                  <SelectItem value="other">Outro</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -130,7 +132,7 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
         />
         
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : (patient ? "Update Patient" : "Add Patient")}
+          {isSubmitting ? "Salvando..." : (patient ? "Atualizar Paciente" : "Adicionar Paciente")}
         </Button>
       </form>
     </Form>

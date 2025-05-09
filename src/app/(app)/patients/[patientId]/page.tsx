@@ -16,7 +16,6 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   const { getPatientById, isLoading } = usePatientContext();
   const router = useRouter();
   
-  // As per Next.js warning, unwrap params Promise using React.use()
   const resolvedParams = React.use(params);
   const patient = getPatientById(resolvedParams.patientId);
 
@@ -39,10 +38,10 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   if (!patient) {
     return (
       <div className="container mx-auto py-8 text-center">
-        <h1 className="text-2xl font-semibold mb-4">Patient Not Found</h1>
-        <p className="text-muted-foreground mb-6">The patient you are looking for does not exist or could not be loaded.</p>
+        <h1 className="text-2xl font-semibold mb-4">Paciente Não Encontrado</h1>
+        <p className="text-muted-foreground mb-6">O paciente que você está procurando não existe ou não pôde ser carregado.</p>
         <Button onClick={() => router.push("/patients")}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Patients List
+          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para a Lista de Pacientes
         </Button>
       </div>
     );
@@ -52,12 +51,12 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <Button variant="outline" onClick={() => router.back()}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
         </Button>
         {/* Edit Patient button can be added here if an edit page is implemented */}
         {/* <Button variant="outline" asChild>
           <Link href={`/patients/${patient.id}/edit`}>
-            <Edit className="mr-2 h-4 w-4" /> Edit Patient
+            <Edit className="mr-2 h-4 w-4" /> Editar Paciente
           </Link>
         </Button> */}
       </div>

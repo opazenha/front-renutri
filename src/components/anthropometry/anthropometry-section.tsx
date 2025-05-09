@@ -2,7 +2,7 @@
 
 import type { AnthropometricFormData } from "@/lib/schemas";
 import { AnthropometricSchema } from "@/lib/schemas";
-import type { Patient, AnthropometricRecord } from "@/types";
+import type { Patient } from "@/types";
 import { usePatientContext } from "@/contexts/patient-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import { CalendarIcon, LineChart, PlusCircle } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,19 +41,18 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
     try {
       updatePatientAnthropometry(patient.id, data);
       toast({
-        title: "Anthropometry Updated",
-        description: "New record added successfully.",
+        title: "Antropometria Atualizada",
+        description: "Novo registro adicionado com sucesso.",
       });
       form.reset({ 
         date: format(new Date(), "yyyy-MM-dd"),
-        // Keep last entered values or clear them
         weightKg: data.weightKg, 
         heightCm: data.heightCm
       });
     } catch (error) {
        toast({
-        title: "Error",
-        description: "Failed to add record. Please try again.",
+        title: "Erro",
+        description: "Falha ao adicionar registro. Por favor, tente novamente.",
         variant: "destructive",
       });
     }
@@ -62,8 +62,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
     <div className="space-y-8">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center"><PlusCircle className="mr-2 h-6 w-6 text-primary" /> Add New Anthropometric Record</CardTitle>
-          <CardDescription>Enter new weight and height measurements for {patient.name}.</CardDescription>
+          <CardTitle className="text-xl flex items-center"><PlusCircle className="mr-2 h-6 w-6 text-primary" /> Adicionar Novo Registro Antropométrico</CardTitle>
+          <CardDescription>Insira novas medições de peso e altura para {patient.name}.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -74,7 +74,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Measurement Date</FormLabel>
+                      <FormLabel>Data da Medição</FormLabel>
                        <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -86,9 +86,9 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                               )}
                             >
                               {field.value ? (
-                                format(new Date(field.value), "PPP")
+                                format(new Date(field.value), "PPP", { locale: ptBR })
                               ) : (
-                                <span>Pick a date</span>
+                                <span>Escolha uma data</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -101,6 +101,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                             onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
                             disabled={(date) => date > new Date()}
                             initialFocus
+                            locale={ptBR}
                           />
                         </PopoverContent>
                       </Popover>
@@ -113,9 +114,9 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                   name="weightKg"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Weight (kg)</FormLabel>
+                      <FormLabel>Peso (kg)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 70.5" {...field} />
+                        <Input type="number" step="0.1" placeholder="ex: 70,5" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -126,16 +127,16 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                   name="heightCm"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Height (cm)</FormLabel>
+                      <FormLabel>Altura (cm)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 175" {...field} />
+                        <Input type="number" step="0.1" placeholder="ex: 175" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <Button type="submit">Add Record</Button>
+              <Button type="submit">Adicionar Registro</Button>
             </form>
           </Form>
         </CardContent>
@@ -145,8 +146,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
         <>
           <Card className="shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl flex items-center"><LineChart className="mr-2 h-6 w-6 text-primary" />Progress Visualization</CardTitle>
-              <CardDescription>Weight and BMI trends over time.</CardDescription>
+              <CardTitle className="text-xl flex items-center"><LineChart className="mr-2 h-6 w-6 text-primary" />Visualização de Progresso</CardTitle>
+              <CardDescription>Tendências de peso e IMC ao longo do tempo.</CardDescription>
             </CardHeader>
             <CardContent>
               <WeightProgressChart data={patient.anthropometricData} />
@@ -156,24 +157,24 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
           
           <Card className="shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl">Measurement History</CardTitle>
-              <CardDescription>All recorded anthropometric data.</CardDescription>
+              <CardTitle className="text-xl">Histórico de Medições</CardTitle>
+              <CardDescription>Todos os dados antropométricos registrados.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Weight (kg)</TableHead>
-                      <TableHead>Height (cm)</TableHead>
-                      <TableHead>BMI</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Peso (kg)</TableHead>
+                      <TableHead>Altura (cm)</TableHead>
+                      <TableHead>IMC</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {patient.anthropometricData.map((record) => (
                       <TableRow key={record.id}>
-                        <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(record.date).toLocaleDateString('pt-BR')}</TableCell>
                         <TableCell>{record.weightKg.toFixed(1)}</TableCell>
                         <TableCell>{record.heightCm.toFixed(1)}</TableCell>
                         <TableCell>{record.bmi ? record.bmi.toFixed(1) : "N/A"}</TableCell>

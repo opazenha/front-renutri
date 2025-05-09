@@ -271,28 +271,22 @@ const SidebarTrigger = React.forwardRef<
     toggleSidebar();
   };
 
-  // Default props for the Button when not using `asChild`
   const defaultButtonProps = {
     variant: "ghost",
     size: "icon",
-    className: cn("h-7 w-7", className), // `className` here is the one passed to SidebarTrigger
+    className: cn("h-7 w-7", className), 
   };
 
-  // Determine props for the underlying Button component
-  // If `asChild` is true, specific defaults like variant/size are omitted to let the child control them.
-  // The `className` passed to SidebarTrigger is applied directly.
-  // If not `asChild`, defaultButtonProps are used.
-  // Any props in `...props` (like a variant or size passed directly to SidebarTrigger) will override these.
   const buttonBaseProps = props.asChild
-    ? { className } // Only apply SidebarTrigger's own className if asChild
+    ? { className } 
     : defaultButtonProps;
 
   const buttonProps = {
     ref,
     "data-sidebar": "trigger",
     onClick: effectiveOnClick,
-    ...buttonBaseProps, // Apply base props (either defaults or just className for asChild)
-    ...props,          // Spread all other props from SidebarTrigger, including asChild and any overrides
+    ...buttonBaseProps, 
+    ...props,          
   };
 
   return (
@@ -300,7 +294,7 @@ const SidebarTrigger = React.forwardRef<
       {props.asChild ? childrenFromProps : (
         <>
           <PanelLeft />
-          <span className="sr-only">Toggle Sidebar</span>
+          <span className="sr-only">Alternar Barra Lateral</span>
         </>
       )}
     </Button>
@@ -318,10 +312,10 @@ const SidebarRail = React.forwardRef<
     <button
       ref={ref}
       data-sidebar="rail"
-      aria-label="Toggle Sidebar"
+      aria-label="Alternar Barra Lateral"
       tabIndex={-1}
       onClick={toggleSidebar}
-      title="Toggle Sidebar"
+      title="Alternar Barra Lateral"
       className={cn(
         "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex",
         "[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",

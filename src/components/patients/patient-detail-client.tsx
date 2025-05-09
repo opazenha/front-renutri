@@ -6,7 +6,7 @@ import { AnthropometrySection } from "@/components/anthropometry/anthropometry-s
 import { FoodAssessmentSection } from "@/components/food/food-assessment-section";
 import { RecommendationsSection } from "@/components/recommendations/recommendations-section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Utensils, Brain, CalendarDays } from "lucide-react";
+import { User, Scale, Utensils, Brain } from "lucide-react";
 import { calculateAge } from "@/types";
 import { Badge } from "@/components/ui/badge";
 
@@ -18,10 +18,10 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
   return (
     <Tabs defaultValue="overview" className="w-full">
       <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
-        <TabsTrigger value="overview"><User className="mr-2 h-4 w-4 sm:inline hidden" />Overview</TabsTrigger>
-        <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Anthropometry</TabsTrigger>
-        <TabsTrigger value="food-assessment"><Utensils className="mr-2 h-4 w-4 sm:inline hidden" />Food Assessment</TabsTrigger>
-        <TabsTrigger value="recommendations"><Brain className="mr-2 h-4 w-4 sm:inline hidden" />Recommendations</TabsTrigger>
+        <TabsTrigger value="overview"><User className="mr-2 h-4 w-4 sm:inline hidden" />Visão Geral</TabsTrigger>
+        <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Antropometria</TabsTrigger>
+        <TabsTrigger value="food-assessment"><Utensils className="mr-2 h-4 w-4 sm:inline hidden" />Avaliação Alimentar</TabsTrigger>
+        <TabsTrigger value="recommendations"><Brain className="mr-2 h-4 w-4 sm:inline hidden" />Recomendações</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview">
@@ -31,22 +31,22 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
               <User className="h-10 w-10 text-primary" />
               <div>
                 <CardTitle className="text-2xl text-primary">{patient.name}</CardTitle>
-                <CardDescription>Patient Overview and Basic Information</CardDescription>
+                <CardDescription>Visão Geral do Paciente e Informações Básicas</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div><strong>Age:</strong> {calculateAge(patient.dob)} years</div>
-              <div><strong>Date of Birth:</strong> {new Date(patient.dob).toLocaleDateString()}</div>
-              <div><strong>Gender:</strong> <Badge variant="secondary" className="capitalize">{patient.gender}</Badge></div>
-              <div><strong>Registered On:</strong> {new Date(patient.registrationDate).toLocaleDateString()}</div>
+              <div><strong>Idade:</strong> {calculateAge(patient.dob)} anos</div>
+              <div><strong>Data de Nascimento:</strong> {new Date(patient.dob).toLocaleDateString('pt-BR')}</div>
+              <div><strong>Gênero:</strong> <Badge variant="secondary" className="capitalize">{patient.gender === 'male' ? 'Masculino' : patient.gender === 'female' ? 'Feminino' : 'Outro'}</Badge></div>
+              <div><strong>Registrado Em:</strong> {new Date(patient.registrationDate).toLocaleDateString('pt-BR')}</div>
             </div>
              <div className="mt-6 border-t pt-4">
-                <h4 className="font-semibold mb-2 text-primary">Summary Data</h4>
-                <p>Anthropometric Records: {patient.anthropometricData.length}</p>
-                <p>Nutritional Recommendations: {patient.recommendations.length}</p>
-                {patient.foodAssessment?.lastUpdated && <p>Food Assessment Last Updated: {new Date(patient.foodAssessment.lastUpdated).toLocaleDateString()}</p>}
+                <h4 className="font-semibold mb-2 text-primary">Dados Resumidos</h4>
+                <p>Registros Antropométricos: {patient.anthropometricData.length}</p>
+                <p>Recomendações Nutricionais: {patient.recommendations.length}</p>
+                {patient.foodAssessment?.lastUpdated && <p>Avaliação Alimentar Atualizada Em: {new Date(patient.foodAssessment.lastUpdated).toLocaleDateString('pt-BR')}</p>}
             </div>
           </CardContent>
         </Card>

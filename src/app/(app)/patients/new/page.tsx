@@ -19,14 +19,14 @@ export default function NewPatientPage() {
     try {
       const newPatient = addPatient(data);
       toast({
-        title: "Patient Added",
-        description: `${data.name} has been successfully added.`,
+        title: "Paciente Adicionado",
+        description: `${data.name} foi adicionado(a) com sucesso.`,
       });
       router.push(`/patients/${newPatient.id}`);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to add patient. Please try again.",
+        title: "Erro",
+        description: "Falha ao adicionar paciente. Por favor, tente novamente.",
         variant: "destructive",
       });
       setIsSubmitting(false);
@@ -37,8 +37,8 @@ export default function NewPatientPage() {
     <div className="container mx-auto py-8">
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-primary">Register New Patient</CardTitle>
-          <CardDescription>Enter the details for the new patient.</CardDescription>
+          <CardTitle className="text-2xl text-primary">Cadastrar Novo Paciente</CardTitle>
+          <CardDescription>Insira os detalhes do novo paciente.</CardDescription>
         </CardHeader>
         <CardContent>
           <PatientFormClient onSubmit={handleSubmit} isSubmitting={isSubmitting} />

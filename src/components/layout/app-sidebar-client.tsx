@@ -19,8 +19,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", tooltip: "Dashboard" },
-  { href: "/patients", icon: Users, label: "Patients", tooltip: "Manage Patients" },
+  { href: "/dashboard", icon: LayoutDashboard, label: "Painel", tooltip: "Painel de Controle" },
+  { href: "/patients", icon: Users, label: "Pacientes", tooltip: "Gerenciar Pacientes" },
 ];
 
 export function AppSidebarClient() {
@@ -54,18 +54,18 @@ export function AppSidebarClient() {
         <Link href="/profile" passHref legacyBehavior>
             <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")}>
                 <UserCircle className="shrink-0"/>
-                <span className={cn("ml-2", open ? "" : "sr-only")}>Profile</span>
+                <span className={cn("ml-2", open ? "" : "sr-only")}>Perfil</span>
             </Button>
         </Link>
         <Link href="/settings" passHref legacyBehavior>
             <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")}>
                 <Settings className="shrink-0"/>
-                <span className={cn("ml-2", open ? "" : "sr-only")}>Settings</span>
+                <span className={cn("ml-2", open ? "" : "sr-only")}>Configurações</span>
             </Button>
         </Link>
         <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")}>
             <LogOut className="shrink-0"/>
-            <span className={cn("ml-2", open ? "" : "sr-only")}>Logout</span>
+            <span className={cn("ml-2", open ? "" : "sr-only")}>Sair</span>
         </Button>
       </SidebarFooter>
     </Sidebar>

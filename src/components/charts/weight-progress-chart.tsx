@@ -20,14 +20,14 @@ interface WeightProgressChartProps {
 
 const chartConfigWeight = {
   weightKg: {
-    label: "Weight (kg)",
+    label: "Peso (kg)",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig
 
 const chartConfigBmi = {
    bmi: {
-    label: "BMI",
+    label: "IMC",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig
@@ -37,27 +37,25 @@ export function WeightProgressChart({ data }: WeightProgressChartProps) {
 
   const formattedData = data
     .map(item => ({
-      date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: new Date(item.date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }),
       weightKg: item.weightKg,
       bmi: item.bmi,
     }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Ensure data is sorted by date for line chart
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   if (formattedData.length === 0) {
-    return <p className="text-muted-foreground text-center py-4">No data available to display chart.</p>
+    return <p className="text-muted-foreground text-center py-4">Nenhum dado disponível para exibir o gráfico.</p>
   }
   
-  // Note: Chart download functionality is complex and typically requires a library like html-to-image or server-side rendering.
-  // This placeholder button illustrates where such functionality would be.
   const handleDownload = () => {
-    alert("Chart download functionality is not implemented in this demo.");
+    alert("A funcionalidade de download de gráficos não está implementada nesta demonstração.");
   };
 
 
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-2">Weight Trend (kg)</h3>
+        <h3 className="text-lg font-semibold mb-2">Tendência de Peso (kg)</h3>
         <ChartContainer config={chartConfigWeight} className="h-[300px] w-full" ref={chartRef}>
           <LineChart
             accessibilityLayer
@@ -98,7 +96,7 @@ export function WeightProgressChart({ data }: WeightProgressChartProps) {
       
       {formattedData.some(d => d.bmi) && (
         <div>
-          <h3 className="text-lg font-semibold mb-2">BMI Trend</h3>
+          <h3 className="text-lg font-semibold mb-2">Tendência de IMC</h3>
           <ChartContainer config={chartConfigBmi} className="h-[300px] w-full">
             <BarChart accessibilityLayer data={formattedData} margin={{ top: 20, left: 12, right: 12 }}>
               <CartesianGrid vertical={false} />
@@ -129,7 +127,7 @@ export function WeightProgressChart({ data }: WeightProgressChartProps) {
       <div className="text-right">
         <Button onClick={handleDownload} variant="outline">
           <Download className="mr-2 h-4 w-4" />
-          Download Charts (Demo)
+          Baixar Gráficos (Demo)
         </Button>
       </div>
     </div>

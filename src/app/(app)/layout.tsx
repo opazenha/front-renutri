@@ -19,7 +19,7 @@ export default function AppLayout({
             <SidebarTrigger asChild>
               <Button size="icon" variant="outline" className="md:hidden">
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
+                <span className="sr-only">Alternar Menu</span>
               </Button>
             </SidebarTrigger>
             <h1 className="text-lg font-semibold">ReNutri</h1>

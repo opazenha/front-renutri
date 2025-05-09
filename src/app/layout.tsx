@@ -8,8 +8,8 @@ const geistSans = GeistSans;
 const geistMono = GeistMono;
 
 export const metadata: Metadata = {
-  title: 'ReNutri - Nutritional Management',
-  description: 'Personalized nutrition and patient management by ReNutri',
+  title: 'ReNutri - Gestão Nutricional',
+  description: 'Nutrição personalizada e gestão de pacientes por ReNutri',
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         {children}
         <Toaster />

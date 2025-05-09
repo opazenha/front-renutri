@@ -26,9 +26,28 @@ interface RecommendationsSectionProps {
   patient: Patient;
 }
 
+const activityLevelTranslations: Record<ActivityLevel, string> = {
+  sedentary: "Sedentário",
+  lightlyActive: "Levemente Ativo",
+  moderatelyActive: "Moderadamente Ativo",
+  veryActive: "Muito Ativo",
+  extraActive: "Extremamente Ativo",
+};
+
+const goalTranslations: Record<Goal, string> = {
+  weightLoss: "Perda de Peso",
+  weightGain: "Ganho de Peso",
+  maintainWeight: "Manutenção de Peso",
+};
+
 const activityLevels: ActivityLevel[] = ["sedentary", "lightlyActive", "moderatelyActive", "veryActive", "extraActive"];
 const goals: Goal[] = ["weightLoss", "weightGain", "maintainWeight"];
 const aiGenders: AiGender[] = ["male", "female"];
+const aiGenderTranslations: Record<AiGender, string> = {
+  male: "Masculino",
+  female: "Feminino",
+};
+
 
 export function RecommendationsSection({ patient }: RecommendationsSectionProps) {
   const { addMacronutrientRecommendation } = usePatientContext();
@@ -55,8 +74,8 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
 
     if (!latestAnthropometry) {
       toast({
-        title: "Missing Data",
-        description: "Please add anthropometric data (weight and height) for the patient first.",
+        title: "Dados Ausentes",
+        description: "Por favor, adicione dados antropométricos (peso e altura) para o paciente primeiro.",
         variant: "destructive",
       });
       setIsLoadingAi(false);
@@ -65,8 +84,8 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
     
     if (patient.gender === "other" && !form.getValues("genderForAI")) {
          toast({
-        title: "Gender Required for AI",
-        description: "Please select a gender (Male/Female) for AI calculation purposes.",
+        title: "Gênero Necessário para IA",
+        description: "Por favor, selecione um gênero (Masculino/Feminino) para fins de cálculo da IA.",
         variant: "destructive",
       });
       setIsLoadingAi(false);
@@ -84,22 +103,22 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
       activityLevel: data.activityLevel,
       goal: data.goal,
       GET: data.GET,
-      foodPreferences: data.foodPreferences || patient.foodAssessment?.dietaryPreferences || "No specific preferences.",
+      foodPreferences: data.foodPreferences || patient.foodAssessment?.dietaryPreferences || "Sem preferências específicas.",
     };
 
     try {
       const result = await generateMacronutrientRecommendations(aiInput);
       addMacronutrientRecommendation(patient.id, aiInput, result);
-      setLatestRecommendation({ ...aiInput, ...result, id: "temp", dateGenerated: new Date().toISOString() }); // Update UI immediately
+      setLatestRecommendation({ ...aiInput, ...result, id: "temp", dateGenerated: new Date().toISOString() }); 
       toast({
-        title: "Recommendations Generated",
-        description: "AI-powered macronutrient plan created successfully.",
+        title: "Recomendações Geradas",
+        description: "Plano de macronutrientes com IA criado com sucesso.",
       });
     } catch (error) {
       console.error("AI Recommendation Error:", error);
       toast({
-        title: "AI Error",
-        description: "Failed to generate recommendations. Please try again later.",
+        title: "Erro na IA",
+        description: "Falha ao gerar recomendações. Por favor, tente novamente mais tarde.",
         variant: "destructive",
       });
     } finally {
@@ -108,9 +127,9 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
   };
   
   const recommendationForChart = latestRecommendation ? [
-      { name: 'Protein (g)', value: latestRecommendation.proteinGrams, fill: 'hsl(var(--chart-1))' },
-      { name: 'Carbs (g)', value: latestRecommendation.carbohydrateGrams, fill: 'hsl(var(--chart-2))'},
-      { name: 'Fat (g)', value: latestRecommendation.fatGrams, fill: 'hsl(var(--chart-3))' },
+      { name: 'Proteína (g)', value: latestRecommendation.proteinGrams, fill: 'hsl(var(--chart-1))' },
+      { name: 'Carboidratos (g)', value: latestRecommendation.carbohydrateGrams, fill: 'hsl(var(--chart-2))'},
+      { name: 'Gordura (g)', value: latestRecommendation.fatGrams, fill: 'hsl(var(--chart-3))' },
     ] : [];
 
 
@@ -118,11 +137,11 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
     <div className="space-y-8">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center"><Brain className="mr-2 h-6 w-6 text-primary" /> Generate Macronutrient Recommendations</CardTitle>
+          <CardTitle className="text-xl flex items-center"><Brain className="mr-2 h-6 w-6 text-primary" /> Gerar Recomendações de Macronutrientes</CardTitle>
           <CardDescription>
-            Provide details to generate an AI-powered macronutrient plan for {patient.name}. 
-            Current Age: {calculateAge(patient.dob)}.
-            {patient.anthropometricData[0] ? ` Latest Weight: ${patient.anthropometricData[0].weightKg}kg, Height: ${patient.anthropometricData[0].heightCm}cm.` : " No anthropometric data found."}
+            Forneça detalhes para gerar um plano de macronutrientes com IA para {patient.name}. 
+            Idade Atual: {calculateAge(patient.dob)}.
+            {patient.anthropometricData[0] ? ` Último Peso: ${patient.anthropometricData[0].weightKg}kg, Altura: ${patient.anthropometricData[0].heightCm}cm.` : " Nenhum dado antropométrico encontrado."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,13 +153,13 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                   name="activityLevel"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Activity Level</FormLabel>
+                      <FormLabel>Nível de Atividade</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Select activity level" /></SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder="Selecione o nível de atividade" /></SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {activityLevels.map(level => <SelectItem key={level} value={level} className="capitalize">{level.replace(/([A-Z])/g, ' $1')}</SelectItem>)}
+                          {activityLevels.map(level => <SelectItem key={level} value={level}>{activityLevelTranslations[level]}</SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -152,13 +171,13 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                   name="goal"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nutritional Goal</FormLabel>
+                      <FormLabel>Objetivo Nutricional</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Select nutritional goal" /></SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder="Selecione o objetivo nutricional" /></SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {goals.map(g => <SelectItem key={g} value={g} className="capitalize">{g.replace(/([A-Z])/g, ' $1')}</SelectItem>)}
+                          {goals.map(g => <SelectItem key={g} value={g}>{goalTranslations[g]}</SelectItem>)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -170,19 +189,18 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                  <FormField
                   control={form.control}
                   name="genderForAI"
-                  // Cast to any because genderForAI is not in MacronutrientRecommendationFormInputData but needed for form state
                   render={({ field }: { field: any }) => ( 
                     <FormItem>
-                      <FormLabel>Biological Gender (for AI calculation)</FormLabel>
+                      <FormLabel>Gênero Biológico (para cálculo da IA)</FormLabel>
                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Select gender for AI" /></SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder="Selecione o gênero para IA" /></SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {aiGenders.map(g => <SelectItem key={g} value={g} className="capitalize">{g}</SelectItem>)}
+                          {aiGenders.map(g => <SelectItem key={g} value={g}>{aiGenderTranslations[g]}</SelectItem>)}
                         </SelectContent>
                       </Select>
-                      <FormDescription>The AI model requires biological gender for calculations.</FormDescription>
+                      <FormDescription>O modelo de IA requer o gênero biológico para os cálculos.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -193,9 +211,9 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                 name="GET"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Total Daily Energy Expenditure (GET/TDEE in Calories)</FormLabel>
+                    <FormLabel>Gasto Energético Total Diário (GET/TDEE em Calorias)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 2000" {...field} value={field.value ?? ""} />
+                      <Input type="number" placeholder="ex: 2000" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -206,20 +224,20 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                 name="foodPreferences"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Food Preferences & Restrictions (override)</FormLabel>
+                    <FormLabel>Preferências e Restrições Alimentares (substituir)</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Current preferences will be used if blank. Or, specify preferences for this plan." className="min-h-[100px]" {...field} />
+                      <Textarea placeholder="As preferências atuais serão usadas se em branco. Ou, especifique preferências para este plano." className="min-h-[100px]" {...field} />
                     </FormControl>
-                    <FormDescription>Overrides patient's general food assessment for this specific recommendation.</FormDescription>
+                    <FormDescription>Substitui a avaliação alimentar geral do paciente para esta recomendação específica.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" disabled={isLoadingAi || !patient.anthropometricData[0]}>
                 {isLoadingAi && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoadingAi ? "Generating..." : "Generate Recommendations"}
+                {isLoadingAi ? "Gerando..." : "Gerar Recomendações"}
               </Button>
-              {!patient.anthropometricData[0] && <p className="text-sm text-destructive">Please add anthropometric data first.</p>}
+              {!patient.anthropometricData[0] && <p className="text-sm text-destructive">Por favor, adicione dados antropométricos primeiro.</p>}
             </form>
           </Form>
         </CardContent>
@@ -228,15 +246,15 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
       {latestRecommendation && (
         <Card className="shadow-lg mt-8 bg-primary/5">
           <CardHeader>
-            <CardTitle className="text-xl text-primary flex items-center"><BarChartHorizontalBig className="mr-2 h-6 w-6" /> Latest Macronutrient Recommendation</CardTitle>
-            <CardDescription>Generated on: {new Date(latestRecommendation.dateGenerated).toLocaleDateString()}</CardDescription>
+            <CardTitle className="text-xl text-primary flex items-center"><BarChartHorizontalBig className="mr-2 h-6 w-6" /> Última Recomendação de Macronutrientes</CardTitle>
+            <CardDescription>Gerado em: {new Date(latestRecommendation.dateGenerated).toLocaleDateString('pt-BR')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6 items-center">
                 <div>
                     <div className="grid grid-cols-3 gap-4 text-center mb-6">
                         <div>
-                            <p className="text-sm text-muted-foreground">Protein</p>
+                            <p className="text-sm text-muted-foreground">Proteína</p>
                             <p className="text-2xl font-bold text-primary">{latestRecommendation.proteinGrams}g</p>
                         </div>
                         <div>
@@ -244,12 +262,12 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
                             <p className="text-2xl font-bold text-primary">{latestRecommendation.carbohydrateGrams}g</p>
                         </div>
                         <div>
-                            <p className="text-sm text-muted-foreground">Fat</p>
+                            <p className="text-sm text-muted-foreground">Gordura</p>
                             <p className="text-2xl font-bold text-primary">{latestRecommendation.fatGrams}g</p>
                         </div>
                     </div>
                     <Alert>
-                        <AlertTitle className="font-semibold">Rationale</AlertTitle>
+                        <AlertTitle className="font-semibold">Justificativa</AlertTitle>
                         <AlertDescription>{latestRecommendation.recommendationRationale}</AlertDescription>
                     </Alert>
                 </div>
@@ -278,16 +296,16 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
             </div>
 
             <details className="text-sm">
-              <summary className="cursor-pointer font-medium text-primary hover:underline">View Input Parameters for this Recommendation</summary>
+              <summary className="cursor-pointer font-medium text-primary hover:underline">Ver Parâmetros de Entrada para esta Recomendação</summary>
               <ul className="list-disc pl-5 mt-2 space-y-1 bg-card p-4 rounded-md border">
-                <li><strong>Age:</strong> {latestRecommendation.age} years</li>
-                <li><strong>Gender (for AI):</strong> {latestRecommendation.gender}</li>
-                <li><strong>Weight:</strong> {latestRecommendation.weightKg} kg</li>
-                <li><strong>Height:</strong> {latestRecommendation.heightCm} cm</li>
-                <li><strong>Activity Level:</strong> <span className="capitalize">{latestRecommendation.activityLevel.replace(/([A-Z])/g, ' $1')}</span></li>
-                <li><strong>Goal:</strong> <span className="capitalize">{latestRecommendation.goal.replace(/([A-Z])/g, ' $1')}</span></li>
-                <li><strong>GET:</strong> {latestRecommendation.GET} calories</li>
-                <li><strong>Food Preferences:</strong> {latestRecommendation.foodPreferences}</li>
+                <li><strong>Idade:</strong> {latestRecommendation.age} anos</li>
+                <li><strong>Gênero (para IA):</strong> {aiGenderTranslations[latestRecommendation.gender]}</li>
+                <li><strong>Peso:</strong> {latestRecommendation.weightKg} kg</li>
+                <li><strong>Altura:</strong> {latestRecommendation.heightCm} cm</li>
+                <li><strong>Nível de Atividade:</strong> <span className="capitalize">{activityLevelTranslations[latestRecommendation.activityLevel]}</span></li>
+                <li><strong>Objetivo:</strong> <span className="capitalize">{goalTranslations[latestRecommendation.goal]}</span></li>
+                <li><strong>GET:</strong> {latestRecommendation.GET} calorias</li>
+                <li><strong>Preferências Alimentares:</strong> {latestRecommendation.foodPreferences}</li>
               </ul>
             </details>
           </CardContent>
@@ -297,14 +315,14 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
       {patient.recommendations.length > 1 && (
         <Card className="shadow-md mt-8">
           <CardHeader>
-            <CardTitle className="text-lg">Previous Recommendations</CardTitle>
+            <CardTitle className="text-lg">Recomendações Anteriores</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
             {patient.recommendations.slice(1).map(rec => (
               <li key={rec.id} className="text-sm p-2 border rounded-md">
-                Generated on {new Date(rec.dateGenerated).toLocaleDateString()}: 
-                P: {rec.proteinGrams}g, C: {rec.carbohydrateGrams}g, F: {rec.fatGrams}g. Goal: {rec.goal}.
+                Gerado em {new Date(rec.dateGenerated).toLocaleDateString('pt-BR')}: 
+                P: {rec.proteinGrams}g, C: {rec.carbohydrateGrams}g, G: {rec.fatGrams}g. Objetivo: {goalTranslations[rec.goal]}.
               </li>
             ))}
             </ul>
@@ -314,5 +332,3 @@ export function RecommendationsSection({ patient }: RecommendationsSectionProps)
     </div>
   );
 }
-
-    
