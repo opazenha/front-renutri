@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -58,7 +59,7 @@ const SidebarProvider = React.forwardRef<
 >(
   (
     {
-      defaultOpen = true,
+      defaultOpen = false, // Changed default to false
       open: openProp,
       onOpenChange: setOpenProp,
       className,
@@ -87,7 +88,7 @@ const SidebarProvider = React.forwardRef<
         // This sets the cookie to keep the sidebar state.
         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
       },
-      [setOpenProp, open]
+      [setOpenProp, open, _setOpen] // Added _setOpen
     )
 
     // Helper to toggle the sidebar.
@@ -176,7 +177,7 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar()
 
     if (collapsible === "none") {
       return (
@@ -245,6 +246,8 @@ const Sidebar = React.forwardRef<
               : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
             className
           )}
+          onMouseEnter={collapsible === "icon" && !isMobile ? () => setOpen(true) : undefined}
+          onMouseLeave={collapsible === "icon" && !isMobile ? () => setOpen(false) : undefined}
           {...props}
         >
           <div
@@ -778,3 +781,4 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
