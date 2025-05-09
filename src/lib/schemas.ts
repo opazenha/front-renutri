@@ -14,21 +14,3 @@ export const AnthropometricSchema = z.object({
   heightCm: z.coerce.number().positive({ message: "A altura deve ser positiva." }),
 });
 export type AnthropometricFormData = z.infer<typeof AnthropometricSchema>;
-
-
-export const FoodAssessmentSchema = z.object({
-  dietaryPreferences: z.string().optional(),
-  foodRestrictions: z.string().optional(),
-  typicalMealPatterns: z.string().optional(),
-});
-export type FoodAssessmentFormData = z.infer<typeof FoodAssessmentSchema>;
-
-
-export const MacronutrientRecommendationInputSchema = z.object({
-  activityLevel: z.enum(["sedentary", "lightlyActive", "moderatelyActive", "veryActive", "extraActive"], { required_error: "Nível de atividade é obrigatório." }),
-  goal: z.enum(["weightLoss", "weightGain", "maintainWeight"], { required_error: "Objetivo é obrigatório." }),
-  GET: z.coerce.number().positive({ message: "GET deve ser um número positivo." }),
-  foodPreferences: z.string().optional(),
-  genderForAI: z.enum(["male", "female"]).optional(), // Added for conditional validation, not directly in AI input type.
-});
-export type MacronutrientRecommendationFormInputData = z.infer<typeof MacronutrientRecommendationInputSchema>;

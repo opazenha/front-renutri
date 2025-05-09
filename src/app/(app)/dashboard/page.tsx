@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, PlusCircle, BarChart3, Brain } from "lucide-react";
+import { Users, PlusCircle, BarChart3, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { usePatientContext } from "@/contexts/patient-context";
 import Image from "next/image";
@@ -22,7 +22,7 @@ export default function DashboardPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-primary">Bem-vindo ao Painel ReNutri</h1>
-        <p className="text-muted-foreground">Gerencie seus pacientes e planos nutricionais de forma eficiente.</p>
+        <p className="text-muted-foreground">Gerencie seus pacientes e avaliações clínicas de forma eficiente.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -79,9 +79,9 @@ export default function DashboardPage() {
               </Button>
             </div>
             <div className="flex flex-col items-center text-center p-4 rounded-lg border">
-              <Brain className="h-12 w-12 text-primary mb-3" />
-              <h3 className="font-semibold mb-1">2. Gere Recomendações</h3>
-              <p className="text-sm text-muted-foreground mb-3">Para cada paciente, insira seus detalhes para gerar recomendações de macronutrientes com IA.</p>
+              <ClipboardList className="h-12 w-12 text-primary mb-3" />
+              <h3 className="font-semibold mb-1">2. Realize Avaliações Clínicas</h3>
+              <p className="text-sm text-muted-foreground mb-3">Para cada paciente, registre dados antropométricos e acompanhe o progresso.</p>
                <Button asChild size="sm" variant="outline">
                 <Link href="/patients">Ir para Pacientes</Link>
               </Button>
@@ -90,7 +90,7 @@ export default function DashboardPage() {
         </Card>
       </div>
        <div className="mt-12 text-center">
-          <Image src="https://picsum.photos/seed/dashboard-health/800/300" alt="Estilo de vida saudável" width={800} height={300} className="rounded-lg shadow-lg mx-auto" data-ai-hint="healthy food doctor" />
+          <Image src="https://picsum.photos/seed/dashboard-assessment/800/300" alt="Avaliação clínica" width={800} height={300} className="rounded-lg shadow-lg mx-auto" data-ai-hint="clinical assessment doctor" />
         </div>
     </div>
   );

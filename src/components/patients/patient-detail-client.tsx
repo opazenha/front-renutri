@@ -3,10 +3,8 @@
 import type { Patient } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnthropometrySection } from "@/components/anthropometry/anthropometry-section";
-import { FoodAssessmentSection } from "@/components/food/food-assessment-section";
-import { RecommendationsSection } from "@/components/recommendations/recommendations-section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Utensils, Brain } from "lucide-react";
+import { User, Scale } from "lucide-react";
 import { calculateAge } from "@/types";
 import { Badge } from "@/components/ui/badge";
 
@@ -17,11 +15,9 @@ interface PatientDetailClientProps {
 export function PatientDetailClient({ patient }: PatientDetailClientProps) {
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
+      <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
         <TabsTrigger value="overview"><User className="mr-2 h-4 w-4 sm:inline hidden" />Visão Geral</TabsTrigger>
-        <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Antropometria</TabsTrigger>
-        <TabsTrigger value="food-assessment"><Utensils className="mr-2 h-4 w-4 sm:inline hidden" />Avaliação Alimentar</TabsTrigger>
-        <TabsTrigger value="recommendations"><Brain className="mr-2 h-4 w-4 sm:inline hidden" />Recomendações</TabsTrigger>
+        <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Avaliação Clínica</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview">
@@ -45,8 +41,6 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
              <div className="mt-6 border-t pt-4">
                 <h4 className="font-semibold mb-2 text-primary">Dados Resumidos</h4>
                 <p>Registros Antropométricos: {patient.anthropometricData.length}</p>
-                <p>Recomendações Nutricionais: {patient.recommendations.length}</p>
-                {patient.foodAssessment?.lastUpdated && <p>Avaliação Alimentar Atualizada Em: {new Date(patient.foodAssessment.lastUpdated).toLocaleDateString('pt-BR')}</p>}
             </div>
           </CardContent>
         </Card>
@@ -54,14 +48,6 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
 
       <TabsContent value="anthropometry">
         <AnthropometrySection patient={patient} />
-      </TabsContent>
-
-      <TabsContent value="food-assessment">
-        <FoodAssessmentSection patient={patient} />
-      </TabsContent>
-
-      <TabsContent value="recommendations">
-        <RecommendationsSection patient={patient} />
       </TabsContent>
     </Tabs>
   );

@@ -1,16 +1,14 @@
 "use client";
 
-import type { Patient, AnthropometricRecord, FoodAssessment, MacronutrientRecommendation, MacronutrientAiInput } from "@/types";
+import type { Patient, AnthropometricRecord } from "@/types";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 
 interface PatientContextType {
   patients: Patient[];
-  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "foodAssessment" | "recommendations">) => Patient;
+  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
   updatePatientAnthropometry: (patientId: string, data: Omit<AnthropometricRecord, "id" | "bmi">) => void;
-  updatePatientFoodAssessment: (patientId: string, data: Omit<FoodAssessment, 'lastUpdated'>) => void;
-  addMacronutrientRecommendation: (patientId: string, input: MacronutrientAiInput, output: Omit<MacronutrientRecommendation, keyof MacronutrientAiInput | "id" | "dateGenerated">) => void;
   isLoading: boolean;
 }
 
@@ -44,14 +42,12 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [patients, isLoading]);
 
-  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "foodAssessment" | "recommendations">) => {
+  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData">) => {
     const newPatient: Patient = {
       ...patientData,
       id: uuidv4(),
       registrationDate: new Date().toISOString(),
       anthropometricData: [],
-      foodAssessment: { dietaryPreferences: "", foodRestrictions: "", typicalMealPatterns: "", lastUpdated: new Date().toISOString() },
-      recommendations: [],
     };
     setPatients((prevPatients) => [...prevPatients, newPatient]);
     return newPatient;
@@ -67,44 +63,17 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
         if (p.id === patientId) {
           const bmi = data.weightKg / ((data.heightCm / 100) ** 2);
           const newRecord: AnthropometricRecord = { ...data, id: uuidv4(), bmi: parseFloat(bmi.toFixed(2)) };
-          return { ...p, anthropometricData: [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()) };
+          // Add new record and sort by date descending
+          const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          return { ...p, anthropometricData: updatedAnthropometricData };
         }
         return p;
       })
     );
   };
-  
-  const updatePatientFoodAssessment = (patientId: string, data: Omit<FoodAssessment, 'lastUpdated'>) => {
-    setPatients((prevPatients) =>
-      prevPatients.map((p) => {
-        if (p.id === patientId) {
-          return { ...p, foodAssessment: { ...data, lastUpdated: new Date().toISOString() } };
-        }
-        return p;
-      })
-    );
-  };
-
-  const addMacronutrientRecommendation = (patientId: string, input: MacronutrientAiInput, output: Omit<MacronutrientRecommendation, keyof MacronutrientAiInput | "id" | "dateGenerated">) => {
-    setPatients((prevPatients) =>
-      prevPatients.map((p) => {
-        if (p.id === patientId) {
-          const newRecommendation: MacronutrientRecommendation = {
-            ...input,
-            ...output,
-            id: uuidv4(),
-            dateGenerated: new Date().toISOString(),
-          };
-          return { ...p, recommendations: [newRecommendation, ...p.recommendations].sort((a,b) => new Date(b.dateGenerated).getTime() - new Date(a.dateGenerated).getTime()) };
-        }
-        return p;
-      })
-    );
-  };
-
 
   return (
-    <PatientContext.Provider value={{ patients, addPatient, getPatientById, updatePatientAnthropometry, updatePatientFoodAssessment, addMacronutrientRecommendation, isLoading }}>
+    <PatientContext.Provider value={{ patients, addPatient, getPatientById, updatePatientAnthropometry, isLoading }}>
       {children}
     </PatientContext.Provider>
   );

@@ -33,7 +33,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
     defaultValues: {
       date: format(new Date(), "yyyy-MM-dd"),
       weightKg: patient.anthropometricData[0]?.weightKg || undefined,
-      heightCm: patient.anthropometricData[0]?.heightCm || undefined,
+      heightCm: patient.anthropometricData[0]?.heightCm || patient.anthropometricData.find(d => d.heightCm)?.heightCm || undefined, // Use last recorded height if available
     },
   });
 
@@ -41,13 +41,13 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
     try {
       updatePatientAnthropometry(patient.id, data);
       toast({
-        title: "Antropometria Atualizada",
-        description: "Novo registro adicionado com sucesso.",
+        title: "Avaliação Clínica Atualizada",
+        description: "Novo registro antropométrico adicionado com sucesso.",
       });
       form.reset({ 
         date: format(new Date(), "yyyy-MM-dd"),
-        weightKg: data.weightKg, 
-        heightCm: data.heightCm
+        weightKg: undefined, // Clear weight for next entry
+        heightCm: data.heightCm // Keep height for convenience
       });
     } catch (error) {
        toast({
@@ -62,8 +62,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
     <div className="space-y-8">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center"><PlusCircle className="mr-2 h-6 w-6 text-primary" /> Adicionar Novo Registro Antropométrico</CardTitle>
-          <CardDescription>Insira novas medições de peso e altura para {patient.name}.</CardDescription>
+          <CardTitle className="text-xl flex items-center"><PlusCircle className="mr-2 h-6 w-6 text-primary" /> Adicionar Novo Registro Clínico</CardTitle>
+          <CardDescription>Insira novas medições antropométricas para {patient.name}.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -151,14 +151,13 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
             </CardHeader>
             <CardContent>
               <WeightProgressChart data={patient.anthropometricData} />
-              {/* Add BMI chart if needed */}
             </CardContent>
           </Card>
           
           <Card className="shadow-md">
             <CardHeader>
               <CardTitle className="text-xl">Histórico de Medições</CardTitle>
-              <CardDescription>Todos os dados antropométricos registrados.</CardDescription>
+              <CardDescription>Todos os dados antropométricos registrados para {patient.name}.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">

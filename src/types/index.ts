@@ -12,8 +12,6 @@ export interface Patient {
   gender: Gender;
   registrationDate: string; // YYYY-MM-DD ISO String
   anthropometricData: AnthropometricRecord[];
-  foodAssessment: FoodAssessment;
-  recommendations: MacronutrientRecommendation[];
 }
 
 export interface AnthropometricRecord {
@@ -22,36 +20,6 @@ export interface AnthropometricRecord {
   weightKg: number;
   heightCm: number;
   bmi?: number; // Calculated
-}
-
-export interface FoodAssessment {
-  dietaryPreferences: string;
-  foodRestrictions: string;
-  typicalMealPatterns: string;
-  lastUpdated: string; // YYYY-MM-DD ISO String
-}
-
-export interface MacronutrientAiInput {
-  gender: AiGender;
-  age: number; 
-  weightKg: number;
-  heightCm: number;
-  activityLevel: ActivityLevel;
-  goal: Goal;
-  GET: number; 
-  foodPreferences: string;
-}
-
-export interface MacronutrientRecommendationOutput {
-  proteinGrams: number;
-  carbohydrateGrams: number;
-  fatGrams: number;
-  recommendationRationale: string;
-}
-
-export interface MacronutrientRecommendation extends MacronutrientAiInput, MacronutrientRecommendationOutput {
-  id: string;
-  dateGenerated: string; // YYYY-MM-DD ISO String
 }
 
 // Helper to calculate age from DOB string
