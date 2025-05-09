@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HeartPulse, Users, BarChart } from "lucide-react";
+import { Users, BarChart } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { AppLogoIcon } from "@/components/layout/app-logo-icon"; // Import new icon
 
 export default function LandingPage() {
   return (
@@ -10,7 +10,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <Link href="/" className="flex items-center space-x-2 text-lg font-semibold text-primary">
-            <HeartPulse className="h-7 w-7" />
+            <AppLogoIcon className="h-7 w-7" /> {/* Changed icon */}
             <span>ReNutri</span>
           </Link>
           <nav className="ml-auto flex items-center space-x-2">
@@ -51,14 +51,7 @@ export default function LandingPage() {
                   </Button>
                 </div>
               </div>
-              <Image
-                src="https://picsum.photos/seed/renutri-hero-clinic/600/400"
-                alt="Nutricionista realizando avaliação"
-                width={600}
-                height={400}
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square shadow-lg"
-                data-ai-hint="nutritionist assessment"
-              />
+              {/* Image removed as per user request */}
             </div>
           </div>
         </section>
