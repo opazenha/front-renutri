@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Users, PlusCircle, BarChart3, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { usePatientContext } from "@/contexts/patient-context";
-import Image from "next/image";
 
 export default function DashboardPage() {
   const { patients, isLoading } = usePatientContext();
@@ -66,13 +65,13 @@ export default function DashboardPage() {
       <div className="mt-12">
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl">Comece a Usar o ReNutri</CardTitle>
-            <CardDescription>Siga estes passos para aproveitar ao máximo a plataforma.</CardDescription>
+            {/* Title and description removed as per user request */}
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-6">
             <div className="flex flex-col items-center text-center p-4 rounded-lg border">
               <Users className="h-12 w-12 text-primary mb-3" />
-              <h3 className="font-semibold mb-1">1. Cadastre Pacientes</h3>
+              <h3 className="font-semibold mb-1 text-primary">CADASTRO</h3>
+              <h4 className="font-semibold mb-1">1. Cadastre Pacientes</h4>
               <p className="text-sm text-muted-foreground mb-3">Comece adicionando seus pacientes ao sistema. Clique em 'Adicionar Novo Paciente' ou navegue para a seção Pacientes.</p>
               <Button asChild size="sm">
                 <Link href="/patients/new">Adicionar Paciente</Link>
@@ -80,7 +79,8 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-col items-center text-center p-4 rounded-lg border">
               <ClipboardList className="h-12 w-12 text-primary mb-3" />
-              <h3 className="font-semibold mb-1">2. Realize Avaliações Clínicas</h3>
+              <h3 className="font-semibold mb-1 text-primary">AVALIAÇÕES</h3>
+              <h4 className="font-semibold mb-1">2. Realize Avaliações Clínicas</h4>
               <p className="text-sm text-muted-foreground mb-3">Para cada paciente, registre dados antropométricos e acompanhe o progresso.</p>
                <Button asChild size="sm" variant="outline">
                 <Link href="/patients">Ir para Pacientes</Link>
@@ -89,9 +89,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-       <div className="mt-12 text-center">
-          <Image src="https://picsum.photos/seed/dashboard-assessment/800/300" alt="Avaliação clínica" width={800} height={300} className="rounded-lg shadow-lg mx-auto" data-ai-hint="clinical assessment doctor" />
-        </div>
+       {/* Image removed as per user request */}
     </div>
   );
 }
