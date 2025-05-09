@@ -1,21 +1,24 @@
 "use client";
 
+import React from "react";
 import { usePatientContext } from "@/contexts/patient-context";
 import { PatientDetailClient } from "@/components/patients/patient-detail-client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PatientDetailPageProps {
-  params: { patientId: string };
+  params: Promise<{ patientId: string }>;
 }
 
 export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   const { getPatientById, isLoading } = usePatientContext();
   const router = useRouter();
-  const patient = getPatientById(params.patientId);
+  
+  // As per Next.js warning, unwrap params Promise using React.use()
+  const resolvedParams = React.use(params);
+  const patient = getPatientById(resolvedParams.patientId);
 
   if (isLoading) {
     return (
