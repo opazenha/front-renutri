@@ -3,14 +3,14 @@
 
 import type { AnthropometricFormData } from "@/lib/schemas";
 import { AnthropometricSchema } from "@/lib/schemas";
-import type { Patient } from "@/types";
+import type { Patient, LabExamRecord } from "@/types";
 import { usePatientContext } from "@/contexts/patient-context";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, LineChart, PlusCircle, Activity, Coffee, Droplets, Ruler, HeartPulse, ClipboardCheck, Bone } from "lucide-react";
+import { CalendarIcon, LineChart, PlusCircle, Ruler, HeartPulse, ClipboardCheck, Bone, FlaskConical, Trash2 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -20,8 +20,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { WeightProgressChart } from "@/components/charts/weight-progress-chart";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { v4 as uuidv4 } from "uuid";
 
 interface AnthropometrySectionProps {
   patient: Patient;
@@ -41,28 +41,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
       heightCm: latestAnthropometricData.heightCm || patient.anthropometricData.find(d => d.heightCm)?.heightCm || undefined,
       usualWeightKg: latestAnthropometricData.usualWeightKg || undefined,
       desiredWeightKg: latestAnthropometricData.desiredWeightKg || undefined,
-      // Habits - set default if a previous record exists
-      smokingStatus: latestAnthropometricData.smokingStatus || undefined,
-      smokingStartDate: latestAnthropometricData.smokingStartDate || "",
-      smokingProductType: latestAnthropometricData.smokingProductType || "",
-      smokingQuantityPerDay: latestAnthropometricData.smokingQuantityPerDay || "",
-      smokingStopTime: latestAnthropometricData.smokingStopTime || "",
-      alcoholConsumptionStatus: latestAnthropometricData.alcoholConsumptionStatus || undefined,
-      alcoholStartDate: latestAnthropometricData.alcoholStartDate || "",
-      alcoholMainBeverageType: latestAnthropometricData.alcoholMainBeverageType || "",
-      alcoholMainBeverageFrequency: latestAnthropometricData.alcoholMainBeverageFrequency || "",
-      alcoholMainBeverageQuantity: latestAnthropometricData.alcoholMainBeverageQuantity || "",
-      alcoholMainBeverageUnit: latestAnthropometricData.alcoholMainBeverageUnit || "",
-      alcoholMainBeverageContent: latestAnthropometricData.alcoholMainBeverageContent || undefined,
-      alcoholOtherBeveragesNotes: latestAnthropometricData.alcoholOtherBeveragesNotes || "",
-      alcoholStopTime: latestAnthropometricData.alcoholStopTime || "",
-      physicalActivityStatus: latestAnthropometricData.physicalActivityStatus || undefined,
-      physicalActivities: latestAnthropometricData.physicalActivities || "",
-      physicalActivityFrequency: latestAnthropometricData.physicalActivityFrequency || "",
-      physicalActivityDuration: latestAnthropometricData.physicalActivityDuration || "",
-      physicalActivityIntensity: latestAnthropometricData.physicalActivityIntensity || undefined,
-      stressLevel: latestAnthropometricData.stressLevel || undefined,
-      perceivedQualityOfLife: latestAnthropometricData.perceivedQualityOfLife || "",
       // Circumferences
       relaxedArmCircumference: latestAnthropometricData.relaxedArmCircumference || undefined,
       contractedArmCircumference: latestAnthropometricData.contractedArmCircumference || undefined,
@@ -88,56 +66,37 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
       humerusBiepicondylarDiameter: latestAnthropometricData.humerusBiepicondylarDiameter || undefined,
       femurBiepicondylarDiameter: latestAnthropometricData.femurBiepicondylarDiameter || undefined,
       assessmentObjective: latestAnthropometricData.assessmentObjective || "",
+      labExams: latestAnthropometricData.labExams?.map((exam: LabExamRecord) => ({...exam, result: exam.result as number | undefined})) || [],
     },
   });
 
-  const watchSmokingStatus = form.watch("smokingStatus");
-  const watchAlcoholStatus = form.watch("alcoholConsumptionStatus");
-  const watchPhysicalActivityStatus = form.watch("physicalActivityStatus");
+  const { fields: labExamFields, append: appendLabExam, remove: removeLabExam } = useFieldArray({
+    control: form.control,
+    name: "labExams",
+  });
+
 
   function handleSubmit(data: AnthropometricFormData) {
     try {
-      updatePatientAnthropometry(patient.id, data);
+      // Ensure lab exam IDs are generated if not present
+      const processedData = {
+        ...data,
+        labExams: data.labExams?.map(exam => ({
+          ...exam,
+          id: exam.id || uuidv4(), 
+        }))
+      };
+      updatePatientAnthropometry(patient.id, processedData);
       toast({
         title: "Avaliação Clínica Atualizada",
         description: "Novo registro clínico adicionado com sucesso.",
       });
-      // Reset form, keeping height and potentially other non-volatile fields.
-      // For habits, it might be better to clear them or keep them based on user preference,
-      // for now, we clear fields that are typically per-assessment.
       form.reset({ 
         date: format(new Date(), "yyyy-MM-dd"),
         weightKg: undefined, 
-        heightCm: data.heightCm, // Keep height
-        usualWeightKg: data.usualWeightKg, // Keep usual weight
-        desiredWeightKg: data.desiredWeightKg, // Keep desired weight
-        // Resetting habit details if status changes, or keep if status is same
-        smokingStatus: data.smokingStatus,
-        smokingStartDate: data.smokingStatus !== 'no' ? data.smokingStartDate : "",
-        smokingProductType: data.smokingStatus !== 'no' ? data.smokingProductType : "",
-        smokingQuantityPerDay: data.smokingStatus !== 'no' ? data.smokingQuantityPerDay : "",
-        smokingStopTime: data.smokingStatus === 'exSmoker' ? data.smokingStopTime : "",
-        
-        alcoholConsumptionStatus: data.alcoholConsumptionStatus,
-        alcoholStartDate: data.alcoholConsumptionStatus !== 'no' ? data.alcoholStartDate : "",
-        alcoholMainBeverageType: data.alcoholConsumptionStatus !== 'no' ? data.alcoholMainBeverageType : "",
-        alcoholMainBeverageFrequency: data.alcoholConsumptionStatus !== 'no' ? data.alcoholMainBeverageFrequency : "",
-        alcoholMainBeverageQuantity: data.alcoholConsumptionStatus !== 'no' ? data.alcoholMainBeverageQuantity : "",
-        alcoholMainBeverageUnit: data.alcoholConsumptionStatus !== 'no' ? data.alcoholMainBeverageUnit : "",
-        alcoholMainBeverageContent: data.alcoholConsumptionStatus !== 'no' ? data.alcoholMainBeverageContent : undefined,
-        alcoholOtherBeveragesNotes: data.alcoholConsumptionStatus !== 'no' ? data.alcoholOtherBeveragesNotes : "",
-        alcoholStopTime: data.alcoholConsumptionStatus === 'exConsumer' ? data.alcoholStopTime : "",
-
-        physicalActivityStatus: data.physicalActivityStatus,
-        physicalActivities: data.physicalActivityStatus === 'yes' ? data.physicalActivities : "",
-        physicalActivityFrequency: data.physicalActivityStatus === 'yes' ? data.physicalActivityFrequency : "",
-        physicalActivityDuration: data.physicalActivityStatus === 'yes' ? data.physicalActivityDuration : "",
-        physicalActivityIntensity: data.physicalActivityStatus === 'yes' ? data.physicalActivityIntensity : undefined,
-        
-        stressLevel: data.stressLevel,
-        perceivedQualityOfLife: data.perceivedQualityOfLife,
-        
-        // Clear measurements
+        heightCm: data.heightCm, 
+        usualWeightKg: data.usualWeightKg,
+        desiredWeightKg: data.desiredWeightKg,
         relaxedArmCircumference: undefined,
         contractedArmCircumference: undefined,
         waistCircumference: undefined,
@@ -159,7 +118,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
         medialCalfSkinfold: undefined,
         humerusBiepicondylarDiameter: undefined,
         femurBiepicondylarDiameter: undefined,
-        assessmentObjective: data.assessmentObjective, // Keep objective
+        assessmentObjective: data.assessmentObjective,
+        labExams: [], // Reset lab exams or keep them based on preference
       });
     } catch (error) {
        toast({
@@ -175,7 +135,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
       <Card className="shadow-md">
         <CardHeader>
           <CardTitle className="text-xl flex items-center"><PlusCircle className="mr-2 h-6 w-6 text-primary" /> Adicionar Novo Registro Clínico</CardTitle>
-          <CardDescription>Insira novas medições e hábitos para {patient.name}.</CardDescription>
+          <CardDescription>Insira novas medições e exames para {patient.name}.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -219,125 +179,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
 
-              {/* Habits */}
-              <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center"><Activity className="mr-2 h-5 w-5 text-primary" /> Hábitos de Vida</CardTitle></CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Smoking */}
-                  <FormField control={form.control} name="smokingStatus" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tabagismo</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Fumante?" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          <SelectItem value="no">Não</SelectItem>
-                          <SelectItem value="yes">Sim</SelectItem>
-                          <SelectItem value="exSmoker">Ex-fumante</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  {(watchSmokingStatus === "yes" || watchSmokingStatus === "exSmoker") && (
-                    <div className="grid md:grid-cols-2 gap-6 pl-4 border-l-2 border-muted ml-2">
-                      <FormField control={form.control} name="smokingStartDate" render={({ field }) => (<FormItem><FormLabel>Início (tabagismo)</FormLabel><FormControl><Input placeholder="Idade ou data" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="smokingProductType" render={({ field }) => (<FormItem><FormLabel>Tipo de produto</FormLabel><FormControl><Input placeholder="Cigarro, vaper, etc." {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="smokingQuantityPerDay" render={({ field }) => (<FormItem><FormLabel>Quantidade/dia</FormLabel><FormControl><Input placeholder="Maços, unidades" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      {watchSmokingStatus === "exSmoker" && <FormField control={form.control} name="smokingStopTime" render={({ field }) => (<FormItem><FormLabel>Parou há quanto tempo?</FormLabel><FormControl><Input placeholder="Meses, anos" {...field} /></FormControl><FormMessage /></FormItem>)} />}
-                    </div>
-                  )}
-
-                  {/* Alcohol */}
-                  <FormField control={form.control} name="alcoholConsumptionStatus" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Etilismo</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Consome bebida alcoólica?" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          <SelectItem value="no">Não</SelectItem>
-                          <SelectItem value="yes">Sim</SelectItem>
-                          <SelectItem value="exConsumer">Ex-consumidor</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  {(watchAlcoholStatus === "yes" || watchAlcoholStatus === "exConsumer") && (
-                    <div className="grid md:grid-cols-2 gap-6 pl-4 border-l-2 border-muted ml-2">
-                      <FormField control={form.control} name="alcoholStartDate" render={({ field }) => (<FormItem><FormLabel>Início do consumo</FormLabel><FormControl><Input placeholder="Idade ou data" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="alcoholMainBeverageType" render={({ field }) => (<FormItem><FormLabel>Principal Tipo de Bebida</FormLabel><FormControl><Input placeholder="Ex: Cerveja, Vinho" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="alcoholMainBeverageFrequency" render={({ field }) => (<FormItem><FormLabel>Frequência (Principal Bebida)</FormLabel><FormControl><Input placeholder="Ex: 2x/semana" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="alcoholMainBeverageQuantity" render={({ field }) => (<FormItem><FormLabel>Quantidade por ocasião (Principal Bebida)</FormLabel><FormControl><Input placeholder="Ex: 3 latas" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="alcoholMainBeverageUnit" render={({ field }) => (<FormItem><FormLabel>Unidade (Principal Bebida)</FormLabel><FormControl><Input placeholder="Ex: Lata, Dose" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="alcoholMainBeverageContent" render={({ field }) => (<FormItem><FormLabel>Teor Alcoólico (%) (Principal Bebida)</FormLabel><FormControl><Input type="number" placeholder="Ex: 5" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name="alcoholOtherBeveragesNotes" render={({ field }) => (<FormItem className="md:col-span-2"><FormLabel>Outras Bebidas e Notas</FormLabel><FormControl><Textarea placeholder="Detalhes sobre outros tipos de bebidas consumidas, frequências, etc." {...field} /></FormControl><FormMessage /></FormItem>)} />
-                      {watchAlcoholStatus === "exConsumer" && <FormField control={form.control} name="alcoholStopTime" render={({ field }) => (<FormItem><FormLabel>Parou de consumir há quanto tempo?</FormLabel><FormControl><Input placeholder="Meses, anos" {...field} /></FormControl><FormMessage /></FormItem>)} />}
-                    </div>
-                  )}
-
-                  {/* Physical Activity */}
-                  <FormField control={form.control} name="physicalActivityStatus" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Prática de Atividade Física</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Pratica atividade física?" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          <SelectItem value="no">Não</SelectItem>
-                          <SelectItem value="yes">Sim</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  {watchPhysicalActivityStatus === "yes" && (
-                     <div className="grid md:grid-cols-2 gap-6 pl-4 border-l-2 border-muted ml-2">
-                        <FormField control={form.control} name="physicalActivities" render={({ field }) => (<FormItem><FormLabel>Qual(is) atividade(s)?</FormLabel><FormControl><Input placeholder="Ex: Musculação, Corrida" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="physicalActivityFrequency" render={({ field }) => (<FormItem><FormLabel>Frequência (atividade física)</FormLabel><FormControl><Input placeholder="Ex: 3x/semana" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="physicalActivityDuration" render={({ field }) => (<FormItem><FormLabel>Duração (atividade física)</FormLabel><FormControl><Input placeholder="Ex: 60 min/sessão" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="physicalActivityIntensity" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Intensidade (atividade física)</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="Selecione a intensidade" /></SelectTrigger></FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="light">Leve</SelectItem>
-                                        <SelectItem value="moderate">Moderada</SelectItem>
-                                        <SelectItem value="intense">Intensa</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    </div>
-                  )}
-                  
-                  {/* Stress Level */}
-                  <FormField control={form.control} name="stressLevel" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nível de Estresse</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Selecione o nível de estresse" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          <SelectItem value="low">Baixo</SelectItem>
-                          <SelectItem value="moderate">Moderado</SelectItem>
-                          <SelectItem value="high">Alto</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  {/* Perceived Quality of Life */}
-                  <FormField control={form.control} name="perceivedQualityOfLife" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Qualidade de Vida Percebida</FormLabel>
-                      <FormControl><Textarea placeholder="Descreva a percepção sobre a qualidade de vida" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </CardContent>
-              </Card>
-
               {/* Circumferences */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Ruler className="mr-2 h-5 w-5 text-primary" /> Circunferências (cm)</CardTitle></CardHeader>
@@ -357,7 +198,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
 
               {/* Skinfolds */}
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center"><Droplets className="mr-2 h-5 w-5 text-primary" /> Dobras Cutâneas (mm)</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-lg flex items-center"><Ruler className="mr-2 h-5 w-5 text-primary" /> Dobras Cutâneas (mm)</CardTitle><FormDescription>Utilizar adipômetro.</FormDescription></CardHeader>
                 <CardContent className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
                   <FormField control={form.control} name="bicepsSkinfold" render={({ field }) => (<FormItem><FormLabel>Bicipital</FormLabel><FormControl><Input type="number" step="0.1" placeholder="mm" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="tricepsSkinfold" render={({ field }) => (<FormItem><FormLabel>Tricipital</FormLabel><FormControl><Input type="number" step="0.1" placeholder="mm" {...field} /></FormControl><FormMessage /></FormItem>)} />
@@ -380,6 +221,57 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
 
+              {/* Lab Exams */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center"><FlaskConical className="mr-2 h-5 w-5 text-primary" /> Exames Laboratoriais</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {labExamFields.map((field, index) => (
+                    <Card key={field.id} className="p-4 space-y-4 relative shadow-sm border">
+                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive" onClick={() => removeLabExam(index)}>
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Remover Exame</span>
+                      </Button>
+                      <FormField
+                        control={form.control}
+                        name={`labExams.${index}.collectionDate`}
+                        render={({ field: labField }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Data da Coleta</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button variant={"outline"} className={cn("w-full md:w-[240px] pl-3 text-left font-normal", !labField.value && "text-muted-foreground")}>
+                                    {labField.value ? format(new Date(labField.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar mode="single" selected={labField.value ? new Date(labField.value) : undefined} onSelect={(date) => labField.onChange(date ? format(date, "yyyy-MM-dd") : "")} disabled={(date) => date > new Date()} initialFocus locale={ptBR} />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <FormField control={form.control} name={`labExams.${index}.examName`} render={({ field: labField }) => (<FormItem><FormLabel>Nome do Exame</FormLabel><FormControl><Input placeholder="Ex: Glicemia de Jejum" {...labField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`labExams.${index}.result`} render={({ field: labField }) => (<FormItem><FormLabel>Resultado</FormLabel><FormControl><Input type="number" step="any" placeholder="Ex: 98" {...labField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`labExams.${index}.unit`} render={({ field: labField }) => (<FormItem><FormLabel>Unidade</FormLabel><FormControl><Input placeholder="Ex: mg/dL" {...labField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`labExams.${index}.referenceRange`} render={({ field: labField }) => (<FormItem><FormLabel>Valor de Referência</FormLabel><FormControl><Input placeholder="Ex: 70-99 mg/dL" {...labField} /></FormControl><FormMessage /></FormItem>)} />
+                      </div>
+                      <FormField control={form.control} name={`labExams.${index}.specificCondition`} render={({ field: labField }) => (<FormItem><FormLabel>Condição Específica</FormLabel><FormControl><Input placeholder="Ex: Fase folicular" {...labField} /></FormControl><FormMessage /></FormItem>)} />
+                    </Card>
+                  ))}
+                  <Button type="button" variant="outline" onClick={() => appendLabExam({ collectionDate: format(new Date(), "yyyy-MM-dd"), examName: "", result: undefined, unit: "", referenceRange: "", specificCondition: "" })}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Exame Laboratorial
+                  </Button>
+                </CardContent>
+              </Card>
+
+
               {/* Assessment Objective */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><ClipboardCheck className="mr-2 h-5 w-5 text-primary" /> Objetivo da Avaliação</CardTitle></CardHeader>
@@ -394,7 +286,9 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
 
-              <Button type="submit">Adicionar Registro Clínico</Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Salvando..." : "Adicionar Registro Clínico"}
+              </Button>
             </form>
           </Form>
         </CardContent>
@@ -423,17 +317,14 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Data</TableHead>
-                      <TableHead>Peso Atual (kg)</TableHead>
+                      <TableHead>Peso (kg)</TableHead>
                       <TableHead>Altura (cm)</TableHead>
                       <TableHead>IMC</TableHead>
-                      <TableHead>Peso Habitual (kg)</TableHead>
-                      <TableHead>Peso Desejado (kg)</TableHead>
-                      <TableHead>Tabagismo</TableHead>
-                      <TableHead>Etilismo</TableHead>
-                      <TableHead>Ativ. Física</TableHead>
+                      <TableHead>P.Habitual (kg)</TableHead>
+                      <TableHead>P.Desejado (kg)</TableHead>
                       <TableHead>Cintura (cm)</TableHead>
-                      <TableHead>Abdômen (cm)</TableHead>
                       <TableHead>Quadril (cm)</TableHead>
+                      <TableHead>Nº Exames</TableHead>
                       <TableHead>Objetivo</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -446,13 +337,10 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                         <TableCell>{record.bmi ? record.bmi.toFixed(1) : "N/A"}</TableCell>
                         <TableCell>{record.usualWeightKg?.toFixed(1) || "N/A"}</TableCell>
                         <TableCell>{record.desiredWeightKg?.toFixed(1) || "N/A"}</TableCell>
-                        <TableCell>{record.smokingStatus ? {no: "Não", yes: "Sim", exSmoker: "Ex"}[record.smokingStatus] : "N/A"}</TableCell>
-                        <TableCell>{record.alcoholConsumptionStatus ? {no: "Não", yes: "Sim", exConsumer: "Ex"}[record.alcoholConsumptionStatus] : "N/A"}</TableCell>
-                        <TableCell>{record.physicalActivityStatus ? {no: "Não", yes: "Sim"}[record.physicalActivityStatus] : "N/A"}</TableCell>
                         <TableCell>{record.waistCircumference?.toFixed(1) || "N/A"}</TableCell>
-                        <TableCell>{record.abdomenCircumference?.toFixed(1) || "N/A"}</TableCell>
                         <TableCell>{record.hipCircumference?.toFixed(1) || "N/A"}</TableCell>
-                        <TableCell>{record.assessmentObjective || "N/A"}</TableCell>
+                        <TableCell>{record.labExams?.length || 0}</TableCell>
+                        <TableCell className="max-w-xs truncate">{record.assessmentObjective || "N/A"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

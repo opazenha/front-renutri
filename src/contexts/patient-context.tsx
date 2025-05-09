@@ -1,8 +1,8 @@
 
 "use client";
 
-import type { Patient, AnthropometricRecord } from "@/types";
-import type { AnthropometricFormData } from "@/lib/schemas";
+import type { Patient, AnthropometricRecord, LabExamRecord } from "@/types";
+import type { AnthropometricFormData, LabExamFormData } from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 
@@ -55,10 +55,6 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     return newPatient;
   };
 
-  const getPatientById = (id: string) => {
-    return patients.find((p) => p.id === id);
-  };
-
   const updatePatientAnthropometry = (patientId: string, data: AnthropometricFormData) => {
     setPatients((prevPatients) =>
       prevPatients.map((p) => {
@@ -70,33 +66,13 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
           }
           
           const newRecord: AnthropometricRecord = { 
-            ...data, // Spread all form data
             id: uuidv4(), 
+            date: data.date,
+            weightKg: data.weightKg,
+            heightCm: data.heightCm,
             bmi: bmi,
-            // Ensure all optional fields from schema are included, even if undefined
             usualWeightKg: data.usualWeightKg,
             desiredWeightKg: data.desiredWeightKg,
-            smokingStatus: data.smokingStatus,
-            smokingStartDate: data.smokingStartDate,
-            smokingProductType: data.smokingProductType,
-            smokingQuantityPerDay: data.smokingQuantityPerDay,
-            smokingStopTime: data.smokingStopTime,
-            alcoholConsumptionStatus: data.alcoholConsumptionStatus,
-            alcoholStartDate: data.alcoholStartDate,
-            alcoholMainBeverageType: data.alcoholMainBeverageType,
-            alcoholMainBeverageFrequency: data.alcoholMainBeverageFrequency,
-            alcoholMainBeverageQuantity: data.alcoholMainBeverageQuantity,
-            alcoholMainBeverageUnit: data.alcoholMainBeverageUnit,
-            alcoholMainBeverageContent: data.alcoholMainBeverageContent,
-            alcoholOtherBeveragesNotes: data.alcoholOtherBeveragesNotes,
-            alcoholStopTime: data.alcoholStopTime,
-            physicalActivityStatus: data.physicalActivityStatus,
-            physicalActivities: data.physicalActivities,
-            physicalActivityFrequency: data.physicalActivityFrequency,
-            physicalActivityDuration: data.physicalActivityDuration,
-            physicalActivityIntensity: data.physicalActivityIntensity,
-            stressLevel: data.stressLevel,
-            perceivedQualityOfLife: data.perceivedQualityOfLife,
             relaxedArmCircumference: data.relaxedArmCircumference,
             contractedArmCircumference: data.contractedArmCircumference,
             waistCircumference: data.waistCircumference,
@@ -119,6 +95,11 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
             humerusBiepicondylarDiameter: data.humerusBiepicondylarDiameter,
             femurBiepicondylarDiameter: data.femurBiepicondylarDiameter,
             assessmentObjective: data.assessmentObjective,
+            labExams: data.labExams?.map((exam: LabExamFormData) => ({
+              ...exam,
+              id: exam.id || uuidv4(), // Ensure ID is present
+              result: exam.result as number, // Already coerced by Zod
+            } as LabExamRecord)) || [],
           };
 
           // Add new record and sort by date descending

@@ -14,42 +14,25 @@ export interface Patient {
   anthropometricData: AnthropometricRecord[];
 }
 
+export interface LabExamRecord {
+  id: string;
+  collectionDate: string; // YYYY-MM-DD
+  examName: string;
+  result: number;
+  unit: string;
+  referenceRange?: string;
+  specificCondition?: string;
+}
+
 export interface AnthropometricRecord {
   id: string;
   date: string; // YYYY-MM-DD ISO String
-  weightKg?: number; // Current Weight
+  weightKg?: number; 
   heightCm?: number;
   bmi?: number; // Calculated
 
-  // New Anthropometric fields
   usualWeightKg?: number;
   desiredWeightKg?: number;
-
-  // Habits
-  smokingStatus?: "yes" | "no" | "exSmoker";
-  smokingStartDate?: string;
-  smokingProductType?: string;
-  smokingQuantityPerDay?: string;
-  smokingStopTime?: string;
-
-  alcoholConsumptionStatus?: "yes" | "no" | "exConsumer";
-  alcoholStartDate?: string;
-  alcoholMainBeverageType?: string;
-  alcoholMainBeverageFrequency?: string;
-  alcoholMainBeverageQuantity?: string;
-  alcoholMainBeverageUnit?: string;
-  alcoholMainBeverageContent?: number;
-  alcoholOtherBeveragesNotes?: string;
-  alcoholStopTime?: string;
-  
-  physicalActivityStatus?: "yes" | "no";
-  physicalActivities?: string;
-  physicalActivityFrequency?: string;
-  physicalActivityDuration?: string;
-  physicalActivityIntensity?: "light" | "moderate" | "intense";
-  
-  stressLevel?: "low" | "moderate" | "high";
-  perceivedQualityOfLife?: string;
 
   // Circumferences (cm)
   relaxedArmCircumference?: number;
@@ -67,7 +50,7 @@ export interface AnthropometricRecord {
   bicepsSkinfold?: number;
   tricepsSkinfold?: number;
   subscapularSkinfold?: number;
-  pectoralSkinfold?: number;
+  pectoralSkinfold?: number; // Typically for men
   midaxillarySkinfold?: number;
   suprailiacSkinfold?: number;
   abdominalSkinfold?: number;
@@ -79,6 +62,7 @@ export interface AnthropometricRecord {
   femurBiepicondylarDiameter?: number;
 
   assessmentObjective?: string;
+  labExams?: LabExamRecord[];
 }
 
 // Helper to calculate age from DOB string
