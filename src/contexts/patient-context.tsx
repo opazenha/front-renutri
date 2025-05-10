@@ -1,14 +1,14 @@
-
 "use client";
 
 import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment } from "@/types";
 import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData, AppointmentFormData } from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
+import { mockPatients } from "@/lib/mock-data"; // Import mock data
 
 interface PatientContextType {
   patients: Patient[];
-  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations">) => Patient;
+  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
   updatePatientAnthropometry: (patientId: string, data: AnthropometricFormData) => void;
   updatePatientEnergyExpenditure: (patientId: string, data: EnergyExpenditureFormData) => void;
@@ -39,6 +39,9 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       const storedPatients = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
       if (storedPatients) {
         setPatients(JSON.parse(storedPatients));
+      } else {
+        // If no patients in localStorage, initialize with mock data
+        setPatients(mockPatients);
       }
       const storedAppointments = localStorage.getItem(LOCAL_STORAGE_KEY_APPOINTMENTS);
       if (storedAppointments) {
@@ -46,6 +49,8 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error("Failed to load data from localStorage", error);
+      // Fallback to mock data if parsing fails or on any error during load
+      if (patients.length === 0) setPatients(mockPatients);
     }
     setIsLoading(false);
   }, []);
@@ -71,7 +76,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
   }, [appointments, isLoading]);
 
 
-  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations">) => {
+  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments">) => {
     const newPatient: Patient = {
       ...patientData,
       id: uuidv4(),
@@ -80,6 +85,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       energyExpenditureRecords: [],
       macronutrientPlans: [],
       micronutrientRecommendations: [],
+      // appointments: [], // Initialize appointments if stored per patient
     };
     setPatients((prevPatients) => [...prevPatients, newPatient]);
     return newPatient;
@@ -91,7 +97,8 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
         if (p.id === patientId) {
           let bmi: number | undefined = undefined;
           if (data.weightKg && data.heightCm && data.heightCm > 0) {
-            const calculatedBmi = data.weightKg / ((data.heightCm / 100) ** 2);
+            const heightInMeters = data.heightCm / 100;
+            const calculatedBmi = data.weightKg / (heightInMeters * heightInMeters);
             bmi = parseFloat(calculatedBmi.toFixed(2));
           }
           
@@ -128,7 +135,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
             labExams: data.labExams?.map((exam: LabExamFormData) => ({
               ...exam,
               id: exam.id || uuidv4(), 
-              result: exam.result as number, 
+              result: exam.result as number, // Already coerced by Zod if valid, or will be NaN/undefined which is fine if optional in type
             } as LabExamRecord)) || [],
           };
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());

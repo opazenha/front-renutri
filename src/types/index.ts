@@ -15,7 +15,7 @@ export interface Patient {
   energyExpenditureRecords?: EnergyExpenditureRecord[];
   macronutrientPlans?: MacronutrientPlan[];
   micronutrientRecommendations?: MicronutrientRecommendation[];
-  // appointments can be stored here or globally. For now, let's assume a global list in context.
+  appointments?: Appointment[]; // Added optional appointments
 }
 
 export interface LabExamRecord {
