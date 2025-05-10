@@ -290,27 +290,29 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, onClick, children: childrenFromProps, ...props }, ref) => {
+>(({ className, onClick, children: childrenFromProps, asChild, ...restProps }, ref) => {
   const { toggleSidebar } = useSidebar();
 
   const effectiveOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onClick?.(event);
+    if (onClick) onClick(event); // Use onClick from passed props if it exists
     toggleSidebar();
   };
 
-  const Comp = props.asChild ? Slot : Button;
+  const Comp = asChild ? Slot : Button;
+
+  const {asChild: _asChild, ...rest} = restProps;
 
   return (
     <Comp
       ref={ref}
       data-sidebar="trigger"
-      variant="ghost"
-      size="icon"
-      className={cn("h-7 w-7", className)}
+      variant="ghost" // SidebarTrigger's own variant
+      size="icon"   // SidebarTrigger's own size
+      className={cn("h-7 w-7", className)} // Merges with passed className
       onClick={effectiveOnClick}
-      {...props}
+      {...rest} // Pass all other props (e.g. aria-label) EXCEPT asChild
     >
-      {props.asChild ? childrenFromProps : (
+      {asChild ? childrenFromProps : (
         <>
           <PanelLeft />
           <span className="sr-only">Alternar Barra Lateral</span>
@@ -838,3 +840,4 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
