@@ -30,10 +30,10 @@ export function AppSidebarClient() {
 
   return (
     <Sidebar collapsible="icon" variant="inset" side="left">
-      <SidebarHeader className={cn("p-4", !open && "items-center justify-center p-2")}>
-        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 7 : 6} />
+      <SidebarHeader className={cn("p-2", !open && "items-center justify-center p-2")}> {/* Changed p-4 to p-2 */}
+        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 6 : 6} /> {/* Changed iconSize for open state */}
       </SidebarHeader>
-      <SidebarContent className="p-2 flex-1">
+      <SidebarContent className="p-1 flex-1"> {/* Changed p-2 to p-1 */}
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
@@ -51,7 +51,7 @@ export function AppSidebarClient() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="p-4 flex flex-col gap-2">
+      <SidebarFooter className="p-2 flex flex-col gap-2"> {/* Changed p-4 to p-2 */}
         <Link href="/profile" passHref legacyBehavior>
             <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")}>
                 <UserCircle className="shrink-0"/>

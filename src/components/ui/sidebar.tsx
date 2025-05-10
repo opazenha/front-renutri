@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet" // Added SheetTitle
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -22,7 +22,7 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = "14rem" // Reduced from 16rem
+const SIDEBAR_WIDTH = "10rem"; // Reduced from 14rem to 10rem
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "2.5rem" 
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
@@ -222,6 +222,7 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
+          <SheetTitle className="sr-only">Menu de Navegação</SheetTitle> 
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>
@@ -287,7 +288,7 @@ const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
   Omit<React.ComponentProps<typeof Button>, "asChild"> & { asChild?: boolean }
 >(({ className, onClick, children: childrenFromProps, asChild = false, ...restProps }, ref) => {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar()
 
   const effectiveOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) onClick(event); 
@@ -428,7 +429,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex flex-col gap-2 p-2", className)} // Changed p-4 to p-2 for expanded state
       {...props}
     />
   )
@@ -443,7 +444,7 @@ const SidebarFooter = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="footer"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex flex-col gap-2 p-2", className)} // Changed p-4 to p-2 for expanded state
       {...props}
     />
   )
@@ -475,7 +476,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-1", // Changed p-2 to p-1
         state === "collapsed" && "group-data-[collapsible=icon]:overflow-hidden",
         className
       )}
