@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Patient } from "@/types";
@@ -7,7 +6,7 @@ import { AnthropometrySection } from "@/components/anthropometry/anthropometry-s
 import { EnergyExpenditureSection } from "@/components/energy-expenditure/energy-expenditure-section";
 import { MacronutrientPlanSection } from "@/components/macronutrients/macronutrient-plan-section";
 import { MicronutrientRecommendationSection } from "@/components/micronutrients/micronutrient-recommendation-section";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Scale, Flame, Target, Leaf, Mail } from "lucide-react";
 import { calculateAge } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +30,7 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
 
   return (
     <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-6">
+      <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-5 mb-6">
         <TabsTrigger value="overview"><User className="mr-2 h-4 w-4 sm:inline hidden" />Visão Geral</TabsTrigger>
         <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Aval. Clínica</TabsTrigger>
         <TabsTrigger value="energy-expenditure"><Flame className="mr-2 h-4 w-4 sm:inline hidden" />Gasto Energético</TabsTrigger>
@@ -47,7 +46,7 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
                 <User className="h-10 w-10 text-primary" />
                 <div>
                     <CardTitle className="text-2xl text-primary">{patient.name}</CardTitle>
-                    <CardDescription>Visão Geral do Paciente e Informações Básicas</CardDescription>
+                    {/* CardDescription removed as per user request */}
                 </div>
                 </div>
                 <Button variant="outline" size="icon" onClick={handleOpenMessages} aria-label="Abrir mensagens do paciente">
