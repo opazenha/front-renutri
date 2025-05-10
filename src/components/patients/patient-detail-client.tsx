@@ -8,15 +8,27 @@ import { EnergyExpenditureSection } from "@/components/energy-expenditure/energy
 import { MacronutrientPlanSection } from "@/components/macronutrients/macronutrient-plan-section";
 import { MicronutrientRecommendationSection } from "@/components/micronutrients/micronutrient-recommendation-section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Flame, Target, Leaf } from "lucide-react";
+import { User, Scale, Flame, Target, Leaf, Mail } from "lucide-react";
 import { calculateAge } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface PatientDetailClientProps {
   patient: Patient;
 }
 
 export function PatientDetailClient({ patient }: PatientDetailClientProps) {
+  const { toast } = useToast();
+
+  const handleOpenMessages = () => {
+    toast({
+      title: "Funcionalidade Indisponível",
+      description: "O sistema de mensagens para pacientes estará disponível em breve.",
+      variant: "default",
+    });
+  };
+
   return (
     <Tabs defaultValue="overview" className="w-full">
       <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-6">
@@ -30,24 +42,31 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
       <TabsContent value="overview">
         <Card className="shadow-lg">
           <CardHeader>
-            <div className="flex items-center space-x-4">
-              <User className="h-10 w-10 text-primary" />
-              <div>
-                <CardTitle className="text-2xl text-primary">{patient.name}</CardTitle>
-                <CardDescription>Visão Geral do Paciente e Informações Básicas</CardDescription>
-              </div>
+            <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-4">
+                <User className="h-10 w-10 text-primary" />
+                <div>
+                    <CardTitle className="text-2xl text-primary">{patient.name}</CardTitle>
+                    <CardDescription>Visão Geral do Paciente e Informações Básicas</CardDescription>
+                </div>
+                </div>
+                <Button variant="outline" size="icon" onClick={handleOpenMessages} aria-label="Abrir mensagens do paciente">
+                    <Mail className="h-5 w-5" />
+                </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div><strong>Idade:</strong> {calculateAge(patient.dob)} anos</div>
-              <div><strong>Data de Nascimento:</strong> {new Date(patient.dob).toLocaleDateString('pt-BR')}</div>
               <div><strong>Gênero:</strong> <Badge variant="secondary" className="capitalize">{patient.gender === 'male' ? 'Masculino' : patient.gender === 'female' ? 'Feminino' : 'Outro'}</Badge></div>
+              <div><strong>Data de Nascimento:</strong> {new Date(patient.dob).toLocaleDateString('pt-BR')}</div>
               <div><strong>Registrado Em:</strong> {new Date(patient.registrationDate).toLocaleDateString('pt-BR')}</div>
+              <div><strong>Próxima consulta:</strong> <span className="text-muted-foreground">Não agendada</span></div>
+              <div><strong>Última consulta:</strong> <span className="text-muted-foreground">N/A</span></div>
             </div>
              <div className="mt-6 border-t pt-4">
                 <h4 className="font-semibold mb-2 text-primary">Dados Resumidos</h4>
-                <p>Registros Antropométricos: {patient.anthropometricData.length}</p>
+                <p>Registros Clínicos: {patient.anthropometricData.length}</p>
                 <p>Registros de Gasto Energético: {patient.energyExpenditureRecords?.length || 0}</p>
                 <p>Planos de Macronutrientes: {patient.macronutrientPlans?.length || 0}</p>
                 <p>Recomendações de Micronutrientes: {patient.micronutrientRecommendations?.length || 0}</p>
