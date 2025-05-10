@@ -11,11 +11,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, PlusCircle, Trash2, Leaf, Pill, Stethoscope } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { PlusCircle, Trash2, Leaf, Pill, Stethoscope } from "lucide-react";
+import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
+import { format, getYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +31,8 @@ const commonMicronutrients = [
   "Cálcio", "Fósforo", "Magnésio", "Ferro", "Zinco", "Cobre", "Selênio", "Iodo",
   "Sódio", "Potássio", "Cloreto"
 ];
+
+const CURRENT_YEAR = getYear(new Date());
 
 export function MicronutrientRecommendationSection({ patient }: MicronutrientRecommendationSectionProps) {
   const { updatePatientMicronutrientRecommendation } = usePatientContext();
@@ -70,7 +70,6 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
     name: "recommendations",
   });
 
-  // Function to reset to default micronutrients
   const resetToDefaultMicronutrients = () => {
     const defaultRecs = commonMicronutrients.map(name => ({
       nutrientName: name,
@@ -88,8 +87,6 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
         title: "Recomendações de Micronutrientes Atualizadas",
         description: "Novas recomendações adicionadas com sucesso.",
       });
-       // form.reset kept for potential future adjustments
-       // For now, no specific reset beyond initial defaults or manual reset.
     } catch (error) {
       toast({
         title: "Erro",
@@ -118,19 +115,15 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Data da Recomendação</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                                {field.value ? format(new Date(field.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar mode="single" selected={field.value ? new Date(field.value) : undefined} onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")} disabled={(date) => date > new Date()} initialFocus locale={ptBR} />
-                          </PopoverContent>
-                        </Popover>
+                          <FormControl>
+                            <DateDropdowns
+                              value={field.value}
+                              onChange={field.onChange}
+                              disableFuture={true}
+                              maxYear={CURRENT_YEAR}
+                              minYear={CURRENT_YEAR -10} // Example: last 10 years
+                            />
+                          </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

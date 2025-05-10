@@ -4,17 +4,15 @@
 import type { MacronutrientPlanFormData } from "@/lib/schemas";
 import { MacronutrientPlanSchema } from "@/lib/schemas";
 import type { Patient, MacronutrientPlan, CaloricObjective } from "@/types";
-import { usePatientContext, PatientProvider } from "@/contexts/patient-context"; // Ensure PatientProvider is not default exported if not used here.
+import { usePatientContext, PatientProvider } from "@/contexts/patient-context"; 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, PlusCircle, Target, PieChart, Activity, AlertTriangle, Hash } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { PlusCircle, Target, PieChart, Activity, AlertTriangle, Hash } from "lucide-react";
+import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
+import { format, getYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +25,7 @@ interface MacronutrientPlanSectionProps {
 }
 
 const caloricObjectiveOptions: CaloricObjective[] = ["Manutenção", "Perda de Peso", "Ganho de Massa"];
+const CURRENT_YEAR = getYear(new Date());
 
 export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionProps) {
   const { updatePatientMacronutrientPlan } = usePatientContext();
@@ -72,7 +71,7 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
         proteinGramsPerKg: undefined,
         carbohydrateGramsPerKg: undefined,
         lipidGramsPerKg: undefined,
-        weightForCalculation: data.weightForCalculation, // Keep last entered
+        weightForCalculation: data.weightForCalculation, 
         activityFactor: undefined,
         injuryStressFactor: undefined,
         specificConsiderations: "",
@@ -105,19 +104,15 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Data do Plano</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                                {field.value ? format(new Date(field.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar mode="single" selected={field.value ? new Date(field.value) : undefined} onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")} disabled={(date) => date > new Date()} initialFocus locale={ptBR}/>
-                          </PopoverContent>
-                        </Popover>
+                          <FormControl>
+                            <DateDropdowns
+                              value={field.value}
+                              onChange={field.onChange}
+                              disableFuture={true}
+                              maxYear={CURRENT_YEAR}
+                              minYear={CURRENT_YEAR - 10} // Example: last 10 years
+                            />
+                          </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

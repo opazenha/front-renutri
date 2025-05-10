@@ -10,11 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, PlusCircle, Trash2, Flame, Bed, Bike, Briefcase, Sparkles } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { PlusCircle, Trash2, Flame, Bed, Bike, Briefcase, Sparkles } from "lucide-react";
+import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
+import { format, getYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -27,7 +25,7 @@ interface EnergyExpenditureSectionProps {
 }
 
 const activityIntensityOptions: Array<'Leve' | 'Moderada' | 'Intensa'> = ['Leve', 'Moderada', 'Intensa'];
-
+const CURRENT_YEAR = getYear(new Date());
 
 export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionProps) {
   const { updatePatientEnergyExpenditure } = usePatientContext();
@@ -68,7 +66,7 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
       });
       form.reset({
         consultationDate: format(new Date(), "yyyy-MM-dd"),
-        weightKg: data.weightKg, // Keep last entered weight
+        weightKg: data.weightKg, 
         restingEnergyExpenditure: undefined,
         gerFormula: "",
         sleepDuration: undefined,
@@ -104,19 +102,15 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Data da Consulta</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                                {field.value ? format(new Date(field.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar mode="single" selected={field.value ? new Date(field.value) : undefined} onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")} disabled={(date) => date > new Date()} initialFocus locale={ptBR} />
-                          </PopoverContent>
-                        </Popover>
+                          <FormControl>
+                            <DateDropdowns
+                              value={field.value}
+                              onChange={field.onChange}
+                              disableFuture={true}
+                              maxYear={CURRENT_YEAR}
+                              minYear={CURRENT_YEAR - 10} // Example: last 10 years
+                            />
+                          </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -128,7 +122,6 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                 </CardContent>
               </Card>
 
-              {/* Physical Activities */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Bike className="mr-2 h-5 w-5 text-primary" /> Atividades Físicas</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
@@ -151,7 +144,6 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                 </CardContent>
               </Card>
 
-              {/* Work Activity */}
               <Card>
                   <CardHeader><CardTitle className="text-lg flex items-center"><Briefcase className="mr-2 h-5 w-5 text-primary" /> Atividade Laboral/Ocupacional</CardTitle></CardHeader>
                   <CardContent className="space-y-4">
@@ -164,7 +156,6 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                   </CardContent>
               </Card>
 
-              {/* Other Activities */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Sparkles className="mr-2 h-5 w-5 text-primary" /> Outras Atividades Regulares</CardTitle></CardHeader>
                 <CardContent className="space-y-4">

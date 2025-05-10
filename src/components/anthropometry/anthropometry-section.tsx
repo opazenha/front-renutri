@@ -10,11 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, LineChart, PlusCircle, Ruler, HeartPulse, ClipboardCheck, Bone, FlaskConical, Trash2 } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { LineChart, PlusCircle, Ruler, HeartPulse, ClipboardCheck, Bone, FlaskConical, Trash2 } from "lucide-react";
+import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
+import { format, getYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +24,8 @@ import { v4 as uuidv4 } from "uuid";
 interface AnthropometrySectionProps {
   patient: Patient;
 }
+
+const CURRENT_YEAR = getYear(new Date());
 
 export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
   const { updatePatientAnthropometry } = usePatientContext();
@@ -66,7 +66,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
       humerusBiepicondylarDiameter: latestAnthropometricData.humerusBiepicondylarDiameter || undefined,
       femurBiepicondylarDiameter: latestAnthropometricData.femurBiepicondylarDiameter || undefined,
       assessmentObjective: latestAnthropometricData.assessmentObjective || "",
-      labExams: latestAnthropometricData.labExams?.map((exam: LabExamRecord) => ({...exam, result: exam.result as number | undefined})) || [],
+      labExams: latestAnthropometricData.labExams?.map((exam: LabExamRecord) => ({...exam, result: exam.result as number | undefined, collectionDate: exam.collectionDate ? format(new Date(exam.collectionDate), "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd") })) || [],
     },
   });
 
@@ -119,7 +119,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
         humerusBiepicondylarDiameter: undefined,
         femurBiepicondylarDiameter: undefined,
         assessmentObjective: data.assessmentObjective,
-        labExams: [], // Reset lab exams or keep them based on preference
+        labExams: [], 
       });
     } catch (error) {
        toast({
@@ -141,7 +141,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
               
-              {/* Basic Assessment Data */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><HeartPulse className="mr-2 h-5 w-5 text-primary" /> Dados Básicos da Avaliação</CardTitle></CardHeader>
                 <CardContent className="space-y-6">
@@ -152,21 +151,15 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
                           <FormLabel>Data da Avaliação</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn("w-full pl-3 text-left font-normal",!field.value && "text-muted-foreground")}>
-                                  {field.value ? format(new Date(field.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar mode="single" selected={field.value ? new Date(field.value) : undefined} onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")} disabled={(date) => date > new Date()} initialFocus locale={ptBR}/>
-                            </PopoverContent>
-                          </Popover>
+                            <FormControl>
+                              <DateDropdowns
+                                value={field.value}
+                                onChange={field.onChange}
+                                disableFuture={true}
+                                maxYear={CURRENT_YEAR}
+                                minYear={CURRENT_YEAR - 100} // Allow up to 100 years in the past
+                              />
+                            </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -179,7 +172,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
 
-              {/* Circumferences */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Ruler className="mr-2 h-5 w-5 text-primary" /> Circunferências (cm)</CardTitle></CardHeader>
                 <CardContent className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -196,7 +188,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
 
-              {/* Skinfolds */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Ruler className="mr-2 h-5 w-5 text-primary" /> Dobras Cutâneas (mm)</CardTitle><FormDescription>Utilizar adipômetro.</FormDescription></CardHeader>
                 <CardContent className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -212,7 +203,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
               
-              {/* Bone Diameters */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Bone className="mr-2 h-5 w-5 text-primary" /> Diâmetros Ósseos (cm)</CardTitle></CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6">
@@ -221,7 +211,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 </CardContent>
               </Card>
 
-              {/* Lab Exams */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center"><FlaskConical className="mr-2 h-5 w-5 text-primary" /> Exames Laboratoriais</CardTitle>
@@ -239,19 +228,15 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                         render={({ field: labField }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Data da Coleta</FormLabel>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button variant={"outline"} className={cn("w-full md:w-[240px] pl-3 text-left font-normal", !labField.value && "text-muted-foreground")}>
-                                    {labField.value ? format(new Date(labField.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar mode="single" selected={labField.value ? new Date(labField.value) : undefined} onSelect={(date) => labField.onChange(date ? format(date, "yyyy-MM-dd") : "")} disabled={(date) => date > new Date()} initialFocus locale={ptBR} />
-                              </PopoverContent>
-                            </Popover>
+                              <FormControl>
+                                <DateDropdowns
+                                  value={labField.value}
+                                  onChange={labField.onChange}
+                                  disableFuture={true}
+                                  maxYear={CURRENT_YEAR}
+                                  minYear={CURRENT_YEAR - 5} // Limit to last 5 years or adjust as needed
+                                />
+                              </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -272,7 +257,6 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
               </Card>
 
 
-              {/* Assessment Objective */}
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><ClipboardCheck className="mr-2 h-5 w-5 text-primary" /> Objetivo da Avaliação</CardTitle></CardHeader>
                 <CardContent>
