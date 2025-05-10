@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -24,7 +25,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3rem" // Adjusted for compactness
+const SIDEBAR_WIDTH_ICON = "2.5rem" // Adjusted for compactness from 3rem
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -265,7 +266,7 @@ const Sidebar = React.forwardRef<
             variant === "floating" || variant === "inset"
               ? "p-2"
               : (side === "left" ? "border-r" : "border-l"),
-             (variant === "floating" || variant === "inset") && (isIconCollapsible && !open) && "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]",
+             (variant === "floating" || variant === "inset") && (isIconCollapsible && !open) && "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]",
             className
           )}
           {...props}
