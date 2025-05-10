@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
@@ -8,7 +9,7 @@ const geistSans = GeistSans;
 const geistMono = GeistMono;
 
 export const metadata: Metadata = {
-  title: 'ReNutri - Gestão Nutricional',
+  title: 'ReNutri',
   description: 'Nutrição personalizada e gestão de pacientes por ReNutri',
 };
 

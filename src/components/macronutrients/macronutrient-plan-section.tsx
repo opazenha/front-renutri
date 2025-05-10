@@ -122,7 +122,7 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
                       </FormItem>
                     )}
                   />
-                  <FormField control={form.control} name="totalEnergyExpenditure" render={({ field }) => (<FormItem><FormLabel>GET (Kcal/dia)</FormLabel><FormControl><Input type="number" placeholder="Ex: 2000" {...field} /></FormControl><FormDescription>Gasto Energético Total.</FormDescription><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="totalEnergyExpenditure" render={({ field }) => (<FormItem><FormLabel>Gasto Energético Total (GET - Kcal/dia)</FormLabel><FormControl><Input type="number" placeholder="Ex: 2000" {...field} /></FormControl><FormDescription>Importado da avaliação de gasto ou estimado.</FormDescription><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="caloricObjective" render={({ field }) => (
                       <FormItem>
                           <FormLabel>Objetivo Calórico</FormLabel>
@@ -133,15 +133,15 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
                           <FormMessage />
                       </FormItem>
                   )} />
-                  <FormField control={form.control} name="caloricAdjustment" render={({ field }) => (<FormItem><FormLabel>Ajuste Calórico (Kcal ou %)</FormLabel><FormControl><Input type="number" placeholder="Ex: -500 ou 10 (%)" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                   <FormField control={form.control} name="weightForCalculation" render={({ field }) => (<FormItem><FormLabel>Peso para Cálculo (kg)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 70" {...field} /></FormControl><FormDescription>Peso atual ou desejado.</FormDescription><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="caloricAdjustment" render={({ field }) => (<FormItem><FormLabel>Ajuste Calórico (Kcal ou %)</FormLabel><FormControl><Input type="number" placeholder="Ex: -500 ou 10" {...field} /></FormControl><FormDescription>Para ganho/perda. Ex: -500 Kcal ou 10%.</FormDescription><FormMessage /></FormItem>)} />
+                   <FormField control={form.control} name="weightForCalculation" render={({ field }) => (<FormItem><FormLabel>Peso para Cálculo (kg)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 70" {...field} /></FormControl><FormDescription>Peso atual, ajustado ou desejado.</FormDescription><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><PieChart className="mr-2 h-5 w-5 text-primary" /> Distribuição de Macronutrientes</CardTitle></CardHeader>
                 <CardContent className="space-y-6">
-                    <FormDescription>Preencha por percentual (%) OU por gramas por Kg (g/kg).</FormDescription>
+                    <FormDescription>Preencha por percentual (% do VET) OU por gramas por Kg de peso (g/kg).</FormDescription>
                     <div className="grid md:grid-cols-3 gap-6 p-4 border rounded-md">
                         <h4 className="md:col-span-3 text-md font-medium">Percentual (% do VET)</h4>
                         <FormField control={form.control} name="proteinPercentage" render={({ field }) => (<FormItem><FormLabel>Proteínas (%)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 20" {...field} /></FormControl><FormMessage /></FormItem>)} />
@@ -160,7 +160,7 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
               <Card>
                 <CardHeader><CardTitle className="text-lg">Fatores Adicionais</CardTitle></CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="activityFactor" render={({ field }) => (<FormItem><FormLabel><Activity className="inline mr-1 h-4 w-4" />Fator Atividade</FormLabel><FormControl><Input type="number" step="0.01" placeholder="Ex: 1.55" {...field} /></FormControl><FormDescription>Se GET não disponível.</FormDescription><FormMessage /></FormItem>)} />
+                    <FormField control={form.control} name="activityFactor" render={({ field }) => (<FormItem><FormLabel><Activity className="inline mr-1 h-4 w-4" />Fator Atividade (FA)</FormLabel><FormControl><Input type="number" step="0.01" placeholder="Ex: 1.55" {...field} /></FormControl><FormDescription>Se GET não calculado por METs.</FormDescription><FormMessage /></FormItem>)} />
                     <FormField control={form.control} name="injuryStressFactor" render={({ field }) => (<FormItem><FormLabel><AlertTriangle className="inline mr-1 h-4 w-4" />Fator Injúria/Estresse</FormLabel><FormControl><Input type="number" step="0.01" placeholder="Ex: 1.2" {...field} /></FormControl><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
@@ -168,7 +168,7 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Hash className="mr-2 h-5 w-5 text-primary" />Considerações Específicas</CardTitle></CardHeader>
                 <CardContent>
-                   <FormField control={form.control} name="specificConsiderations" render={({ field }) => (<FormItem><FormLabel>Notas e Considerações</FormLabel><FormControl><Textarea placeholder="Ex: Dieta cetogênica, Baixo FODMAP, Gestante..." {...field} /></FormControl><FormMessage /></FormItem>)} />
+                   <FormField control={form.control} name="specificConsiderations" render={({ field }) => (<FormItem><FormLabel>Notas e Considerações para a Prescrição</FormLabel><FormControl><Textarea placeholder="Ex: Dieta cetogênica, Baixo FODMAP, Gestante, Atleta de endurance, Sarcopenia..." {...field} /></FormControl><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
 
@@ -212,6 +212,7 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
                 </TableBody>
               </Table>
             </div>
+            <p className="text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
           </CardContent>
         </Card>
       )}

@@ -104,7 +104,7 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
       <Card className="shadow-md">
         <CardHeader>
           <CardTitle className="text-xl flex items-center"><Leaf className="mr-2 h-6 w-6 text-primary" /> Adicionar Recomendações de Micronutrientes</CardTitle>
-          <CardDescription>Defina as recomendações e suplementações para {patient.name}.</CardDescription>
+          <CardDescription>Defina as recomendações e suplementações para {patient.name}. Baseado em DRIs ou necessidades específicas.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -135,18 +135,19 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
                       </FormItem>
                     )}
                   />
-                  <FormField control={form.control} name="ageAtTimeOfRec" render={({ field }) => (<FormItem><FormLabel>Idade (anos)</FormLabel><FormControl><Input type="number" disabled {...field} /></FormControl><FormDescription>Automático.</FormDescription><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="sexAtTimeOfRec" render={({ field }) => (<FormItem><FormLabel>Sexo</FormLabel><FormControl><Input disabled {...field} /></FormControl><FormDescription>Automático.</FormDescription><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="ageAtTimeOfRec" render={({ field }) => (<FormItem><FormLabel>Idade (anos)</FormLabel><FormControl><Input type="number" disabled {...field} /></FormControl><FormDescription>Calculado automaticamente.</FormDescription><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="sexAtTimeOfRec" render={({ field }) => (<FormItem><FormLabel>Sexo Biológico</FormLabel><FormControl><Input disabled {...field} className="capitalize"/></FormControl><FormDescription>Considerado para DRIs.</FormDescription><FormMessage /></FormItem>)} />
                    <FormField control={form.control} name="specialConditions" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Condições Especiais (separadas por vírgula)</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Ex: Gestante, Lactante, Idoso" 
+                            placeholder="Ex: Gestante, Lactante, Idoso, Atleta" 
                             value={Array.isArray(field.value) ? field.value.join(", ") : ""}
-                            onChange={(e) => field.onChange(e.target.value.split(",").map(s => s.trim()))} 
+                            onChange={(e) => field.onChange(e.target.value.split(",").map(s => s.trim()).filter(s => s))} 
                           />
                         </FormControl>
+                        <FormDescription>Afetam as necessidades de micronutrientes.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -157,7 +158,7 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg flex items-center"><Stethoscope className="mr-2 h-5 w-5 text-primary" /> Detalhes dos Micronutrientes</CardTitle>
                     <Button type="button" variant="outline" size="sm" onClick={resetToDefaultMicronutrients}>
-                        Resetar para Padrão
+                        Zerar Recomendações
                     </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -178,9 +179,9 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
                       
                       <FormField control={form.control} name={`recommendations.${index}.specificRecommendation`} render={({ field: recField }) => (
                           <FormItem>
-                              <FormLabel>Recomendação Específica</FormLabel>
+                              <FormLabel>Recomendação Específica (se diferente da DRI)</FormLabel>
                               <FormControl><Input placeholder="Ex: 2000 UI/dia ou 50 mcg/dia" {...recField} /></FormControl>
-                              <FormDescription>Valor e unidade. Deixar em branco para usar DRIs (se implementado).</FormDescription>
+                              <FormDescription>Valor e unidade. Deixar em branco para usar DRIs padrão (se implementado).</FormDescription>
                               <FormMessage />
                           </FormItem>
                       )} />
@@ -218,9 +219,9 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
                 <TableHeader>
                   <TableRow>
                     <TableHead>Data</TableHead>
-                    <TableHead>Idade</TableHead>
+                    <TableHead>Idade (anos)</TableHead>
                     <TableHead>Cond. Especiais</TableHead>
-                    <TableHead>Nº Recomendações</TableHead>
+                    <TableHead>Nº de Recomendações Detalhadas</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -239,6 +240,7 @@ export function MicronutrientRecommendationSection({ patient }: MicronutrientRec
                 </TableBody>
               </Table>
             </div>
+            <p className="text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
           </CardContent>
         </Card>
       )}

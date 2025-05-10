@@ -9,14 +9,13 @@ import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PatientDetailPageProps {
-  params: { patientId: string }; // Changed from Promise<{ patientId: string }>
+  params: { patientId: string }; 
 }
 
 export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   const { getPatientById, isLoading } = usePatientContext();
   const router = useRouter();
   
-  // Direct access for client component params
   const patient = getPatientById(params.patientId);
 
   if (isLoading) {

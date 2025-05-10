@@ -23,8 +23,8 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
         <TabsTrigger value="overview"><User className="mr-2 h-4 w-4 sm:inline hidden" />Visão Geral</TabsTrigger>
         <TabsTrigger value="anthropometry"><Scale className="mr-2 h-4 w-4 sm:inline hidden" />Aval. Clínica</TabsTrigger>
         <TabsTrigger value="energy-expenditure"><Flame className="mr-2 h-4 w-4 sm:inline hidden" />Gasto Energético</TabsTrigger>
-        <TabsTrigger value="macronutrient-plan"><Target className="mr-2 h-4 w-4 sm:inline hidden" />Plano Macros</TabsTrigger>
-        <TabsTrigger value="micronutrient-recommendations"><Leaf className="mr-2 h-4 w-4 sm:inline hidden" />Recom. Micros</TabsTrigger>
+        <TabsTrigger value="macronutrient-plan"><Target className="mr-2 h-4 w-4 sm:inline hidden" />Plano de Macros</TabsTrigger>
+        <TabsTrigger value="micronutrient-recommendations"><Leaf className="mr-2 h-4 w-4 sm:inline hidden" />Recom. de Micros</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview">

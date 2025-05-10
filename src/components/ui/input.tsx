@@ -11,7 +11,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
     // This does not apply to types like 'checkbox' or 'radio' (controlled by 'checked'),
     // or 'file' (value is read-only), or button types.
     let currentValue = propValue;
-    const isValueControlledType = !(
+    const isValueControlledTypeTextLike = !(
       type === 'checkbox' ||
       type === 'radio' ||
       type === 'file' ||
@@ -19,18 +19,20 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       type === 'submit' ||
       type === 'reset' ||
       type === 'image' ||
-      type === 'hidden' // Hidden inputs might also not always need this behavior
+      type === 'hidden'
     );
 
-    if (isValueControlledType && propValue === undefined) {
+    if (isValueControlledTypeTextLike && propValue === undefined) {
       currentValue = "";
     }
     
     // For type="number", if currentValue is an empty string, it might cause issues.
-    // However, react-hook-form handles coercion, so an empty string for number input
-    // usually results in `undefined` or `NaN` after coercion by Zod, which is often desired.
-    // If we explicitly convert "" to undefined here for number, it might interfere with RHF's default value handling.
-    // So, we'll let "" pass for number types, and rely on schema validation for correctness.
+    // React itself will warn if an empty string is provided to a number input that expects a number.
+    // However, react-hook-form and Zod often handle this coercion.
+    // If `currentValue` is `""` and `type` is `number`, we might let it pass
+    // relying on `react-hook-form` and `zod` to manage coercion and validation.
+    // Or, ensure that number inputs always receive `undefined` or a valid number from the form state.
+    // The `defaultValues` in `react-hook-form` should handle initializing number fields appropriately (e.g., to `undefined` or a specific number).
 
     return (
       <input
