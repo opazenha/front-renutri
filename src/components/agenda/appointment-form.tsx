@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { AppointmentFormData } from "@/lib/schemas";
+import type { AppointmentFormData, Appointment } from "@/lib/schemas";
 import { AppointmentSchema } from "@/lib/schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,29 +19,45 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePatientContext } from "@/contexts/patient-context";
-import type { Patient } from "@/types";
-import { format } from "date-fns";
+import type { Patient as PatientType } from "@/types"; // Renamed to avoid conflict
+import { format, parseISO } from "date-fns";
 import { DateDropdowns } from "../ui/date-dropdowns";
+import React, { useEffect } from "react";
 
 interface AppointmentFormProps {
   onSubmit: (data: AppointmentFormData) => void;
   onCancel: () => void;
-  initialData?: Partial<AppointmentFormData> & { date?: string }; // date can be pre-filled
+  initialData?: Partial<AppointmentFormData & { id?: string; date?: string }>; // Accept full appointment for editing
   isSubmitting?: boolean;
+  isEditing?: boolean;
 }
 
-export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting }: AppointmentFormProps) {
+export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting, isEditing }: AppointmentFormProps) {
   const { patients } = usePatientContext();
+  
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(AppointmentSchema),
     defaultValues: {
       patientId: initialData?.patientId || "",
-      date: initialData?.date || format(new Date(), "yyyy-MM-dd"),
+      date: initialData?.date ? (initialData.date.includes('T') ? format(parseISO(initialData.date), "yyyy-MM-dd") : initialData.date) : format(new Date(), "yyyy-MM-dd"),
       time: initialData?.time || "",
       description: initialData?.description || "",
       status: initialData?.status || "scheduled",
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        patientId: initialData.patientId || "",
+        date: initialData.date ? (initialData.date.includes('T') ? format(parseISO(initialData.date), "yyyy-MM-dd") : initialData.date) : format(new Date(), "yyyy-MM-dd"),
+        time: initialData.time || "",
+        description: initialData.description || "",
+        status: initialData.status || "scheduled",
+      });
+    }
+  }, [initialData, form.reset]);
+
 
   const handleSubmit = (data: AppointmentFormData) => {
     onSubmit(data);
@@ -63,7 +79,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting 
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {patients.map((patient: Patient) => (
+                  {patients.map((patient: PatientType) => (
                     <SelectItem key={patient.id} value={patient.id}>
                       {patient.name}
                     </SelectItem>
@@ -83,7 +99,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting 
               <FormLabel>Data do Agendamento</FormLabel>
               <FormControl>
                  <DateDropdowns
-                    value={field.value}
+                    value={field.value} // field.value should be "yyyy-MM-dd"
                     onChange={field.onChange}
                     disabled={isSubmitting}
                   />
@@ -120,13 +136,41 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting 
             </FormItem>
           )}
         />
+        
+        {isEditing && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="scheduled">Agendado</SelectItem>
+                    <SelectItem value="completed">Realizado</SelectItem>
+                    <SelectItem value="cancelled">Cancelado</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
 
         <div className="flex justify-end space-x-3">
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             Cancelar
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Salvando..." : "Salvar Agendamento"}
+            {isSubmitting 
+              ? (isEditing ? "Salvando Alterações..." : "Salvando...") 
+              : (isEditing ? "Salvar Alterações" : "Salvar Agendamento")}
           </Button>
         </div>
       </form>

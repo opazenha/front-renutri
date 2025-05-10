@@ -20,6 +20,7 @@ interface PatientContextType {
   addAppointment: (appointmentData: AppointmentFormData) => Appointment;
   getAppointmentsByDate: (date: string) => Appointment[];
   updateAppointmentStatus: (appointmentId: string, status: Appointment['status']) => void;
+  updateAppointment: (appointmentId: string, data: AppointmentFormData) => void;
 }
 
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
@@ -238,6 +239,23 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const updateAppointment = (appointmentId: string, data: AppointmentFormData) => {
+    setAppointments(prevAppointments => {
+      const patient = getPatientById(data.patientId);
+      if (!patient && data.patientId) {
+        // This might occur if patientId is somehow invalid, or patient was deleted.
+        // For robustness, you might want to handle this more gracefully,
+        // e.g., by not changing patientName or logging an error.
+        console.warn(`Patient with ID ${data.patientId} not found during appointment update for ${appointmentId}. Patient name may not be updated.`);
+      }
+      return prevAppointments.map(app =>
+        app.id === appointmentId
+          ? { ...app, ...data, patientName: patient ? patient.name : app.patientName } // Update patientName only if patient is found
+          : app
+      ).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time));
+    });
+  };
+
 
   return (
     <PatientContext.Provider value={{ 
@@ -253,6 +271,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       addAppointment,
       getAppointmentsByDate,
       updateAppointmentStatus,
+      updateAppointment,
     }}>
       {children}
     </PatientContext.Provider>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
@@ -16,11 +17,13 @@ import { Badge } from "@/components/ui/badge";
 import { WeekView } from "./week-view";
 
 export function AgendaClient() {
-  const { patients, appointments, addAppointment, getAppointmentsByDate, updateAppointmentStatus, isLoading } = usePatientContext();
+  const { patients, appointments, addAppointment, getAppointmentsByDate, updateAppointmentStatus, updateAppointment, isLoading } = usePatientContext();
   const { toast } = useToast();
 
-  const [currentDate, setCurrentDate] = useState<Date>(new Date()); // This date drives all views
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDateSelectFromMonthCalendar = (date: Date | undefined) => {
@@ -33,12 +36,17 @@ export function AgendaClient() {
     setCurrentDate(newDate);
   }, []);
 
-
-  const handleAddNewAppointment = () => {
-    setIsFormOpen(true);
+  const handleAddNewAppointmentClick = () => {
+    setEditingAppointment(null);
+    setIsAddFormOpen(true);
   };
 
-  const handleFormSubmit = (data: AppointmentFormData) => {
+  const handleEditAppointmentClick = (appointment: Appointment) => {
+    setEditingAppointment(appointment);
+    setIsEditFormOpen(true);
+  };
+
+  const handleAddFormSubmit = (data: AppointmentFormData) => {
     setIsSubmitting(true);
     try {
       addAppointment(data);
@@ -46,11 +54,34 @@ export function AgendaClient() {
         title: "Agendamento Criado",
         description: `Agendamento para ${patients.find(p=>p.id === data.patientId)?.name} em ${format(parseISO(data.date), "dd/MM/yyyy")} às ${data.time} foi criado.`,
       });
-      setIsFormOpen(false);
+      setIsAddFormOpen(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro desconhecido.";
       toast({
         title: "Erro ao Criar Agendamento",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditFormSubmit = (data: AppointmentFormData) => {
+    if (!editingAppointment) return;
+    setIsSubmitting(true);
+    try {
+      updateAppointment(editingAppointment.id, data);
+      toast({
+        title: "Agendamento Atualizado",
+        description: "As alterações no agendamento foram salvas.",
+      });
+      setIsEditFormOpen(false);
+      setEditingAppointment(null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro desconhecido.";
+      toast({
+        title: "Erro ao Atualizar Agendamento",
         description: errorMessage,
         variant: "destructive",
       });
@@ -76,15 +107,14 @@ export function AgendaClient() {
   };
 
   const selectedDateString = useMemo(() => {
-    return format(currentDate, "yyyy-MM-dd"); // currentDate is always a Date object
+    return format(currentDate, "yyyy-MM-dd");
   }, [currentDate]);
 
   const appointmentsForSelectedDate = useMemo(() => {
     return getAppointmentsByDate(selectedDateString);
-  }, [selectedDateString, getAppointmentsByDate]);
+  }, [selectedDateString, getAppointmentsByDate, appointments]); // Added appointments to dependency array
 
   const appointmentDatesForMonthCalendar = useMemo(() => {
-    // Filter out invalid dates before parsing
     return appointments.filter(app => app.date && isValid(parseISO(app.date))).map(app => parseISO(app.date));
   }, [appointments]);
 
@@ -131,10 +161,7 @@ export function AgendaClient() {
           currentDate={currentDate} 
           appointments={appointments} 
           onDateChange={handleWeekViewDateChange}
-          onAppointmentClick={(appointment) => {
-            const patientName = patients.find(p => p.id === appointment.patientId)?.name || appointment.patientName;
-            toast({ title: "Agendamento Clicado", description: `Paciente: ${patientName} às ${appointment.time}`});
-          }}
+          onAppointmentClick={handleEditAppointmentClick} // Changed to open edit form
         />
       </div>
 
@@ -148,7 +175,7 @@ export function AgendaClient() {
               </CardTitle>
               <CardDescription className="text-xs">Compromissos do dia</CardDescription>
             </div>
-            <Button onClick={handleAddNewAppointment} size="sm" variant="outline">
+            <Button onClick={handleAddNewAppointmentClick} size="sm" variant="outline">
               <PlusCircle className="mr-1 h-4 w-4" /> Novo
             </Button>
           </CardHeader>
@@ -158,7 +185,7 @@ export function AgendaClient() {
                 {appointmentsForSelectedDate.map((app) => {
                   const patientName = patients.find(p => p.id === app.patientId)?.name || app.patientName;
                   return (
-                    <li key={app.id} className="p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card">
+                    <li key={app.id} className="p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card cursor-pointer" onClick={() => handleEditAppointmentClick(app)}>
                       <div className="flex justify-between items-start mb-1">
                         <div>
                           <h3 className="font-semibold text-primary text-sm">{patientName}</h3>
@@ -178,10 +205,10 @@ export function AgendaClient() {
                       </div>
                       {app.status === 'scheduled' && (
                         <div className="mt-2 pt-2 border-t flex gap-2">
-                            <Button size="sm" className="text-xs h-7 px-2" variant="outline" onClick={() => handleStatusChange(app.id, 'completed')}>
+                            <Button size="sm" className="text-xs h-7 px-2" variant="outline" onClick={(e) => { e.stopPropagation(); handleStatusChange(app.id, 'completed');}}>
                               <CheckCircle className="mr-1 h-3 w-3" /> Realizado
                             </Button>
-                            <Button size="sm" className="text-xs h-7 px-2 text-destructive hover:text-destructive" variant="outline" onClick={() => handleStatusChange(app.id, 'cancelled')}>
+                            <Button size="sm" className="text-xs h-7 px-2 text-destructive hover:text-destructive" variant="outline" onClick={(e) => { e.stopPropagation(); handleStatusChange(app.id, 'cancelled'); }}>
                               <XCircle className="mr-1 h-3 w-3" /> Cancelar
                             </Button>
                         </div>
@@ -199,7 +226,11 @@ export function AgendaClient() {
         </Card>
       </div>
 
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+      {/* Dialog for Adding New Appointment */}
+      <Dialog open={isAddFormOpen} onOpenChange={(isOpen) => {
+          setIsAddFormOpen(isOpen);
+          if (!isOpen) setEditingAppointment(null);
+        }}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Novo Agendamento</DialogTitle>
@@ -209,11 +240,36 @@ export function AgendaClient() {
             </DialogDescription>
           </DialogHeader>
           <AppointmentForm
-            onSubmit={handleFormSubmit}
-            onCancel={() => setIsFormOpen(false)}
+            onSubmit={handleAddFormSubmit}
+            onCancel={() => setIsAddFormOpen(false)}
             initialData={{ date: selectedDateString }} 
             isSubmitting={isSubmitting}
+            isEditing={false}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for Editing Existing Appointment */}
+      <Dialog open={isEditFormOpen} onOpenChange={(isOpen) => {
+          setIsEditFormOpen(isOpen);
+          if (!isOpen) setEditingAppointment(null);
+      }}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Editar Agendamento</DialogTitle>
+            <DialogDescription>
+              Altere os detalhes do agendamento abaixo.
+            </DialogDescription>
+          </DialogHeader>
+          {editingAppointment && (
+            <AppointmentForm
+              onSubmit={handleEditFormSubmit}
+              onCancel={() => { setIsEditFormOpen(false); setEditingAppointment(null);}}
+              initialData={editingAppointment} // Pass the full appointment object
+              isSubmitting={isSubmitting}
+              isEditing={true}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

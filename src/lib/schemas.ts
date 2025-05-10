@@ -61,33 +61,33 @@ export type AnthropometricFormData = z.infer<typeof AnthropometricSchema>;
 
 
 // Energy Expenditure Schemas
-const ActivityDetailSchema = z.object({
+const ActivityDetailSchemaBase = z.object({ // Renamed to avoid conflict, use this for FormData
   id: z.string().optional(),
   type: z.string().min(1, "Tipo de atividade é obrigatório."),
   duration: z.string().min(1, "Duração é obrigatória."),
   mets: z.coerce.number().positive("METS deve ser um número positivo.").optional(),
   intensity: z.enum(["Leve", "Moderada", "Intensa"]).optional(),
 });
-export type ActivityDetailFormData = z.infer<typeof ActivityDetailSchema>;
+export type ActivityDetailFormData = z.infer<typeof ActivityDetailSchemaBase>;
 
-const WorkActivityDetailSchema = z.object({
+const WorkActivityDetailSchemaBase = z.object({ // Renamed to avoid conflict, use this for FormData
   id: z.string().optional(),
   description: z.string().min(1, "Descrição da atividade principal é obrigatória."),
   timeSpent: z.string().min(1, "Tempo gasto é obrigatório."),
   mets: z.coerce.number().positive("METS deve ser um número positivo.").optional(),
   occupationalActivityFactor: z.string().optional(),
 });
-export type WorkActivityDetailFormData = z.infer<typeof WorkActivityDetailSchema>;
+export type WorkActivityDetailFormData = z.infer<typeof WorkActivityDetailSchemaBase>;
 
 export const EnergyExpenditureSchema = z.object({
   consultationDate: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data da consulta inválida." }),
   weightKg: z.coerce.number().positive("Peso deve ser positivo.").optional(),
   restingEnergyExpenditure: z.coerce.number().positive("GER deve ser positivo.").optional(),
   gerFormula: z.string().optional(),
-  sleepDuration: z.string().optional().refine(val => !val || /^\d+(\.\d+)?$/.test(val), { message: "Duração do sono deve ser um número (ex: 7.5)." }),
-  physicalActivities: z.array(ActivityDetailSchema).optional(),
-  workActivity: WorkActivityDetailSchema.optional(),
-  otherActivities: z.array(ActivityDetailSchema).optional(),
+  sleepDuration: z.string().optional().refine(val => !val || /^\d+(\.\d+)?(\s*horas)?$/.test(val), { message: "Duração do sono deve ser um número (ex: 7.5 ou 7.5 horas)." }),
+  physicalActivities: z.array(ActivityDetailSchemaBase).optional(),
+  workActivity: WorkActivityDetailSchemaBase.optional(),
+  otherActivities: z.array(ActivityDetailSchemaBase).optional(),
 });
 export type EnergyExpenditureFormData = z.infer<typeof EnergyExpenditureSchema>;
 
@@ -123,7 +123,7 @@ export type MacronutrientPlanFormData = z.infer<typeof MacronutrientPlanSchema>;
 
 
 // Micronutrient Recommendation Schemas
-const MicronutrientDetailSchema = z.object({
+const MicronutrientDetailSchemaBase = z.object({ // Renamed to avoid conflict, use for FormData
   id: z.string().optional(),
   nutrientName: z.string().min(1, "Nome do micronutriente é obrigatório."),
   specificRecommendation: z.string().optional(),
@@ -131,20 +131,20 @@ const MicronutrientDetailSchema = z.object({
     dose: z.string().optional(),
     frequency: z.string().optional(),
     duration: z.string().optional(),
-  }).optional(),
+  }).optional().nullable(), // Allow null for prescribedSupplementation
 });
-export type MicronutrientDetailFormData = z.infer<typeof MicronutrientDetailSchema>;
+export type MicronutrientDetailFormData = z.infer<typeof MicronutrientDetailSchemaBase>;
 
 export const MicronutrientRecommendationSchema = z.object({
   date: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data da recomendação inválida." }),
   ageAtTimeOfRec: z.coerce.number().int().positive("Idade deve ser um número positivo.").optional(),
   sexAtTimeOfRec: z.enum(["male", "female", "other"]).optional(),
   specialConditions: z.array(z.string()).optional(),
-  recommendations: z.array(MicronutrientDetailSchema).optional(),
+  recommendations: z.array(MicronutrientDetailSchemaBase).optional(),
 });
 export type MicronutrientRecommendationFormData = z.infer<typeof MicronutrientRecommendationSchema>;
 
-// Appointment Schema
+// Appointment Schema for Form Data
 export const AppointmentSchema = z.object({
   patientId: z.string().min(1, { message: "Paciente é obrigatório." }),
   date: z.string().refine((d) => d && !isNaN(new Date(d).getTime()), { message: "Data do agendamento inválida." }),
@@ -153,3 +153,10 @@ export const AppointmentSchema = z.object({
   status: z.enum(["scheduled", "completed", "cancelled"]).default("scheduled"),
 });
 export type AppointmentFormData = z.infer<typeof AppointmentSchema>;
+
+// Full Appointment type (extending FormData and adding runtime properties)
+export const AppointmentTypeSchema = AppointmentSchema.extend({
+  id: z.string(),
+  patientName: z.string(),
+});
+export type Appointment = z.infer<typeof AppointmentTypeSchema>;
