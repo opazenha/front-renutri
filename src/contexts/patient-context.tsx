@@ -1,8 +1,8 @@
 
 "use client";
 
-import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail } from "@/types";
-import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData } from "@/lib/schemas";
+import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment } from "@/types";
+import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData, AppointmentFormData } from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 
@@ -15,24 +15,36 @@ interface PatientContextType {
   updatePatientMacronutrientPlan: (patientId: string, data: MacronutrientPlanFormData) => void;
   updatePatientMicronutrientRecommendation: (patientId: string, data: MicronutrientRecommendationFormData) => void;
   isLoading: boolean;
+
+  appointments: Appointment[];
+  addAppointment: (appointmentData: AppointmentFormData) => Appointment;
+  getAppointmentsByDate: (date: string) => Appointment[];
+  updateAppointmentStatus: (appointmentId: string, status: Appointment['status']) => void;
 }
 
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = "renutri_patients";
+const LOCAL_STORAGE_KEY_PATIENTS = "renutri_patients";
+const LOCAL_STORAGE_KEY_APPOINTMENTS = "renutri_appointments";
+
 
 export const PatientProvider = ({ children }: { children: ReactNode }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
-      const storedPatients = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const storedPatients = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
       if (storedPatients) {
         setPatients(JSON.parse(storedPatients));
       }
+      const storedAppointments = localStorage.getItem(LOCAL_STORAGE_KEY_APPOINTMENTS);
+      if (storedAppointments) {
+        setAppointments(JSON.parse(storedAppointments));
+      }
     } catch (error) {
-      console.error("Failed to load patients from localStorage", error);
+      console.error("Failed to load data from localStorage", error);
     }
     setIsLoading(false);
   }, []);
@@ -40,12 +52,23 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!isLoading) {
       try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(patients));
+        localStorage.setItem(LOCAL_STORAGE_KEY_PATIENTS, JSON.stringify(patients));
       } catch (error) {
         console.error("Failed to save patients to localStorage", error);
       }
     }
   }, [patients, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY_APPOINTMENTS, JSON.stringify(appointments));
+      } catch (error) {
+        console.error("Failed to save appointments to localStorage", error);
+      }
+    }
+  }, [appointments, isLoading]);
+
 
   const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations">) => {
     const newPatient: Patient = {
@@ -185,8 +208,36 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-
   const getPatientById = (id: string) => patients.find((p) => p.id === id);
+
+  const addAppointment = (appointmentData: AppointmentFormData): Appointment => {
+    const patient = getPatientById(appointmentData.patientId);
+    if (!patient) {
+      throw new Error("Paciente não encontrado para o agendamento.");
+    }
+    const newAppointment: Appointment = {
+      ...appointmentData,
+      id: uuidv4(),
+      patientName: patient.name, // Add patient name for convenience
+    };
+    setAppointments((prevAppointments) => 
+        [...prevAppointments, newAppointment].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time))
+    );
+    return newAppointment;
+  };
+
+  const getAppointmentsByDate = (date: string): Appointment[] => {
+    return appointments.filter(app => app.date === date);
+  };
+
+  const updateAppointmentStatus = (appointmentId: string, status: Appointment['status']) => {
+    setAppointments(prevAppointments => 
+      prevAppointments.map(app => 
+        app.id === appointmentId ? { ...app, status } : app
+      )
+    );
+  };
+
 
   return (
     <PatientContext.Provider value={{ 
@@ -197,7 +248,11 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       updatePatientEnergyExpenditure,
       updatePatientMacronutrientPlan,
       updatePatientMicronutrientRecommendation,
-      isLoading 
+      isLoading,
+      appointments,
+      addAppointment,
+      getAppointmentsByDate,
+      updateAppointmentStatus,
     }}>
       {children}
     </PatientContext.Provider>

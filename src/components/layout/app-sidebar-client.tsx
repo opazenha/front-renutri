@@ -12,9 +12,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Logo } from "./logo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, LogOut, Settings, UserCircle } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, Settings, UserCircle, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -22,6 +21,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Painel", tooltip: "Painel de Controle" },
   { href: "/patients", icon: Users, label: "Pacientes", tooltip: "Gerenciar Pacientes" },
+  { href: "/agenda", icon: CalendarDays, label: "Agenda", tooltip: "Consultar Agenda" },
 ];
 
 export function AppSidebarClient() {
@@ -30,8 +30,8 @@ export function AppSidebarClient() {
 
   return (
     <Sidebar collapsible="icon" variant="inset" side="left">
-      <SidebarHeader className={cn("p-4", !open && "items-center justify-center p-2")}> {/* Added justify-center for collapsed state */}
-        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 7 : 6} /> {/* Removed textSize prop */}
+      <SidebarHeader className={cn("p-4", !open && "items-center justify-center p-2")}>
+        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 7 : 6} />
       </SidebarHeader>
       <SidebarContent className="p-2 flex-1">
         <SidebarMenu>
@@ -72,4 +72,3 @@ export function AppSidebarClient() {
     </Sidebar>
   );
 }
-

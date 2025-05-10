@@ -9,7 +9,7 @@ import Link from "next/link";
 export default function DashboardPage() {
   // Placeholder data for new features
   const patientMessagesCount = 0; // Example: replace with actual data
-  const upcomingAppointmentsCount = 0; // Example: replace with actual data
+  const upcomingAppointmentsCount = 0; // Example: replace with actual data from context in future
 
   return (
     <div className="container mx-auto py-8">
@@ -68,10 +68,9 @@ export default function DashboardPage() {
             <CardContent className="flex flex-col space-y-3 pt-4">
                  <p className="text-sm text-muted-foreground mb-1">Consulte seus compromissos e agendamentos.</p>
                  <p className="text-xs text-muted-foreground">({upcomingAppointmentsCount} próximos)</p>
-                 <Button asChild variant="outline" disabled>
-                  <Link href="#"><CalendarDays className="mr-2 h-4 w-4" /> Abrir Agenda</Link>
+                 <Button asChild variant="outline">
+                  <Link href="/agenda"><CalendarDays className="mr-2 h-4 w-4" /> Abrir Agenda</Link>
                 </Button>
-                 <p className="text-xs text-muted-foreground mt-1">Em breve.</p>
             </CardContent>
         </Card>
       </div>
@@ -80,7 +79,7 @@ export default function DashboardPage() {
           <CardHeader>
              <CardTitle className="text-xl font-semibold text-primary">Guia Rápido</CardTitle>
              <CardContent className="text-sm text-muted-foreground mt-2">
-                Comece utilizando as opções acima para gerenciar seus pacientes. As seções de Mensagens e Agenda estarão disponíveis em breve.
+                Comece utilizando as opções acima para gerenciar seus pacientes. A seção de Mensagens estará disponível em breve.
              </CardContent>
           </CardHeader>
         </Card>

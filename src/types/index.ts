@@ -15,6 +15,7 @@ export interface Patient {
   energyExpenditureRecords?: EnergyExpenditureRecord[];
   macronutrientPlans?: MacronutrientPlan[];
   micronutrientRecommendations?: MicronutrientRecommendation[];
+  // appointments can be stored here or globally. For now, let's assume a global list in context.
 }
 
 export interface LabExamRecord {
@@ -146,4 +147,16 @@ export interface MicronutrientRecommendation {
   sexAtTimeOfRec?: Gender; // Auto-populate
   specialConditions?: string[]; // e.g., Gestante, Lactante
   recommendations: MicronutrientDetail[];
+}
+
+export type AppointmentStatus = 'scheduled' | 'completed' | 'cancelled';
+
+export interface Appointment {
+  id: string;
+  patientId: string;
+  patientName: string; // For convenience
+  date: string; // YYYY-MM-DD
+  time: string; // HH:MM
+  description: string;
+  status: AppointmentStatus;
 }

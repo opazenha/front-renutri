@@ -143,3 +143,13 @@ export const MicronutrientRecommendationSchema = z.object({
   recommendations: z.array(MicronutrientDetailSchema).optional(),
 });
 export type MicronutrientRecommendationFormData = z.infer<typeof MicronutrientRecommendationSchema>;
+
+// Appointment Schema
+export const AppointmentSchema = z.object({
+  patientId: z.string().min(1, { message: "Paciente é obrigatório." }),
+  date: z.string().refine((d) => d && !isNaN(new Date(d).getTime()), { message: "Data do agendamento inválida." }),
+  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: "Hora inválida. Use o formato HH:MM." }),
+  description: z.string().min(3, { message: "Descrição deve ter pelo menos 3 caracteres." }),
+  status: z.enum(["scheduled", "completed", "cancelled"]).default("scheduled"),
+});
+export type AppointmentFormData = z.infer<typeof AppointmentSchema>;
