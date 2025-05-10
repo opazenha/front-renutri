@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -25,7 +24,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3.5rem" // Adjusted for slightly larger icons if needed
+const SIDEBAR_WIDTH_ICON = "3rem" // Adjusted for compactness
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -290,8 +289,10 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
->(({ className, onClick, children: childrenFromProps, asChild, ...restProps }, ref) => {
+>(({ className, onClick, children: childrenFromProps, ...restProps }, ref) => {
   const { toggleSidebar } = useSidebar();
+  const { asChild, ...buttonProps } = restProps;
+
 
   const effectiveOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) onClick(event); // Use onClick from passed props if it exists
@@ -300,7 +301,6 @@ const SidebarTrigger = React.forwardRef<
 
   const Comp = asChild ? Slot : Button;
 
-  const {asChild: _asChild, ...rest} = restProps;
 
   return (
     <Comp
@@ -310,7 +310,7 @@ const SidebarTrigger = React.forwardRef<
       size="icon"   // SidebarTrigger's own size
       className={cn("h-7 w-7", className)} // Merges with passed className
       onClick={effectiveOnClick}
-      {...rest} // Pass all other props (e.g. aria-label) EXCEPT asChild
+      {...buttonProps} 
     >
       {asChild ? childrenFromProps : (
         <>
@@ -359,37 +359,48 @@ const SidebarInset = React.forwardRef<
   const { open, isMobile } = useSidebar();
   const isIconCollapsible = true; // Assuming default is icon collapsible for this calculation
 
-  // Determine margin based on sidebar state and type for desktop
-  let marginLeftClass = "md:ml-[var(--sidebar-width)]"; // Default for expanded
-  if (!open && isIconCollapsible) {
-    marginLeftClass = "md:ml-[var(--sidebar-width-icon)]"; // For icon collapsed
-  } else if (!open && !isIconCollapsible) { // offcanvas collapsed
-    marginLeftClass = "md:ml-0";
-  }
-  // Mobile will always have ml-0 as sidebar is off-canvas
-  if (isMobile) {
-    marginLeftClass = "ml-0";
+  // Base margin-left for non-inset variants or mobile
+  let baseMarginLeftClass = "ml-0"; // Default for mobile
+  if (!isMobile) {
+    if (open) {
+      baseMarginLeftClass = "md:ml-[var(--sidebar-width)]";
+    } else if (isIconCollapsible) {
+      baseMarginLeftClass = "md:ml-[var(--sidebar-width-icon)]";
+    } else { // offcanvas collapsed
+      baseMarginLeftClass = "md:ml-0";
+    }
   }
   
-  // Specific adjustments for inset variant
-  const insetClasses = `
+  // Specific margin-left overrides for inset variant on desktop
+  const insetMlCollapsed = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px_+_theme(spacing.2))]';
+  const insetMlExpanded = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width)_+_theme(spacing.2))]';
+  
+  let insetMarginLeftClass = "";
+  if (!isMobile) {
+     if (!open && isIconCollapsible) {
+        insetMarginLeftClass = insetMlCollapsed;
+     } else if (open) {
+        insetMarginLeftClass = insetMlExpanded;
+     } else { // Fallback for other states like offcanvas collapsed with inset (though unusual)
+        insetMarginLeftClass = 'md:peer-data-[variant=inset]:ml-2'; // Default m-2's left part
+     }
+  }
+
+
+  const insetBaseClasses = `
     peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] 
     md:peer-data-[variant=inset]:m-2 
     md:peer-data-[variant=inset]:rounded-xl 
     md:peer-data-[variant=inset]:shadow
-    ${!open && isIconCollapsible ? 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width-icon)_+_theme(spacing.2))]' : 
-      (open ? 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width)_+_theme(spacing.2))]' : 'md:peer-data-[variant=inset]:ml-2')
-    }
   `;
-
 
   return (
     <main
       ref={ref}
       className={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background transition-[margin-left] duration-200 ease-in-out",
-        isMobile ? "ml-0" : marginLeftClass, // Apply dynamic margin for desktop
-        "peer-data-[variant=inset]" ? insetClasses : "", // Apply inset specific classes if variant is inset
+        baseMarginLeftClass, // Base margin for non-inset or mobile
+        "peer-data-[variant=inset]" ? cn(insetBaseClasses, insetMarginLeftClass) : "", // Apply inset specific classes if variant is inset
         className
       )}
       {...props}
@@ -840,4 +851,3 @@ export {
   SidebarTrigger,
   useSidebar,
 }
-

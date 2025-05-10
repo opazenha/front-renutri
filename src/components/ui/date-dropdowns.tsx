@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -141,7 +140,7 @@ export function DateDropdowns({
   return (
     <div className={cn("flex w-full space-x-2", disabled ? "opacity-50" : "")} id={id}>
       <Select value={selectedDay} onValueChange={handleDayChange} disabled={disabled || !selectedMonth || !selectedYear}>
-        <SelectTrigger className="flex-1 min-w-[70px]" aria-label="Dia" disabled={disabled || !selectedMonth || !selectedYear}>
+        <SelectTrigger className="flex-1 min-w-[60px]" aria-label="Dia" disabled={disabled || !selectedMonth || !selectedYear}>
           <SelectValue placeholder="Dia" />
         </SelectTrigger>
         <SelectContent>
@@ -153,7 +152,7 @@ export function DateDropdowns({
         </SelectContent>
       </Select>
       <Select value={selectedMonth} onValueChange={handleMonthChange} disabled={disabled || !selectedYear}>
-        <SelectTrigger className="flex-auto min-w-[130px]" aria-label="Mês" disabled={disabled || !selectedYear}>
+        <SelectTrigger className="flex-auto min-w-[110px]" aria-label="Mês" disabled={disabled || !selectedYear}>
           <SelectValue placeholder="Mês" />
         </SelectTrigger>
         <SelectContent>
@@ -165,7 +164,7 @@ export function DateDropdowns({
         </SelectContent>
       </Select>
       <Select value={selectedYear} onValueChange={handleYearChange} disabled={disabled}>
-        <SelectTrigger className="flex-1 min-w-[90px]" aria-label="Ano" disabled={disabled}>
+        <SelectTrigger className="flex-1 min-w-[80px]" aria-label="Ano" disabled={disabled}>
           <SelectValue placeholder="Ano" />
         </SelectTrigger>
         <SelectContent>
