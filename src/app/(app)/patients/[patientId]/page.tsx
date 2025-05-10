@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -9,10 +10,15 @@ import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PatientDetailPageProps {
-  params: { patientId: string }; 
+  // params can be a promise in newer Next.js versions for dynamic segments
+  params: Promise<{ patientId: string }> | { patientId: string }; 
 }
 
-export default function PatientDetailPage({ params }: PatientDetailPageProps) {
+export default function PatientDetailPage({ params: paramsProp }: PatientDetailPageProps) {
+  // Unwrap the params. If it's a promise, React.use will handle it.
+  // If it's already an object, React.use will return it directly.
+  const params = React.use(paramsProp as Promise<{ patientId: string }>); // Cast to satisfy `use` if it expects a promise primarily
+
   const { getPatientById, isLoading } = usePatientContext();
   const router = useRouter();
   
@@ -50,14 +56,9 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
         <Button variant="outline" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
         </Button>
-        {/* Edit Patient button can be added here if an edit page is implemented */}
-        {/* <Button variant="outline" asChild>
-          <Link href={`/patients/${patient.id}/edit`}>
-            <Edit className="mr-2 h-4 w-4" /> Editar Paciente
-          </Link>
-        </Button> */}
       </div>
       <PatientDetailClient patient={patient} />
     </div>
   );
 }
+
