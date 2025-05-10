@@ -14,35 +14,43 @@ body {
     --card-foreground: 240 10% 15%;
     --popover: 60 50% 93%;
     --popover-foreground: 240 10% 15%;
-    --primary: 300 69% 40%; /* Darker Magenta */
+    
+    --primary: 344 95% 25%; /* Dark Red (#7B0323) */
     --primary-foreground: 0 0% 100%; /* White */
+    
     --secondary: 60 30% 96%; /* Lighter paper/beige */
     --secondary-foreground: 240 10% 20%; /* Darker for contrast on secondary */
+    
     --muted: 60 40% 94%; /* Muted paper shade */
     --muted-foreground: 240 5% 45%;
-    --accent: 300 72% 65%; /* Darker Lighter Magenta */
-    --accent-foreground: 300 60% 20%; /* Darker magenta for text on accent */
+    
+    --accent: 344 80% 40%; /* Lighter/Brighter Red */
+    --accent-foreground: 0 0% 100%; /* White */
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    
     --border: 60 30% 82%; /* Subtle border for paper theme */
     --input: 60 30% 88%; /* Slightly different for input fields */
-    --ring: 300 69% 50%; /* Magenta for focus rings, adjusted for darker primary */
-    --chart-1: 300 69% 40%; /* Darker Magenta, same as primary */
+    --ring: 344 95% 35%; /* Red for focus rings */
+
+    --chart-1: 344 95% 25%; /* Dark Red, same as primary */
     --chart-2: 210 60% 50%; /* A complementary blue */
     --chart-3: 30 80% 55%;
     --chart-4: 120 40% 50%; /* Green */
     --chart-5: 60 70% 50%; /* Yellow/Orange */
+    
     --radius: 0.5rem;
 
     /* Sidebar specific variables */
     --sidebar-background: 240 6% 12%; /* Dark grey for contrast */
     --sidebar-foreground: 0 0% 95%; /* Light text for dark sidebar */
-    --sidebar-primary: 300 72% 70%; /* Adjusted Lighter Magenta for active items in dark sidebar */
-    --sidebar-primary-foreground: 0 0% 98%; /* Light text on new darker sidebar-primary */
+    --sidebar-primary: 344 80% 55%; /* Lighter Red for active items in dark sidebar */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on sidebar-primary */
     --sidebar-accent: 240 4% 20%; /* Slightly lighter dark grey for hover */
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 4% 25%;
-    --sidebar-ring: 300 72% 70%; /* Adjusted for new sidebar-primary */
+    --sidebar-ring: 344 80% 55%; /* Lighter Red for focus rings in sidebar */
   }
 
   .dark {
@@ -52,20 +60,27 @@ body {
     --card-foreground: 0 0% 98%;
     --popover: 240 6% 12%;
     --popover-foreground: 0 0% 98%;
-    --primary: 300 72% 70%; /* Darker Lighter Magenta for dark mode */
-    --primary-foreground: 300 60% 15%; /* Dark magenta for text on light magenta primary */
+
+    --primary: 344 80% 55%; /* Lighter Red for dark mode primary */
+    --primary-foreground: 344 95% 15%; /* Dark red text on light red primary */
+    
     --secondary: 240 4% 18%;
     --secondary-foreground: 0 0% 95%;
+    
     --muted: 240 4% 18%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 300 55% 60%; /* Darker, less vibrant magenta for accent */
-    --accent-foreground: 0 0% 98%;
+    
+    --accent: 344 70% 45%; /* Mid-tone Red for dark mode accent */
+    --accent-foreground: 0 0% 98%; /* White/Light gray text on accent */
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
+    
     --border: 240 4% 20%;
     --input: 240 4% 20%;
-    --ring: 300 72% 70%; /* Lighter Magenta for focus rings, same as new dark primary */
-    --chart-1: 300 72% 70%; /* Lighter Magenta, same as new dark primary */
+    --ring: 344 80% 55%; /* Lighter Red for focus rings */
+
+    --chart-1: 344 80% 55%; /* Lighter Red, same as dark primary */
     --chart-2: 210 70% 65%; /* Lighter complementary blue */
     --chart-3: 30 80% 65%;
     --chart-4: 120 50% 60%; /* Lighter Green */
@@ -74,12 +89,12 @@ body {
     /* Dark Sidebar (can be same as light, or adjusted if needed) */
     --sidebar-background: 240 6% 8%; /* Even darker for depth */
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 300 72% 70%; /* Consistent with dark theme primary */
-    --sidebar-primary-foreground: 300 60% 15%; /* Consistent with dark theme primary-foreground */
+    --sidebar-primary: 344 80% 55%; /* Consistent with dark theme primary */
+    --sidebar-primary-foreground: 344 95% 15%; /* Consistent with dark theme primary-foreground */
     --sidebar-accent: 240 4% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 4% 18%;
-    --sidebar-ring: 300 72% 70%; /* Consistent with dark theme ring */
+    --sidebar-ring: 344 80% 55%; /* Consistent with dark theme ring */
   }
 }
 
