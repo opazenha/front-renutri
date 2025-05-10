@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -11,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet" // Added SheetTitle
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet" 
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -22,7 +23,7 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = "10rem"; // Reduced from 14rem to 10rem
+const SIDEBAR_WIDTH = "10rem"; 
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "2.5rem" 
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
@@ -214,7 +215,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[var(--sidebar-width)] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -245,25 +246,25 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             "duration-200 relative h-svh bg-transparent transition-[width] ease-in-out",
-            open ? "w-[--sidebar-width]" : (isIconCollapsible ? "w-[--sidebar-width-icon]" : "w-0"),
-            variant === "floating" || variant === "inset"
-              ? open ? "w-[--sidebar-width]" : (isIconCollapsible ? "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]" : "w-0")
-              : open ? "w-[--sidebar-width]" : (isIconCollapsible ? "w-[--sidebar-width-icon]" : "w-0"),
+            !isMobile && (open ? "w-[var(--sidebar-width)]" : (isIconCollapsible ? "w-[var(--sidebar-width-icon)]" : "w-0")),
+            !isMobile && (variant === "floating" || variant === "inset") && (
+               open ? "w-[var(--sidebar-width)]" : (isIconCollapsible ? "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]" : "w-0")
+            ),
             "group-data-[side=right]:rotate-180"
           )}
         />
         <div
           className={cn(
             "duration-200 fixed inset-y-0 z-10 hidden h-svh transition-[left,right,width] ease-in-out md:flex",
-            open ? "w-[--sidebar-width]" : (isIconCollapsible ? "w-[--sidebar-width-icon]" : "w-0"),
+            !isMobile && (open ? "w-[var(--sidebar-width)]" : (isIconCollapsible ? "w-[var(--sidebar-width-icon)]" : "w-0")),
             side === "left"
               ? "left-0" 
               : "right-0",
-            (collapsible === "offcanvas" && !open) && (side === "left" ? "left-[calc(var(--sidebar-width)*-1)]" : "right-[calc(var(--sidebar-width)*-1)]"),
+            !isMobile && (collapsible === "offcanvas" && !open) && (side === "left" ? "left-[calc(var(--sidebar-width)*-1)]" : "right-[calc(var(--sidebar-width)*-1)]"),
             variant === "floating" || variant === "inset"
               ? "p-2"
               : (side === "left" ? "border-r" : "border-l"),
-             (variant === "floating" || variant === "inset") && (isIconCollapsible && !open) && "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]",
+            !isMobile && (variant === "floating" || variant === "inset") && (isIconCollapsible && !open) && "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]",
             className
           )}
           {...props}
@@ -361,16 +362,14 @@ const SidebarInset = React.forwardRef<
       baseMarginLeftClass = "md:ml-[var(--sidebar-width)]";
     } else if (isIconCollapsible) {
       baseMarginLeftClass = "md:ml-[var(--sidebar-width-icon)]";
-    } else { 
-      baseMarginLeftClass = "md:ml-0";
-    }
+    } 
   }
   
   const insetMlCollapsed = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px_+_theme(spacing.2))]';
   const insetMlExpanded = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width)_+_theme(spacing.2))]';
   
   let insetMarginLeftClass = "";
-  if (!isMobile) {
+  if(!isMobile) {
      if (!open && isIconCollapsible) {
         insetMarginLeftClass = insetMlCollapsed;
      } else if (open) {
@@ -429,7 +428,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)} // Changed p-4 to p-2 for expanded state
+      className={cn("flex flex-col gap-2 p-2", className)} 
       {...props}
     />
   )
@@ -444,7 +443,7 @@ const SidebarFooter = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="footer"
-      className={cn("flex flex-col gap-2 p-2", className)} // Changed p-4 to p-2 for expanded state
+      className={cn("flex flex-col gap-2 p-2", className)} 
       {...props}
     />
   )
@@ -476,7 +475,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-1", // Changed p-2 to p-1
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-1", 
         state === "collapsed" && "group-data-[collapsible=icon]:overflow-hidden",
         className
       )}
