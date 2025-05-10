@@ -1,33 +1,39 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Edit, Trash2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { PlusCircle, Edit, Trash2, CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, CalendarDaysIcon } from "lucide-react";
 import { usePatientContext } from "@/contexts/patient-context";
-import type { Appointment, AppointmentFormData } from "@/lib/schemas"; // Assuming schemas.ts exports these, or adjust import
+import type { Appointment, AppointmentFormData } from "@/lib/schemas";
 import { AppointmentForm } from "./appointment-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { format, parseISO, isValid } from "date-fns";
+import { format, parseISO, isValid, startOfWeek, endOfWeek, addDays, isSameDay, addWeeks, subWeeks, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-
+import { WeekView } from "./week-view";
 
 export function AgendaClient() {
   const { patients, appointments, addAppointment, getAppointmentsByDate, updateAppointmentStatus, isLoading } = usePatientContext();
   const { toast } = useToast();
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date()); // This date drives all views
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // currentAppointmentToEdit could be added later for edit functionality
 
-  const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDate(date);
+  const handleDateSelectFromMonthCalendar = (date: Date | undefined) => {
+    if (date) {
+      setCurrentDate(date);
+    }
   };
+  
+  const handleWeekViewDateChange = useCallback((newDate: Date) => {
+    setCurrentDate(newDate);
+  }, []);
+
 
   const handleAddNewAppointment = () => {
     setIsFormOpen(true);
@@ -70,43 +76,49 @@ export function AgendaClient() {
     }
   };
 
-
-  const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+  const selectedDateString = currentDate ? format(currentDate, "yyyy-MM-dd") : "";
   const appointmentsForSelectedDate = useMemo(() => {
     return selectedDateString ? getAppointmentsByDate(selectedDateString) : [];
   }, [selectedDateString, getAppointmentsByDate]);
 
-  const appointmentDates = useMemo(() => {
+  const appointmentDatesForMonthCalendar = useMemo(() => {
     return appointments.map(app => parseISO(app.date));
   }, [appointments]);
 
   if (isLoading) {
-    return <p>Carregando agenda...</p>;
+    return <p className="text-center py-10">Carregando agenda...</p>;
   }
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      <div className="md:col-span-1">
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="text-lg">Calendário</CardTitle>
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
+      {/* Left Column: Month Calendar */}
+      <div className="md:col-span-3 lg:col-span-3">
+        <Card className="shadow-md h-full">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center">
+              <CalendarDaysIcon className="mr-2 h-5 w-5 text-primary" />
+              Calendário Mensal
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0 flex justify-center">
             <Calendar
               mode="single"
-              selected={selectedDate}
-              onSelect={handleDateSelect}
+              selected={currentDate}
+              onSelect={handleDateSelectFromMonthCalendar}
               className="rounded-md"
               locale={ptBR}
-              modifiers={{ booked: appointmentDates }}
-              modifiersStyles={{ booked: { fontWeight: 'bold', color: 'hsl(var(--primary))' } }}
+              modifiers={{ booked: appointmentDatesForMonthCalendar, today: new Date() }}
+              modifiersStyles={{ 
+                booked: { fontWeight: 'bold', color: 'hsl(var(--primary))' },
+                today: { border: '1px solid hsl(var(--primary))' }
+              }}
               footer={
-                selectedDate ? (
-                  <p className="text-sm text-center p-2">
-                    Você selecionou {format(selectedDate, "PPP", { locale: ptBR })}.
+                currentDate ? (
+                  <p className="text-xs text-center p-2 text-muted-foreground">
+                    Selecionado: {format(currentDate, "PPP", { locale: ptBR })}.
                   </p>
                 ) : (
-                  <p className="text-sm text-center p-2">Selecione uma data.</p>
+                  <p className="text-xs text-center p-2 text-muted-foreground">Selecione uma data.</p>
                 )
               }
             />
@@ -114,52 +126,61 @@ export function AgendaClient() {
         </Card>
       </div>
 
-      <div className="md:col-span-2">
-        <Card className="shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between">
+      {/* Middle Column: Week View */}
+      <div className="md:col-span-6 lg:col-span-6">
+        <WeekView 
+          currentDate={currentDate} 
+          appointments={appointments} 
+          onDateChange={handleWeekViewDateChange}
+          onAppointmentClick={(appointment) => {
+            // Placeholder: could open an edit dialog or navigate
+            toast({ title: "Agendamento Clicado", description: `Paciente: ${appointment.patientName} às ${appointment.time}`});
+          }}
+        />
+      </div>
+
+      {/* Right Column: Daily Appointments List */}
+      <div className="md:col-span-3 lg:col-span-3">
+        <Card className="shadow-md h-full">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle className="text-lg">
-                Agendamentos para {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Nenhuma data selecionada"}
+                {currentDate ? format(currentDate, "dd/MM/yyyy", {locale: ptBR}) : "Nenhuma data"}
               </CardTitle>
-              <CardDescription>Lista de compromissos para a data selecionada.</CardDescription>
+              <CardDescription className="text-xs">Compromissos do dia</CardDescription>
             </div>
-            <Button onClick={handleAddNewAppointment} size="sm">
-              <PlusCircle className="mr-2 h-4 w-4" /> Novo Agendamento
+            <Button onClick={handleAddNewAppointment} size="sm" variant="outline">
+              <PlusCircle className="mr-1 h-4 w-4" /> Novo
             </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             {appointmentsForSelectedDate.length > 0 ? (
-              <ul className="space-y-4">
+              <ul className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
                 {appointmentsForSelectedDate.map((app) => (
-                  <li key={app.id} className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start">
+                  <li key={app.id} className="p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card">
+                    <div className="flex justify-between items-start mb-1">
                       <div>
-                        <h3 className="font-semibold text-primary">{app.patientName}</h3>
-                        <p className="text-sm text-muted-foreground">Horário: {app.time}</p>
-                        <p className="text-sm">{app.description}</p>
+                        <h3 className="font-semibold text-primary text-sm">{app.patientName}</h3>
+                        <p className="text-xs text-muted-foreground">Hora: {app.time}</p>
+                        <p className="text-xs mt-0.5">{app.description}</p>
                       </div>
-                      <div className="flex items-center space-x-2">
-                         <Badge variant={
-                            app.status === 'completed' ? 'default' : 
-                            app.status === 'cancelled' ? 'destructive' : 
-                            'secondary'
-                          } className="capitalize text-xs">
-                           {app.status === 'scheduled' && <Clock className="mr-1 h-3 w-3" />}
-                           {app.status === 'completed' && <CheckCircle className="mr-1 h-3 w-3" />}
-                           {app.status === 'cancelled' && <XCircle className="mr-1 h-3 w-3" />}
-                           {app.status === 'scheduled' ? 'Agendado' : app.status === 'completed' ? 'Realizado' : 'Cancelado'}
-                         </Badge>
-                        {/* Edit/Delete actions could be added later */}
-                        {/* <Button variant="ghost" size="icon" title="Editar Agendamento"><Edit className="h-4 w-4" /></Button> */}
-                        {/* <Button variant="ghost" size="icon" title="Cancelar Agendamento" className="text-destructive hover:text-destructive-foreground"><Trash2 className="h-4 w-4" /></Button> */}
-                      </div>
+                       <Badge variant={
+                          app.status === 'completed' ? 'default' : 
+                          app.status === 'cancelled' ? 'destructive' : 
+                          'secondary'
+                        } className="capitalize text-xs h-5 px-1.5">
+                         {app.status === 'scheduled' && <Clock className="mr-1 h-2.5 w-2.5" />}
+                         {app.status === 'completed' && <CheckCircle className="mr-1 h-2.5 w-2.5" />}
+                         {app.status === 'cancelled' && <XCircle className="mr-1 h-2.5 w-2.5" />}
+                         {app.status === 'scheduled' ? 'Agendado' : app.status === 'completed' ? 'Realizado' : 'Cancelado'}
+                       </Badge>
                     </div>
                     {app.status === 'scheduled' && (
-                       <div className="mt-3 pt-3 border-t flex gap-2">
-                          <Button size="xs" variant="outline" onClick={() => handleStatusChange(app.id, 'completed')}>
-                            <CheckCircle className="mr-1 h-3 w-3" /> Marcar como Realizado
+                       <div className="mt-2 pt-2 border-t flex gap-2">
+                          <Button size="sm" className="text-xs h-7 px-2" variant="outline" onClick={() => handleStatusChange(app.id, 'completed')}>
+                            <CheckCircle className="mr-1 h-3 w-3" /> Realizado
                           </Button>
-                           <Button size="xs" variant="outline" className="text-destructive hover:text-destructive" onClick={() => handleStatusChange(app.id, 'cancelled')}>
+                           <Button size="sm" className="text-xs h-7 px-2 text-destructive hover:text-destructive" variant="outline" onClick={() => handleStatusChange(app.id, 'cancelled')}>
                             <XCircle className="mr-1 h-3 w-3" /> Cancelar
                           </Button>
                        </div>
@@ -168,8 +189,8 @@ export function AgendaClient() {
                 ))}
               </ul>
             ) : (
-              <p className="text-muted-foreground text-center py-6">
-                Nenhum agendamento para esta data.
+              <p className="text-muted-foreground text-center py-6 text-sm">
+                Nenhum agendamento para este dia.
               </p>
             )}
           </CardContent>
@@ -182,6 +203,7 @@ export function AgendaClient() {
             <DialogTitle>Novo Agendamento</DialogTitle>
             <DialogDescription>
               Preencha os detalhes abaixo para criar um novo agendamento.
+              {currentDate && ` Data padrão: ${format(currentDate, "dd/MM/yyyy", { locale: ptBR })}.`}
             </DialogDescription>
           </DialogHeader>
           <AppointmentForm
@@ -195,21 +217,3 @@ export function AgendaClient() {
     </div>
   );
 }
-
-// Helper to define custom button size variant if needed for "xs"
-// Since this might not be a global change, keeping it specific to the component or using padding.
-// For simplicity, I'll rely on shadcn's default sizes or use `p-1 text-xs` etc.
-// For the demo, I've used `size="xs"` which is not standard in shadcn button,
-// it would require adding this variant or using classNames for padding/font-size.
-// For this implementation, we'll assume `size="sm"` is the smallest standard and adjust if needed.
-// Actual "xs" size buttons in shadcn/ui would require modification of buttonVariants.
-// For now, I will use size="sm" and adjust text directly for the example.
-// In a real app, one might extend buttonVariants.
-
-// Updated: `Button` component in shadcn/ui has `sm`, `lg`, `default`, `icon`. No `xs`.
-// Will use `size="sm"` and potentially add `className="text-xs"` if needed for tighter UI.
-// For the buttons above, I've replaced size="xs" with size="sm" and added classNames.
-// Example: <Button size="sm" className="text-xs h-7" ...>
-// Better: Add 'xs' to buttonVariants in ui/button.tsx if this is a common need.
-// For this iteration, sticking to standard and making minor className adjustments.
-// The `Status Change` buttons will use `size="sm"`.
