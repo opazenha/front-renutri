@@ -1,52 +1,49 @@
+
 "use client";
 
 import type { Patient } from "@/types";
 import { calculateAge } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Eye, Edit, Trash2, UserPlus } from "lucide-react";
+import { Eye, UserPlus, SearchX } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import React from "react";
 
 interface PatientListClientProps {
   patients: Patient[];
+  searchTerm?: string;
 }
 
-export function PatientListClient({ patients }: PatientListClientProps) {
+export function PatientListClient({ patients, searchTerm }: PatientListClientProps) {
   if (patients.length === 0) {
+    const isSearching = searchTerm && searchTerm.trim() !== "";
+    const message = isSearching
+        ? `Nenhum paciente corresponde à busca por "${searchTerm}".`
+        : "Nenhum paciente cadastrado."; 
+    const IconComponent = isSearching ? SearchX : UserPlus;
+
     return (
-       <Card className="w-full max-w-md mx-auto text-center shadow-lg">
-        <CardHeader>
-          <UserPlus className="mx-auto h-16 w-16 text-primary opacity-50 mb-4" />
-          <CardTitle className="text-2xl">Nenhum Paciente Encontrado</CardTitle>
-          <CardDescription>Comece adicionando seu primeiro paciente para gerenciar sua jornada nutricional.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button asChild size="lg">
-            <Link href="/patients/new">
-              <UserPlus className="mr-2 h-5 w-5" /> Adicionar Novo Paciente
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+        <Card className="w-full text-center shadow-md">
+            <CardContent className="py-10 flex flex-col items-center justify-center min-h-[200px]">
+                <IconComponent className="h-16 w-16 text-muted-foreground opacity-75 mb-4" />
+                <p className="text-lg text-muted-foreground">{message}</p>
+                {!isSearching && (
+                    <Button asChild size="lg" className="mt-6">
+                        <Link href="/patients/new">
+                        <UserPlus className="mr-2 h-5 w-5" /> Adicionar Novo Paciente
+                        </Link>
+                    </Button>
+                )}
+            </CardContent>
+        </Card>
     );
   }
 
   return (
     <Card className="shadow-lg">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-2xl text-primary">Registros de Pacientes</CardTitle>
-          <CardDescription>Gerencie e visualize todos os pacientes cadastrados.</CardDescription>
-        </div>
-        <Button asChild>
-          <Link href="/patients/new">
-            <UserPlus className="mr-2 h-4 w-4" /> Adicionar Novo Paciente
-          </Link>
-        </Button>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -92,3 +89,4 @@ export function PatientListClient({ patients }: PatientListClientProps) {
     </Card>
   );
 }
+
