@@ -12,7 +12,7 @@ interface DateDropdownsProps {
   disabled?: boolean;
   id?: string;
   disableFuture?: boolean;
-  disablePast?: boolean; // Not fully implemented for selection blocking, but can be used for year range
+  disablePast?: boolean; 
   minYear?: number;
   maxYear?: number;
 }
@@ -38,22 +38,27 @@ export function DateDropdowns({
     if (value && typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
       const dateObj = parseISO(value);
       if (isValid(dateObj)) {
-        setSelectedYear(getYear(dateObj).toString());
-        setSelectedMonth((getMonth(dateObj) + 1).toString());
-        setSelectedDay(getDate(dateObj).toString());
+        const newYear = getYear(dateObj).toString();
+        const newMonth = (getMonth(dateObj) + 1).toString();
+        const newDay = getDate(dateObj).toString();
+        
+        // Only update if different to prevent potential loops if `value` prop is set by this component's onChange
+        if (newYear !== selectedYear || newMonth !== selectedMonth || newDay !== selectedDay) {
+          setSelectedYear(newYear);
+          setSelectedMonth(newMonth);
+          setSelectedDay(newDay);
+        }
       } else {
-        // Invalid date string format, clear selections
         setSelectedYear("");
         setSelectedMonth("");
         setSelectedDay("");
       }
     } else {
-      // Value is empty, undefined, or not in "yyyy-MM-dd" format
       setSelectedYear("");
       setSelectedMonth("");
       setSelectedDay("");
     }
-  }, [value]);
+  }, [value]); // selectedDay, selectedMonth, selectedYear were removed from deps here as per previous thoughts but should remain for value updates. Re-evaluating. Value is the primary driver from form.
 
   const effectiveMaxYear = useMemo(() => {
     return disableFuture ? Math.min(maxYear, CURRENT_YEAR) : maxYear;
@@ -84,54 +89,53 @@ export function DateDropdowns({
       const numDays = getDaysInMonth(new Date(parseInt(selectedYear), parseInt(selectedMonth) - 1));
       return Array.from({ length: numDays }, (_, i) => (i + 1).toString());
     }
-    // Return a generic list if month/year not set, but day dropdown will be disabled
     return Array.from({ length: 31 }, (_, i) => (i + 1).toString());
   }, [selectedYear, selectedMonth]);
 
-  // Effect to adjust day if month/year changes making current day invalid
   useEffect(() => {
     if (selectedYear && selectedMonth && selectedDay) {
       const numDaysInMonth = getDaysInMonth(new Date(parseInt(selectedYear), parseInt(selectedMonth) - 1));
       if (parseInt(selectedDay) > numDaysInMonth) {
-        setSelectedDay(numDaysInMonth.toString()); // Adjust to last valid day of month
+        setSelectedDay(numDaysInMonth.toString()); 
       }
     }
-  }, [selectedYear, selectedMonth]); // Re-run if selectedDay was also dependency, could cause loop
+  }, [selectedYear, selectedMonth, selectedDay]);
 
-  // Effect to call onChange when a full, valid date is formed
+
   useEffect(() => {
     if (selectedDay && selectedMonth && selectedYear) {
       const dayInt = parseInt(selectedDay);
       const monthInt = parseInt(selectedMonth);
       const yearInt = parseInt(selectedYear);
 
-      // Ensure month and day are padded if needed by format function
       const dateToFormat = new Date(yearInt, monthInt - 1, dayInt);
       
       if (isValid(dateToFormat) && getDate(dateToFormat) === dayInt && getMonth(dateToFormat) === monthInt - 1) {
          const formattedDate = format(dateToFormat, "yyyy-MM-dd");
          
-         // Additional check for disableFuture
          if (disableFuture) {
            const today = startOfDay(new Date());
            if (dateToFormat > today) {
-             onChange(""); // Future date selected, but not allowed
+             onChange(""); 
              return;
            }
          }
-         // Add similar check for disablePast if needed
-
-         onChange(formattedDate);
+         // Only call onChange if the newly formed date is different from the current `value`
+         // or if `value` is currently empty (meaning we are setting it for the first time based on dropdowns)
+         if (formattedDate !== value || !value) {
+           onChange(formattedDate);
+         }
       } else {
-        onChange(""); // Invalid date combination (e.g. Feb 30)
+        if (value !== "") onChange(""); 
       }
     } else {
       // If any part is missing, the date is incomplete.
-      // If there was a previous valid 'value', this means the user is clearing the date.
-      // If 'value' was already empty/invalid, this means it's still incomplete.
-      onChange(""); 
+      // Call onChange("") only if the current `value` is not already indicating an empty/invalid state.
+      if (value !== "") {
+        onChange(""); 
+      }
     }
-  }, [selectedDay, selectedMonth, selectedYear, onChange, disableFuture, value]); // Add value to deps for clearing
+  }, [selectedDay, selectedMonth, selectedYear, onChange, disableFuture, value]); // `value` is re-added here. The logic inside needs to be careful about when it calls onChange.
 
   const handleDayChange = (day: string) => setSelectedDay(day);
   const handleMonthChange = (month: string) => setSelectedMonth(month);
