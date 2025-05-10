@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useMemo } from 'react';
-import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, setHours, setMinutes, isSameDay, isToday, addWeeks, subWeeks, getHours, getMinutes } from 'date-fns';
+import { format, addDays, startOfWeek, endOfWeek, eachDayOfInterval, setHours, setMinutes, isSameDay, isToday, addWeeks, subWeeks, getHours, getMinutes, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -128,3 +128,4 @@ export function WeekView({ currentDate, appointments, onDateChange, onAppointmen
     </Card>
   );
 }
+
