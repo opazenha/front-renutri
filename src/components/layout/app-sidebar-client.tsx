@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -29,8 +30,8 @@ export function AppSidebarClient() {
 
   return (
     <Sidebar collapsible="icon" variant="inset" side="left">
-      <SidebarHeader className="p-4">
-        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 7 : 8} textSize={open ? "lg" : "hidden"} />
+      <SidebarHeader className={cn("p-4", !open && "items-center p-2")}>
+        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 7 : 6} textSize={open ? "lg" : "hidden"} />
       </SidebarHeader>
       <SidebarContent className="p-2 flex-1">
         <SidebarMenu>
@@ -40,7 +41,7 @@ export function AppSidebarClient() {
                 <SidebarMenuButton
                   isActive={pathname.startsWith(item.href)}
                   tooltip={{ children: item.tooltip, className: "bg-primary text-primary-foreground" }}
-                  className="justify-start"
+                  className={cn("justify-start", !open && "justify-center")}
                 >
                   <item.icon className="shrink-0" />
                   <span className={cn(open ? "" : "sr-only")}>{item.label}</span>
@@ -63,7 +64,7 @@ export function AppSidebarClient() {
                 <span className={cn("ml-2", open ? "" : "sr-only")}>Configurações</span>
             </Button>
         </Link>
-        <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")}>
+        <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")} onClick={() => alert("Logout não implementado")}>
             <LogOut className="shrink-0"/>
             <span className={cn("ml-2", open ? "" : "sr-only")}>Sair</span>
         </Button>
@@ -71,3 +72,4 @@ export function AppSidebarClient() {
     </Sidebar>
   );
 }
+
