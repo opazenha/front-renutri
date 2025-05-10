@@ -1,11 +1,13 @@
+
 "use client";
 
-import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment } from "@/types";
+import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender } from "@/types";
 import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData, AppointmentFormData } from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 import { mockPatients } from "@/lib/mock-data"; // Import mock data
 import type { AppointmentStatus } from "@/lib/schemas"; // Explicitly import AppointmentStatus
+import { calculateAge } from "@/types";
 
 interface PatientContextType {
   patients: Patient[];
@@ -35,40 +37,61 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
     setIsLoading(true);
-    let loadedPatients: Patient[] = [];
+    let patientsToSet: Patient[] = [];
+    let appointmentsToSet: Appointment[] = [];
+
     try {
       const storedPatientsJson = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
       if (storedPatientsJson) {
-        const parsed = JSON.parse(storedPatientsJson);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          loadedPatients = parsed;
+        const parsedPatients = JSON.parse(storedPatientsJson) as Patient[];
+        if (Array.isArray(parsedPatients) && parsedPatients.length > 0) {
+          patientsToSet = parsedPatients;
+        } else {
+          // If localStorage has an empty array or is invalid, use mock data.
+          patientsToSet = mockPatients;
         }
+      } else {
+        // No patients in localStorage, use mock data.
+        patientsToSet = mockPatients;
       }
     } catch (error) {
-      console.error("Failed to parse patients from localStorage", error);
+      console.error("Failed to parse patients from localStorage, using mock data.", error);
+      patientsToSet = mockPatients; // Fallback to mock data on error
     }
+    setPatients(patientsToSet);
 
-    if (loadedPatients.length === 0) {
-      // If localStorage is empty, invalid, or had no patients, use mock data
-      loadedPatients = mockPatients;
-    }
-    setPatients(loadedPatients);
-
-    let loadedAppointments: Appointment[] = [];
     try {
         const storedAppointmentsJson = localStorage.getItem(LOCAL_STORAGE_KEY_APPOINTMENTS);
         if (storedAppointmentsJson) {
-            const parsed = JSON.parse(storedAppointmentsJson);
-            if (Array.isArray(parsed)) {
-                loadedAppointments = parsed;
+            const parsedAppointments = JSON.parse(storedAppointmentsJson) as Appointment[];
+            if (Array.isArray(parsedAppointments)) {
+                appointmentsToSet = parsedAppointments;
+            } else {
+                appointmentsToSet = []; // Default to empty if localStorage is invalid
             }
+        } else {
+             // Initialize appointments for mock patients if they don't exist in localStorage
+             const initialAppointments: Appointment[] = [];
+             patientsToSet.forEach(p => {
+                if(p.appointments && p.appointments.length > 0) {
+                    initialAppointments.push(...p.appointments);
+                }
+             });
+             appointmentsToSet = initialAppointments.length > 0 ? initialAppointments : [];
         }
     } catch (error) {
-        console.error("Failed to parse appointments from localStorage", error);
+        console.error("Failed to parse appointments from localStorage, initializing based on patients or empty.", error);
+        const initialAppointmentsFromPatients: Appointment[] = [];
+        patientsToSet.forEach(p => {
+            if(p.appointments && p.appointments.length > 0) {
+                initialAppointmentsFromPatients.push(...p.appointments);
+            }
+         });
+        appointmentsToSet = initialAppointmentsFromPatients.length > 0 ? initialAppointmentsFromPatients : [];
     }
-    setAppointments(loadedAppointments);
+    setAppointments(appointmentsToSet);
 
     setIsLoading(false);
   }, []);
@@ -156,6 +179,14 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
               id: exam.id || uuidv4(), 
               result: exam.result as number, 
             } as LabExamRecord)) || [],
+            smokingHabit: data.smokingHabit,
+            smokingDetails: data.smokingDetails,
+            alcoholConsumption: data.alcoholConsumption,
+            alcoholDetails: data.alcoholDetails?.map(ad => ({...ad, id: ad.id || uuidv4()})),
+            physicalActivityPractice: data.physicalActivityPractice,
+            physicalActivitiesDetails: data.physicalActivitiesDetails?.map(pad => ({...pad, id: pad.id || uuidv4()})),
+            stressLevel: data.stressLevel,
+            perceivedQualityOfLife: data.perceivedQualityOfLife,
           };
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           return { ...p, anthropometricData: updatedAnthropometricData };
@@ -216,11 +247,14 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
   const updatePatientMicronutrientRecommendation = (patientId: string, data: MicronutrientRecommendationFormData) => {
     setPatients(prevPatients => prevPatients.map(p => {
       if (p.id === patientId) {
+        const patientAge = calculateAge(p.dob);
+        const patientGender = p.gender;
+
         const newRecommendation: MicronutrientRecommendation = {
           id: uuidv4(),
           date: data.date,
-          ageAtTimeOfRec: data.ageAtTimeOfRec,
-          sexAtTimeOfRec: data.sexAtTimeOfRec,
+          ageAtTimeOfRec: patientAge, // Use patient's current age
+          sexAtTimeOfRec: patientGender, // Use patient's gender
           specialConditions: data.specialConditions || [],
           recommendations: data.recommendations?.map((rec: MicronutrientDetailFormData) => ({ 
             ...rec, 
@@ -308,4 +342,5 @@ export const usePatientContext = () => {
   }
   return context;
 };
+
 
