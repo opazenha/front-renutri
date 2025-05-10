@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -23,9 +22,9 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = "16rem"
+const SIDEBAR_WIDTH = "14rem" // Reduced from 16rem
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "2.5rem" // Adjusted for compactness from 3rem
+const SIDEBAR_WIDTH_ICON = "2.5rem" 
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -83,14 +82,13 @@ const SidebarProvider = React.forwardRef<
             } else {
                 _setOpen(newOpenState);
             }
-            if (!isMobile) { // Only set cookie for desktop state
+            if (!isMobile) { 
                  document.cookie = `${SIDEBAR_COOKIE_NAME}=${newOpenState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
             }
         },
         [setOpenProp, open, _setOpen, isMobile]
     );
     
-    // Load initial state from cookie for desktop
     React.useEffect(() => {
         if (!isMobile) {
             const cookieValue = document.cookie
@@ -99,11 +97,10 @@ const SidebarProvider = React.forwardRef<
                 ?.split('=')[1];
             if (cookieValue) {
                  const cookieOpenState = cookieValue === 'true';
-                 if (openProp === undefined) { // only apply cookie if not controlled
+                 if (openProp === undefined) { 
                     _setOpen(cookieOpenState);
                  }
             } else {
-                 // If no cookie, use defaultOpen for initial state
                  if (openProp === undefined) {
                     _setOpen(defaultOpen);
                  }
@@ -187,7 +184,7 @@ const Sidebar = React.forwardRef<
     {
       side = "left",
       variant = "sidebar",
-      collapsible = "icon", // Default to icon collapsible
+      collapsible = "icon", 
       className,
       children,
       ...props
@@ -231,7 +228,6 @@ const Sidebar = React.forwardRef<
       )
     }
     
-    // Desktop sidebar (collapsible="icon" or "offcanvas")
     const isIconCollapsible = collapsible === 'icon';
 
     return (
@@ -289,14 +285,12 @@ Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentProps<typeof Button>
->(({ className, onClick, children: childrenFromProps, ...restProps }, ref) => {
+  Omit<React.ComponentProps<typeof Button>, "asChild"> & { asChild?: boolean }
+>(({ className, onClick, children: childrenFromProps, asChild = false, ...restProps }, ref) => {
   const { toggleSidebar } = useSidebar();
-  const { asChild, ...buttonProps } = restProps;
-
 
   const effectiveOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (onClick) onClick(event); // Use onClick from passed props if it exists
+    if (onClick) onClick(event); 
     toggleSidebar();
   };
 
@@ -307,11 +301,11 @@ const SidebarTrigger = React.forwardRef<
     <Comp
       ref={ref}
       data-sidebar="trigger"
-      variant="ghost" // SidebarTrigger's own variant
-      size="icon"   // SidebarTrigger's own size
-      className={cn("h-7 w-7", className)} // Merges with passed className
+      variant="ghost" 
+      size="icon"  
+      className={cn("h-7 w-7", className)} 
       onClick={effectiveOnClick}
-      {...buttonProps} 
+      {...restProps} 
     >
       {asChild ? childrenFromProps : (
         <>
@@ -358,21 +352,19 @@ const SidebarInset = React.forwardRef<
   React.ComponentProps<"main">
 >(({ className, ...props }, ref) => {
   const { open, isMobile } = useSidebar();
-  const isIconCollapsible = true; // Assuming default is icon collapsible for this calculation
+  const isIconCollapsible = true; 
 
-  // Base margin-left for non-inset variants or mobile
-  let baseMarginLeftClass = "ml-0"; // Default for mobile
+  let baseMarginLeftClass = "ml-0"; 
   if (!isMobile) {
     if (open) {
       baseMarginLeftClass = "md:ml-[var(--sidebar-width)]";
     } else if (isIconCollapsible) {
       baseMarginLeftClass = "md:ml-[var(--sidebar-width-icon)]";
-    } else { // offcanvas collapsed
+    } else { 
       baseMarginLeftClass = "md:ml-0";
     }
   }
   
-  // Specific margin-left overrides for inset variant on desktop
   const insetMlCollapsed = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px_+_theme(spacing.2))]';
   const insetMlExpanded = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width)_+_theme(spacing.2))]';
   
@@ -382,8 +374,8 @@ const SidebarInset = React.forwardRef<
         insetMarginLeftClass = insetMlCollapsed;
      } else if (open) {
         insetMarginLeftClass = insetMlExpanded;
-     } else { // Fallback for other states like offcanvas collapsed with inset (though unusual)
-        insetMarginLeftClass = 'md:peer-data-[variant=inset]:ml-2'; // Default m-2's left part
+     } else { 
+        insetMarginLeftClass = 'md:peer-data-[variant=inset]:ml-2'; 
      }
   }
 
@@ -400,8 +392,8 @@ const SidebarInset = React.forwardRef<
       ref={ref}
       className={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background transition-[margin-left] duration-200 ease-in-out",
-        baseMarginLeftClass, // Base margin for non-inset or mobile
-        "peer-data-[variant=inset]" ? cn(insetBaseClasses, insetMarginLeftClass) : "", // Apply inset specific classes if variant is inset
+        baseMarginLeftClass, 
+        "peer-data-[variant=inset]" ? cn(insetBaseClasses, insetMarginLeftClass) : "", 
         className
       )}
       {...props}
@@ -630,13 +622,13 @@ const SidebarMenuButton = React.forwardRef<
       size = "default",
       tooltip,
       className,
-      children, // Added children here
+      children, 
       ...props
     },
     ref
   ) => {
     const Comp = asChild ? Slot : "button"
-    const { isMobile, state, open } = useSidebar()
+    const { isMobile, open } = useSidebar()
 
     const buttonContent = (
       <Comp
@@ -655,7 +647,7 @@ const SidebarMenuButton = React.forwardRef<
       </Comp>
     )
 
-    if (!tooltip || (open && !isMobile) ) { // Hide tooltip if sidebar is open and not mobile
+    if (!tooltip || (open && !isMobile) ) { 
       return buttonContent;
     }
     
@@ -667,8 +659,7 @@ const SidebarMenuButton = React.forwardRef<
         <TooltipContent
           side="right"
           align="center"
-          // hidden={state !== "collapsed" || isMobile} // Original logic, might need adjustment
-          hidden={open || isMobile} // Simpler: hide if open or mobile
+          hidden={open || isMobile} 
           {...tooltipProps}
         />
       </Tooltip>
