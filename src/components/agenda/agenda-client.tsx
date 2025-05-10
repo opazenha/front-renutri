@@ -1,17 +1,16 @@
-
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Edit, Trash2, CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, CalendarDaysIcon } from "lucide-react";
+import { PlusCircle, CheckCircle, XCircle, Clock, CalendarDaysIcon } from "lucide-react";
 import { usePatientContext } from "@/contexts/patient-context";
 import type { Appointment, AppointmentFormData } from "@/lib/schemas";
 import { AppointmentForm } from "./appointment-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { format, parseISO, isValid, startOfWeek, endOfWeek, addDays, isSameDay, addWeeks, subWeeks, isToday } from "date-fns";
+import { format, parseISO, isValid, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { WeekView } from "./week-view";
@@ -76,13 +75,17 @@ export function AgendaClient() {
     }
   };
 
-  const selectedDateString = currentDate ? format(currentDate, "yyyy-MM-dd") : "";
+  const selectedDateString = useMemo(() => {
+    return format(currentDate, "yyyy-MM-dd"); // currentDate is always a Date object
+  }, [currentDate]);
+
   const appointmentsForSelectedDate = useMemo(() => {
-    return selectedDateString ? getAppointmentsByDate(selectedDateString) : [];
+    return getAppointmentsByDate(selectedDateString);
   }, [selectedDateString, getAppointmentsByDate]);
 
   const appointmentDatesForMonthCalendar = useMemo(() => {
-    return appointments.map(app => parseISO(app.date));
+    // Filter out invalid dates before parsing
+    return appointments.filter(app => app.date && isValid(parseISO(app.date))).map(app => parseISO(app.date));
   }, [appointments]);
 
   if (isLoading) {
@@ -90,11 +93,11 @@ export function AgendaClient() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-[auto_minmax(0,1fr)_auto] gap-4 h-full">
       {/* Left Column: Month Calendar */}
-      <div className="md:col-span-3 lg:col-span-3">
+      <div>
         <Card className="shadow-md h-full">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 flex flex-col items-center">
             <CardTitle className="text-lg flex items-center">
               <CalendarDaysIcon className="mr-2 h-5 w-5 text-primary" />
               Calendário Mensal
@@ -113,13 +116,9 @@ export function AgendaClient() {
                 today: { border: '1px solid hsl(var(--primary))' }
               }}
               footer={
-                currentDate ? (
-                  <p className="text-xs text-center p-2 text-muted-foreground">
-                    Selecionado: {format(currentDate, "PPP", { locale: ptBR })}.
-                  </p>
-                ) : (
-                  <p className="text-xs text-center p-2 text-muted-foreground">Selecione uma data.</p>
-                )
+                <p className="text-xs text-center p-2 text-muted-foreground">
+                  Selecionado: {format(currentDate, "PPP", { locale: ptBR })}.
+                </p>
               }
             />
           </CardContent>
@@ -127,25 +126,25 @@ export function AgendaClient() {
       </div>
 
       {/* Middle Column: Week View */}
-      <div className="md:col-span-6 lg:col-span-6">
+      <div>
         <WeekView 
           currentDate={currentDate} 
           appointments={appointments} 
           onDateChange={handleWeekViewDateChange}
           onAppointmentClick={(appointment) => {
-            // Placeholder: could open an edit dialog or navigate
-            toast({ title: "Agendamento Clicado", description: `Paciente: ${appointment.patientName} às ${appointment.time}`});
+            const patientName = patients.find(p => p.id === appointment.patientId)?.name || appointment.patientName;
+            toast({ title: "Agendamento Clicado", description: `Paciente: ${patientName} às ${appointment.time}`});
           }}
         />
       </div>
 
       {/* Right Column: Daily Appointments List */}
-      <div className="md:col-span-3 lg:col-span-3">
+      <div>
         <Card className="shadow-md h-full">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle className="text-lg">
-                {currentDate ? format(currentDate, "dd/MM/yyyy", {locale: ptBR}) : "Nenhuma data"}
+                {format(currentDate, "dd/MM/yyyy", {locale: ptBR})}
               </CardTitle>
               <CardDescription className="text-xs">Compromissos do dia</CardDescription>
             </div>
@@ -156,37 +155,40 @@ export function AgendaClient() {
           <CardContent className="pt-2">
             {appointmentsForSelectedDate.length > 0 ? (
               <ul className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
-                {appointmentsForSelectedDate.map((app) => (
-                  <li key={app.id} className="p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card">
-                    <div className="flex justify-between items-start mb-1">
-                      <div>
-                        <h3 className="font-semibold text-primary text-sm">{app.patientName}</h3>
-                        <p className="text-xs text-muted-foreground">Hora: {app.time}</p>
-                        <p className="text-xs mt-0.5">{app.description}</p>
+                {appointmentsForSelectedDate.map((app) => {
+                  const patientName = patients.find(p => p.id === app.patientId)?.name || app.patientName;
+                  return (
+                    <li key={app.id} className="p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card">
+                      <div className="flex justify-between items-start mb-1">
+                        <div>
+                          <h3 className="font-semibold text-primary text-sm">{patientName}</h3>
+                          <p className="text-xs text-muted-foreground">Hora: {app.time}</p>
+                          <p className="text-xs mt-0.5">{app.description}</p>
+                        </div>
+                        <Badge variant={
+                            app.status === 'completed' ? 'default' : 
+                            app.status === 'cancelled' ? 'destructive' : 
+                            'secondary'
+                          } className="capitalize text-xs h-5 px-1.5">
+                          {app.status === 'scheduled' && <Clock className="mr-1 h-2.5 w-2.5" />}
+                          {app.status === 'completed' && <CheckCircle className="mr-1 h-2.5 w-2.5" />}
+                          {app.status === 'cancelled' && <XCircle className="mr-1 h-2.5 w-2.5" />}
+                          {app.status === 'scheduled' ? 'Agendado' : app.status === 'completed' ? 'Realizado' : 'Cancelado'}
+                        </Badge>
                       </div>
-                       <Badge variant={
-                          app.status === 'completed' ? 'default' : 
-                          app.status === 'cancelled' ? 'destructive' : 
-                          'secondary'
-                        } className="capitalize text-xs h-5 px-1.5">
-                         {app.status === 'scheduled' && <Clock className="mr-1 h-2.5 w-2.5" />}
-                         {app.status === 'completed' && <CheckCircle className="mr-1 h-2.5 w-2.5" />}
-                         {app.status === 'cancelled' && <XCircle className="mr-1 h-2.5 w-2.5" />}
-                         {app.status === 'scheduled' ? 'Agendado' : app.status === 'completed' ? 'Realizado' : 'Cancelado'}
-                       </Badge>
-                    </div>
-                    {app.status === 'scheduled' && (
-                       <div className="mt-2 pt-2 border-t flex gap-2">
-                          <Button size="sm" className="text-xs h-7 px-2" variant="outline" onClick={() => handleStatusChange(app.id, 'completed')}>
-                            <CheckCircle className="mr-1 h-3 w-3" /> Realizado
-                          </Button>
-                           <Button size="sm" className="text-xs h-7 px-2 text-destructive hover:text-destructive" variant="outline" onClick={() => handleStatusChange(app.id, 'cancelled')}>
-                            <XCircle className="mr-1 h-3 w-3" /> Cancelar
-                          </Button>
-                       </div>
-                    )}
-                  </li>
-                ))}
+                      {app.status === 'scheduled' && (
+                        <div className="mt-2 pt-2 border-t flex gap-2">
+                            <Button size="sm" className="text-xs h-7 px-2" variant="outline" onClick={() => handleStatusChange(app.id, 'completed')}>
+                              <CheckCircle className="mr-1 h-3 w-3" /> Realizado
+                            </Button>
+                            <Button size="sm" className="text-xs h-7 px-2 text-destructive hover:text-destructive" variant="outline" onClick={() => handleStatusChange(app.id, 'cancelled')}>
+                              <XCircle className="mr-1 h-3 w-3" /> Cancelar
+                            </Button>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <p className="text-muted-foreground text-center py-6 text-sm">
@@ -203,13 +205,13 @@ export function AgendaClient() {
             <DialogTitle>Novo Agendamento</DialogTitle>
             <DialogDescription>
               Preencha os detalhes abaixo para criar um novo agendamento.
-              {currentDate && ` Data padrão: ${format(currentDate, "dd/MM/yyyy", { locale: ptBR })}.`}
+              {` Data padrão: ${format(currentDate, "dd/MM/yyyy", { locale: ptBR })}.`}
             </DialogDescription>
           </DialogHeader>
           <AppointmentForm
             onSubmit={handleFormSubmit}
             onCancel={() => setIsFormOpen(false)}
-            initialData={{ date: selectedDateString }}
+            initialData={{ date: selectedDateString }} 
             isSubmitting={isSubmitting}
           />
         </DialogContent>
