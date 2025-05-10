@@ -5,6 +5,7 @@ import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
 import { mockPatients } from "@/lib/mock-data"; // Import mock data
+import type { AppointmentStatus } from "@/lib/schemas"; // Explicitly import AppointmentStatus
 
 interface PatientContextType {
   patients: Patient[];
@@ -19,7 +20,7 @@ interface PatientContextType {
   appointments: Appointment[];
   addAppointment: (appointmentData: AppointmentFormData) => Appointment;
   getAppointmentsByDate: (date: string) => Appointment[];
-  updateAppointmentStatus: (appointmentId: string, status: Appointment['status']) => void;
+  updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => void;
   updateAppointment: (appointmentId: string, data: AppointmentFormData) => void;
 }
 
@@ -35,25 +36,43 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
+    let loadedPatients: Patient[] = [];
     try {
-      const storedPatients = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
-      if (storedPatients) {
-        setPatients(JSON.parse(storedPatients));
-      } else {
-        // If no patients in localStorage, initialize with mock data
-        setPatients(mockPatients);
-      }
-      const storedAppointments = localStorage.getItem(LOCAL_STORAGE_KEY_APPOINTMENTS);
-      if (storedAppointments) {
-        setAppointments(JSON.parse(storedAppointments));
+      const storedPatientsJson = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
+      if (storedPatientsJson) {
+        const parsed = JSON.parse(storedPatientsJson);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          loadedPatients = parsed;
+        }
       }
     } catch (error) {
-      console.error("Failed to load data from localStorage", error);
-      // Fallback to mock data if parsing fails or on any error during load
-      if (patients.length === 0) setPatients(mockPatients);
+      console.error("Failed to parse patients from localStorage", error);
     }
+
+    if (loadedPatients.length === 0) {
+      // If localStorage is empty, invalid, or had no patients, use mock data
+      loadedPatients = mockPatients;
+    }
+    setPatients(loadedPatients);
+
+    let loadedAppointments: Appointment[] = [];
+    try {
+        const storedAppointmentsJson = localStorage.getItem(LOCAL_STORAGE_KEY_APPOINTMENTS);
+        if (storedAppointmentsJson) {
+            const parsed = JSON.parse(storedAppointmentsJson);
+            if (Array.isArray(parsed)) {
+                loadedAppointments = parsed;
+            }
+        }
+    } catch (error) {
+        console.error("Failed to parse appointments from localStorage", error);
+    }
+    setAppointments(loadedAppointments);
+
     setIsLoading(false);
   }, []);
+
 
   useEffect(() => {
     if (!isLoading) {
@@ -85,7 +104,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
       energyExpenditureRecords: [],
       macronutrientPlans: [],
       micronutrientRecommendations: [],
-      // appointments: [], // Initialize appointments if stored per patient
+      appointments: [], 
     };
     setPatients((prevPatients) => [...prevPatients, newPatient]);
     return newPatient;
@@ -135,7 +154,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
             labExams: data.labExams?.map((exam: LabExamFormData) => ({
               ...exam,
               id: exam.id || uuidv4(), 
-              result: exam.result as number, // Already coerced by Zod if valid, or will be NaN/undefined which is fine if optional in type
+              result: exam.result as number, 
             } as LabExamRecord)) || [],
           };
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -226,7 +245,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     const newAppointment: Appointment = {
       ...appointmentData,
       id: uuidv4(),
-      patientName: patient.name, // Add patient name for convenience
+      patientName: patient.name, 
     };
     setAppointments((prevAppointments) => 
         [...prevAppointments, newAppointment].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time))
@@ -238,7 +257,7 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     return appointments.filter(app => app.date === date);
   };
 
-  const updateAppointmentStatus = (appointmentId: string, status: Appointment['status']) => {
+  const updateAppointmentStatus = (appointmentId: string, status: AppointmentStatus) => {
     setAppointments(prevAppointments => 
       prevAppointments.map(app => 
         app.id === appointmentId ? { ...app, status } : app
@@ -250,14 +269,11 @@ export const PatientProvider = ({ children }: { children: ReactNode }) => {
     setAppointments(prevAppointments => {
       const patient = getPatientById(data.patientId);
       if (!patient && data.patientId) {
-        // This might occur if patientId is somehow invalid, or patient was deleted.
-        // For robustness, you might want to handle this more gracefully,
-        // e.g., by not changing patientName or logging an error.
         console.warn(`Patient with ID ${data.patientId} not found during appointment update for ${appointmentId}. Patient name may not be updated.`);
       }
       return prevAppointments.map(app =>
         app.id === appointmentId
-          ? { ...app, ...data, patientName: patient ? patient.name : app.patientName } // Update patientName only if patient is found
+          ? { ...app, ...data, patientName: patient ? patient.name : app.patientName } 
           : app
       ).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time));
     });
@@ -292,3 +308,4 @@ export const usePatientContext = () => {
   }
   return context;
 };
+
