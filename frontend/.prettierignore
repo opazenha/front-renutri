@@ -1,0 +1,17 @@
+# Ignore output directory
+/dist
+/coverage
+
+# Ignore node_modules
+node_modules
+
+# Ignore Angular cache
+.angular
+
+# Ignore specific auto-generated files if any
+# e.g., some-generated-file.ts
+
+# Package lock files (they are auto-generated and managing their format isn't typically useful)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
