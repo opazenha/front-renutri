@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // For *ngIf, etc.
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms'; // For reactive forms
-import { Router, RouterModule } from '@angular/router'; // For navigation and routerLink
+import { Router, RouterModule, ActivatedRoute } from '@angular/router'; // For navigation and routerLink
 import { AuthService, LoginRequest } from '../../../../core/services/auth.service'; // Adjust path as needed
 
 @Component({
@@ -24,7 +24,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +52,8 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         console.log('Login successful', response);
         // Navigate to a protected route or dashboard
-        this.router.navigate(['/dashboard']);
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+        this.router.navigateByUrl(returnUrl);
       },
       error: (err) => {
         console.error('Login failed', err);
