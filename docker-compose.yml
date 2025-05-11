@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80" # Map host port 4200 to container port 80 (Nginx)
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080 (Gin)
+    environment:
+      # Replace with your actual Atlas connection string in a .env file or secrets management
+      - MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database_name>?retryWrites=true&w=majority
+      - GIN_MODE=release # or debug for development
+    depends_on:
+      - mongo # Or remove if connecting directly to Atlas and not running a local mongo instance
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:7.0 # Using MongoDB 7.0 as 8.x specific images might not be GA; adjust if needed.
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
