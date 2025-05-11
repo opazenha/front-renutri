@@ -76,7 +76,7 @@ func main() {
 		authRoutes := apiV1.Group("/auth")
 		{
 			authRoutes.POST("/register", handlers.RegisterNutritionist)
-			// Login route will be added here later (POST /login)
+			authRoutes.POST("/login", handlers.LoginNutritionist) // Add login route
 			// Logout route will be added here later (POST /logout)
 		}
 		// Other v1 routes can be added here (e.g., for patients, assessments)

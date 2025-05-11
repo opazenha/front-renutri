@@ -10,8 +10,9 @@ import (
 // Config holds application configuration values
 // For now, it only holds MONGODB_URI, but can be expanded
 type Config struct {
-	MongoURI string
-	// Add other config fields here, e.g., JWTSecret, GinMode
+	MongoURI     string
+	JWTSecretKey string
+	// Add other config fields here, e.g., GinMode
 }
 
 var AppConfig *Config
@@ -34,9 +35,15 @@ func LoadConfig() {
 		log.Fatal("FATAL: MONGODB_URI environment variable is not set.")
 	}
 
-	AppConfig = &Config{
-		MongoURI: mongoURI,
+	jwtSecret := os.Getenv("JWT_SECRET_KEY")
+	if jwtSecret == "" {
+		log.Fatal("FATAL: JWT_SECRET_KEY environment variable is not set.")
 	}
 
-	log.Println("Configuration loaded successfully. MONGODB_URI fetched.")
+	AppConfig = &Config{
+		MongoURI:     mongoURI,
+		JWTSecretKey: jwtSecret,
+	}
+
+	log.Println("Configuration loaded successfully. MONGODB_URI and JWT_SECRET_KEY fetched.")
 }

@@ -26,6 +26,12 @@ type RegisterRequest struct {
 	ProfessionalRegistration string `json:"professionalRegistration,omitempty"`
 }
 
+// LoginRequest defines the structure for the login request body
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
+
 // RegisterNutritionist handles the creation of a new nutritionist user.
 func RegisterNutritionist(c *gin.Context) {
 	var req RegisterRequest
@@ -98,6 +104,66 @@ func RegisterNutritionist(c *gin.Context) {
 			"email":                     newNutritionist.Email,
 			"professionalRegistration": newNutritionist.ProfessionalRegistration,
 			"createdAt":                 newNutritionist.CreatedAt,
+		},
+	})
+}
+
+// LoginNutritionist handles nutritionist login and JWT generation.
+func LoginNutritionist(c *gin.Context) {
+	var req LoginRequest
+
+	// Bind JSON request to LoginRequest struct
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Validate the request struct
+	if err := validate.Struct(req); err != nil {
+		errors := make(map[string]string)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors[err.Field()] = err.Tag()
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": errors})
+		return
+	}
+
+	// Find nutritionist by email
+	collection := database.NutritionistCollection
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var nutritionist models.Nutritionist
+	err := collection.FindOne(ctx, bson.M{"email": req.Email}).Decode(&nutritionist)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
+		return
+	}
+
+	// Check password
+	if !auth.CheckPasswordHash(req.Password, nutritionist.HashedPassword) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	// Generate JWT
+	tokenString, err := auth.GenerateJWT(nutritionist.ID.Hex())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"token":   tokenString,
+		"nutritionist": gin.H{ // Optionally return some nutritionist info
+			"id":    nutritionist.ID.Hex(),
+			"name":  nutritionist.Name,
+			"email": nutritionist.Email,
 		},
 	})
 }
