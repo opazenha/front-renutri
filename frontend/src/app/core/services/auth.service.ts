@@ -35,16 +35,34 @@ export interface RegisterResponse {
 })
 export class AuthService {
   private apiUrl = '/api/v1/auth'; // Base URL for auth endpoints (proxied by Angular CLI in dev)
+  private readonly TOKEN_KEY = 'renutri_auth_token';
 
   constructor(private http: HttpClient) { }
+
+  private saveToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  removeToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken();
+    // Could add token expiration check here if token contains expiry info and is not an opaque string.
+    // For now, presence implies logged in.
+    return !!token;
+  }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        // For now, just log the token. Token storage will be handled in Subtask 2.8.
-        console.log('Login successful, token:', response.token);
-        // In a real app, you'd store the token securely (e.g., localStorage or a more secure solution)
-        // and potentially navigate the user or update an authentication state.
+        this.saveToken(response.token);
+        console.log('Login successful, token stored:', response.token);
       })
     );
   }
