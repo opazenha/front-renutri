@@ -1,0 +1,628 @@
+# App Functionalities
+<appFunctionalities>
+  <generalAppFunctionalities>
+    <functionality>Secure multi-patient platform access for nutritionists.</functionality>
+    <functionality>User authentication and authorization (nutritionist login).</functionality>
+    <functionality>Modular design mirroring assessment categories.</functionality>
+    <functionality>Comprehensive data validation for all user inputs.</functionality>
+    <functionality>Clean, intuitive, and responsive user interface.</functionality>
+    <functionality>Generate printable summaries and reports for individual patients.</functionality>
+    <functionality>Robust search and filtering capabilities for patients and their assessment data.</functionality>
+    <functionality>Consistent use and display of specified units (Kg, cm, Kcal, mg/dl, etc.).</functionality>
+    <functionality>Timestamping of all assessments and records.</functionality>
+    <functionality>Ensure patient data is stored securely with appropriate access controls.</functionality>
+    <functionality>Link related data across modules (e.g., patient ID linking all assessments to a patient).</functionality>
+  </generalAppFunctionalities>
+
+  <moduleFunctionalities name="Cadastro (Patient Registration)">
+    <functionality>Create new patient demographic records.</functionality>
+    <functionality>Read/View existing patient records.</functionality>
+    <functionality>Update existing patient records.</functionality>
+    <functionality>Delete patient records.</functionality>
+    <functionality>Automatically generate a unique Patient ID upon creation.</functionality>
+    <functionality>Automatically calculate patient's Age based on Birth Date and current date.</functionality>
+    <functionality>Automatically populate Registration Date with the current date or allow selection.</functionality>
+    <functionality>Search for patients by various criteria (e.g., name, ID).</functionality>
+    <functionality>List all registered patients.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Av. Clínica (Clinical Assessment)">
+    <functionality>Record detailed clinical anamnesis for a selected patient.</functionality>
+    <functionality>Allow creation of multiple clinical assessments per patient, distinguished by date.</functionality>
+    <functionality>Automatically populate patient's personal data (Name, Birth Date, Age, Sex, Schooling) from the Cadastro module.</functionality>
+    <functionality>Utilize dropdown menus with predefined options for standardized data entry (e.g., birth term, bowel function, yes/no questions).</functionality>
+    <functionality>Allow free-text input for narrative sections (e.g., main complaint, medical history).</functionality>
+    <functionality>Save, view, edit, and delete clinical assessment records.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Av. Alimentar (Food Assessment)">
+    <functionality>Record patient's dietary habits, history with nutritional counseling, allergies, and intolerances.</functionality>
+    <functionality>Link food assessments to a specific patient.</functionality>
+    <functionality>Allow creation of multiple, timestamped food assessments per patient.</functionality>
+    <functionality>Use dropdowns for predefined options (e.g., appetite, previous counseling professional).</functionality>
+    <functionality>Manage detailed meal information (e.g., typical meals like Desjejum, Colação, Almoço, etc., and their composition).</functionality>
+    <functionality>Record 24-hour Food Recall data: input for each meal including time, food item, quantity/portion size, preparation method, and observations.</functionality>
+    <functionality>Record Food Frequency Questionnaire (FFQ) data: input for food items/groups, frequency of consumption, and usual portion size.</functionality>
+    <functionality>Save, view, edit, and delete food assessment records.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Av. Comportamental (Behavioral Assessment)">
+    <functionality>Record patient's smoking habits (status, type, frequency, quantity, history).</functionality>
+    <functionality>Record patient's alcohol consumption habits.</functionality>
+    <functionality>Allow dynamic addition of consumed alcoholic beverage types, with fields for frequency, quantity per occasion, unit of measure, and alcohol content.</functionality>
+    <functionality>Optionally, calculate total alcohol intake based on recorded data.</functionality>
+    <functionality>Record details of physical activity (type(s), frequency, duration per session, intensity).</functionality>
+    <functionality>Record patient's stress level and perceived quality of life.</functionality>
+    <functionality>Link behavioral assessments to a specific patient.</functionality>
+    <functionality>Allow creation of multiple, timestamped behavioral assessments per patient.</functionality>
+    <functionality>Save, view, edit, and delete behavioral assessment records.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Evolução (Patient Evolution)">
+    <functionality>Track and display patient progress over time.</functionality>
+    <functionality>Aggregate and display a chronological log or dashboard of key metrics (e.g., weight, BMI, specific lab results, changes in food habits) collected from other modules.</functionality>
+    <functionality>Allow nutritionists to add timestamped narrative notes about patient progress.</functionality>
+    <functionality>Visualize patient progress using charts (e.g., weight over time, body fat % over time, lab value trends).</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Av. Bioquímica (Biochemical Assessment)">
+    <functionality>Record and track results of biochemical lab exams for a selected patient.</functionality>
+    <functionality>Allow entry of multiple lab exams per assessment date.</functionality>
+    <functionality>Allow multiple entries for each exam type over time to track changes.</functionality>
+    <functionality>Use a predefined list of common exam names and allow adding custom exams.</functionality>
+    <functionality>Record exam value, unit, collection date, and reference range.</functionality>
+    <functionality>Record specific conditions relevant for interpreting exam results (e.g., Ferritina - Menarca, FSH - Fase folicular).</functionality>
+    <functionality>Optionally, allow input of standard reference ranges for exams and automatically flag out-of-range values.</functionality>
+    <functionality>Display biochemical data in tabular formats for comparison over time.</functionality>
+    <functionality>Display biochemical data in graphical formats to visualize trends.</functionality>
+    <functionality>Save, view, edit, and delete biochemical assessment records.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Av. Antropométrica (Anthropometric Assessment)">
+    <functionality>Record and track patient's body measurements for a selected patient.</functionality>
+    <functionality>Allow creation of multiple anthropometric assessments per patient, distinguished by assessment date.</functionality>
+    <functionality>Automatically populate patient's personal data (Name, Sex) from the Cadastro module.</functionality>
+    <functionality>Record current weight, usual weight, desired weight, height, circumferences (various sites), skinfolds (various sites), and bone diameters.</functionality>
+    <functionality>Calculate Body Mass Index (BMI) from current weight and height.</functionality>
+    <functionality>Calculate or allow selection of Body Frame (Compleição ou ossatura) based on measurements (e.g., wrist circumference/height ratio).</functionality>
+    <functionality>Save, view, edit, and delete anthropometric assessment records.</functionality>
+    <functionality>Track changes in anthropometric data over time through multiple assessments.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="MET (Metabolic Equivalent of Task) Calculation">
+    <functionality>Calculate Gross Energy Expenditure (GET) based on Metabolic Equivalent of Task (MET) for a selected patient.</functionality>
+    <functionality>Allow creation of multiple MET calculations per patient, distinguished by date.</functionality>
+    <functionality>Input Resting Energy Expenditure (GER) directly or calculate GER using standard formulas (e.g., Harris-Benedict, Mifflin-St Jeor) requiring inputs like weight, height, age, and sex from other modules.</functionality>
+    <functionality>Input sleep duration (hours).</functionality>
+    <functionality>Allow dynamic addition of physical activities, selecting from a predefined list with associated METS values or adding custom activities and METS values.</functionality>
+    <functionality>Input duration for each physical activity.</functionality>
+    <functionality>Record work/occupational activities, including time spent and METS value or occupational activity factor.</functionality>
+    <functionality>Calculate Energy Expenditure during sleep (GE com sono).</functionality>
+    <functionality>Calculate Energy Expenditure for each recorded activity.</functionality>
+    <functionality>Calculate Total Daily Energy Expenditure (GET).</functionality>
+    <functionality>Feed calculated GET results into the Macronutrients and Calories module for dietary planning.</functionality>
+    <functionality>Save, view, edit, and delete MET calculation records.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Macronutrientes e Calorias (Macronutrients and Calories)">
+    <functionality>Define and calculate dietary prescription protocols for macronutrients and calories for a selected patient.</functionality>
+    <functionality>Import or link to Total Energy Expenditure (GET) calculated in the MET module or from other estimation methods.</functionality>
+    <functionality>Allow selection of prescription protocols based on objective (e.g., Gain, Loss, Maintenance).</functionality>
+    <functionality>Adjust protocols based on activity level and specific goals/conditions (e.g., Endurance, Hipertrofia, Gestante).</functionality>
+    <functionality>Allow input of desired macronutrient distribution as percentages of total energy value or as grams per kg of body weight.</functionality>
+    <functionality>Calculate total target daily calories based on GET and selected caloric objective (e.g., surplus for gain, deficit for loss).</functionality>
+    <functionality>Calculate target grams for each macronutrient (Protein, Carbohydrates, Fat) based on the desired distribution and total target calories.</functionality>
+    <functionality>Allow creation and saving of multiple dietary plans/prescriptions per patient, distinguished by date or plan name.</functionality>
+    <functionality>Save, view, edit, and delete dietary plan records.</functionality>
+  </moduleFunctionalities>
+
+  <moduleFunctionalities name="Micronutrientes (Micronutrients)">
+    <functionality>Manage information and recommendations for minerals and electrolytes for a selected patient.</functionality>
+    <functionality>Display Recommended Daily Allowances (RDAs) or Adequate Intakes (AIs) for various micronutrients.</functionality>
+    <functionality>Allow RDAs/AIs to be dynamic, adjusting based on patient's age, sex, and specific conditions (e.g., pregnancy, lactation) drawing from Cadastro and other relevant modules.</functionality>
+    <functionality>Allow nutritionists to set specific micronutrient goals or targets for a patient, overriding or supplementing DRIs.</functionality>
+    <functionality>Record details of prescribed micronutrient supplementation (e.g., dose, frequency, duration).</functionality>
+    <functionality>Save, view, and edit micronutrient targets and prescribed supplementation records for a patient.</functionality>
+    <functionality description="Future Enhancement">Integrate with a food logging system to compare actual micronutrient intake against recommendations and identify potential deficiencies or excesses.</functionality>
+  </moduleFunctionalities>
+</appFunctionalities>
+
+# Data Structure
+ <dataStructure>
+  <module name="Cadastro">
+   <field name="Nome" type="text"/>
+   <field name="Data de Nascimento" type="date"/>
+   <field name="Sexo" type="dropdown">
+    <option value="Masculino"/>
+    <option value="Feminino"/>
+   </field>
+   <field name="Escolaridade" type="text"/>
+   <field name="Estado Civil" type="dropdown">
+    <option value="Solteiro(a)"/>
+    <option value="Casado(a)"/>
+    <option value="Divorciado(a)"/>
+    <option value="Viúvo(a)"/>
+    <option value="Outro"/>
+   </field>
+   <field name="Profissão" type="text"/>
+   <field name="Data do Cadastro" type="date" />
+  </module>
+  <module name="Av. Clínica">
+   <section name="Dados Pessoais">
+    <field name="Nome" type="text" source="Cadastro"/>
+    <field name="Data de Nascimento" type="date" source="Cadastro"/>
+    <field name="Sexo" type="dropdown" source="Cadastro">
+     <option value="Masculino"/>
+     <option value="Feminino"/>
+    </field>
+    <field name="Escolaridade" type="text" source="Cadastro"/>
+   </section>
+   <section name="Anamnese Clínica">
+    <field name="Queixa Principal" type="text"/>
+    <field name="História da Doença Atual" type="text"/>
+    <field name="História Médica Pregressa" type="text"/>
+    <field name="História Familiar" type="text">
+     <note>e.g., HAS, DM, Câncer, Dislipidemia, Obesidade, Tireoideopatias, Outros</note>
+    </field>
+    <subsection name="Hábitos">
+     <field name="Horas de sono" type="number"/>
+     <field name="Qualidade do sono" type="dropdown">
+      <option value="Bom"/>
+      <option value="Regular"/>
+      <option value="Ruim"/>
+     </field>
+     <field name="Fuma" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Ex-fumante"/>
+     </field>
+     <field name="Tipo" type="text" condition="Fuma = Sim"/>
+     <field name="Frequência" type="text" condition="Fuma = Sim"/>
+     <field name="Quantidade" type="text" condition="Fuma = Sim"/>
+     <field name="Consome bebida alcoólica" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Ex-consumidor"/>
+     </field>
+     <field name="Tipo" type="text" condition="Consome bebida alcoólica = Sim"/>
+     <field name="Frequência" type="text" condition="Consome bebida alcoólica = Sim"/>
+     <field name="Quantidade" type="text" condition="Consome bebida alcoólica = Sim"/>
+    </subsection>
+    <subsection name="Sinais e Sintomas">
+     <field name="Alergias alimentares" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Intolerâncias alimentares" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Dificuldade de mastigação" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Dificuldade de deglutição" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Náuseas" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Vômitos" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Pirose" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Refluxo" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Diarreia" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Obstipação" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Dor abdominal" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Distensão abdominal" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Uso de laxantes" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Uso de antiácidos" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Alterações de apetite" type="dropdown">
+      <option value="Pouco"/>
+      <option value="Normal"/>
+      <option value="Aumentado"/>
+      <option value="Variável"/>
+     </field>
+     <field name="Alterações de peso recentes" type="text"/>
+     <field name="Presença de edema" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Cansaço/Fadiga" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Alterações na pele" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Alterações nas unhas" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Alterações nos cabelos" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Sede excessiva" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Poliúria" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Dores musculares/articulares" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+     <field name="Cãimbras" type="dropdown">
+      <option value="Sim"/>
+      <option value="Não"/>
+      <option value="Não sabe"/>
+     </field>
+    </subsection>
+    <subsection name="Questões Específicas">
+     <field name="Nasceu de parto" type="dropdown">
+      <option value="Pré-termo"/>
+      <option value="A termo"/>
+      <option value="Pós-termo"/>
+     </field>
+     <field name="Funcionamento Intestinal" type="dropdown">
+      <option value="Normal"/>
+      <option value="Obstipado"/>
+      <option value="Diarreico"/>
+      <option value="Alterna diarreia e obstipação"/>
+     </field>
+     <field name="Cor da Urina" type="dropdown">
+      <option value="Muito clara"/>
+      <option value="Clara (normal)"/>
+      <option value="Escura"/>
+     </field>
+     <field name="Uso de medicamentos" type="text"/>
+     <field name="Uso de suplementos" type="text"/>
+     <field name="Outras observações relevantes" type="text"/>
+    </subsection>
+   </section>
+  </module>
+  <module name="Av. Alimentar">
+   <field name="Já fez acompanhamento nutricional antes" type="dropdown">
+    <option value="Sim"/>
+    <option value="Não"/>
+    <option value="Não sabe"/>
+   </field>
+   <field name="Qual objetivo" type="text" condition="Já fez acompanhamento nutricional antes = Sim"/>
+   <field name="Com qual profissional" type="dropdown">
+    <option value="Endocrinologista"/>
+    <option value="Nutricionista"/>
+    <option value="Nutrólogo"/>
+    <option value="Ortomolecular"/>
+    <option value="Pediatra"/>
+    <option value="Outro"/>
+   </field>
+   <field name="Alergias alimentares descritas" type="text"/>
+   <field name="Intolerâncias alimentares descritas" type="text"/>
+   <field name="Apetite" type="dropdown">
+    <option value="Pouco"/>
+    <option value="Normal"/>
+    <option value="Aumentado"/>
+    <option value="Variável"/>
+   </field>
+   <field name="Local onde realiza as refeições" type="text"/>
+   <field name="Quem prepara as refeições" type="text"/>
+   <field name="Horários das refeições" type="text"/>
+   <field name="Consumo de água" type="text"/>
+   <field name="Uso de sal" type="dropdown">
+    <option value="Pouco"/>
+    <option value="Moderado"/>
+    <option value="Muito"/>
+    <option value="Não usa"/>
+   </field>
+   <field name="Tipo de sal" type="text"/>
+   <field name="Uso de óleo/gordura para cozinhar" type="text"/>
+   <field name="Quantidade de óleo/gordura" type="dropdown">
+    <option value="Pouca"/>
+    <option value="Moderada"/>
+    <option value="Muita"/>
+   </field>
+   <field name="Uso de açúcar/adoçante" type="text"/>
+   <field name="Preferências alimentares" type="text"/>
+   <field name="Aversões alimentares" type="text"/>
+   <subsection name="Recordatório Alimentar 24h / Diário Alimentar">
+    <field name="Refeição" type="dropdown">
+     <option value="Desjejum"/>
+     <option value="Colação"/>
+     <option value="Almoço"/>
+     <option value="Lanche"/>
+     <option value="Jantar"/>
+     <option value="Ceia"/>
+     <option value="Antes de dormir"/>
+    </field>
+    <field name="Horário" type="time"/>
+    <field name="Alimento" type="text"/>
+    <field name="Quantidade" type="text"/>
+    <field name="Modo de preparo" type="text"/>
+    <field name="Observações" type="text"/>
+   </subsection>
+   <subsection name="Frequência Alimentar">
+    <field name="Alimento/Grupo" type="text"/>
+    <field name="Frequência de consumo" type="dropdown">
+     <option value="Diário"/>
+     <option value="X vezes/semana"/>
+     <option value="X vezes/mês"/>
+     <option value="Raramente"/>
+     <option value="Nunca"/>
+    </field>
+    <field name="Porção habitual" type="text"/>
+   </subsection>
+  </module>
+  <module name="Av. Comportamental">
+   <subsection name="Tabagismo">
+    <field name="Fumante" type="dropdown">
+     <option value="Sim"/>
+     <option value="Não"/>
+     <option value="Ex-fumante"/>
+    </field>
+    <field name="Início" type="text" condition="Fumante = Sim OR Fumante = Ex-fumante"/>
+    <field name="Tipo de cigarro/produto" type="text" condition="Fumante = Sim OR Fumante = Ex-fumante"/>
+    <field name="Quantidade por dia" type="text" condition="Fumante = Sim OR Fumante = Ex-fumante"/>
+    <field name="Há quanto tempo parou" type="text" condition="Fumante = Ex-fumante"/>
+   </subsection>
+   <subsection name="Etilismo">
+    <field name="Consome bebida alcoólica" type="dropdown">
+     <option value="Sim"/>
+     <option value="Não"/>
+     <option value="Ex-consumidor"/>
+    </field>
+    <field name="Início do consumo" type="text" condition="Consome bebida alcoólica = Sim OR Consome bebida alcoólica = Ex-consumidor"/>
+    <list name="Bebidas Alcoólicas" condition="Consome bebida alcoólica = Sim OR Consome bebida alcoólica = Ex-consumidor">
+     <field name="Tipo de Bebida" type="dropdown">
+      <option value="Absinto"/>
+      <option value="Cachaça"/>
+           <option value="Chopp/cerveja"/>
+           <option value="Ice"/>
+           <option value="Rum/gim"/>
+     </field>
+     <field name="Frequência" type="text"/>
+     <field name="Quantidade por ocasião" type="number"/>
+     <field name="Unidade de medida" type="dropdown">
+      <option value="Cálices"/>
+      <option value="Canecas"/>
+      <option value="Copos americanos"/>
+      <option value="Copos duplos"/>
+      <option value="Doses"/>
+     </field>
+     <field name="Teor Alcoólico (%)" type="number"/>
+    </list>
+    <field name="Há quanto tempo parou" type="text" condition="Consome bebida alcoólica = Ex-consumidor"/>
+   </subsection>
+   <field name="Prática de atividade física" type="dropdown">
+    <option value="Sim"/>
+    <option value="Não"/>
+   </field>
+   <field name="Qual(is)" type="text" condition="Prática de atividade física = Sim"/>
+   <field name="Frequência" type="text" condition="Prática de atividade física = Sim"/>
+   <field name="Duração" type="text" condition="Prática de atividade física = Sim"/>
+   <field name="Intensidade" type="dropdown" condition="Prática de atividade física = Sim">
+    <option value="Leve"/>
+    <option value="Moderada"/>
+    <option value="Intensa"/>
+   </field>
+   <field name="Nível de estresse" type="dropdown">
+    <option value="Baixo"/>
+    <option value="Moderado"/>
+    <option value="Alto"/>
+   </field>
+   <field name="Qualidade de vida percebida" type="text"/>
+  </module>
+  <module name="Av. Antropométrica">
+   <field name="Data da Avaliação" type="date"/>
+   <field name="Peso Atual" type="number" unit="Kg"/>
+   <field name="Peso Habitual" type="number" unit="Kg"/>
+   <field name="Peso Desejado" type="number" unit="Kg"/>
+   <field name="Altura" type="number" unit="m"/>
+   <subsection name="Circunferências">
+    <field name="Braço Relaxado" type="number" unit="cm"/>
+    <field name="Braço Contraído" type="number" unit="cm"/>
+    <field name="Cintura" type="number" unit="cm"/>
+    <field name="Abdômen" type="number" unit="cm"/>
+    <field name="Quadril" type="number" unit="cm"/>
+    <field name="Coxa Proximal" type="number" unit="cm"/>
+    <field name="Coxa Medial" type="number" unit="cm"/>
+    <field name="Panturrilha" type="number" unit="cm"/>
+    <field name="Pescoço" type="number" unit="cm"/>
+    <field name="Punho" type="number" unit="cm"/>
+   </subsection>
+   <subsection name="Dobras Cutâneas">
+    <note>Specify if using Adipômetro (Caliper)</note>
+    <field name="Bicipital" type="number" unit="mm"/>
+    <field name="Tricipital" type="number" unit="mm"/>
+    <field name="Subescapular" type="number" unit="mm"/>
+    <field name="Peitoral" type="number" unit="mm" condition="Paciente.Sexo = Masculino"/>
+    <field name="Axilar Média" type="number" unit="mm"/>
+    <field name="Suprailíaca" type="number" unit="mm"/>
+    <field name="Abdominal" type="number" unit="mm"/>
+    <field name="Coxa" type="number" unit="mm"/>
+    <field name="Panturrilha Medial" type="number" unit="mm"/>
+   </subsection>
+   <subsection name="Diâmetros Ósseos">
+    <field name="Biepicondiliano do Úmero" type="number" unit="cm"/>
+    <field name="Biepicondiliano do Fêmur" type="number" unit="cm"/>
+   </subsection>
+   <field name="Objetivo da avaliação/acompanhamento" type="text"/>
+  </module>
+  <module name="Av. Bioquímica">
+   <field name="Data da Coleta" type="date"/>
+   <list name="Exames">
+    <field name="Nome do Exame" type="dropdown">
+     <option value="Glicemia de Jejum"/>
+     <option value="Hemoglobina Glicada"/>
+     <option value="Colesterol Total"/>
+     <option value="HDL"/>
+     <option value="LDL"/>
+     <option value="Triglicerídeos"/>
+     <option value="Ácido Úrico"/>
+     <option value="Ureia"/>
+     <option value="Creatinina"/>
+     <option value="TGO"/>
+     <option value="TGP"/>
+     <option value="Gama GT"/>
+     <option value="Ferritina"/>
+     <option value="Vitamina D"/>
+     <option value="Vitamina B12"/>
+     <option value="FSH"/>
+     <option value="LH"/>
+     <option value="Estradiol"/>
+     <option value="Progesterona"/>
+     <option value="Testosterona Total"/>
+     <option value="TSH"/>
+     <option value="T4 Livre"/>
+     <option value="T3 Livre"/>
+    </field>
+    <field name="Resultado" type="number"/>
+    <field name="Unidade" type="text"/>
+    <field name="Valor de Referência" type="text"/>
+    <field name="Condição Específica" type="text"/>
+   </list>
+  </module>
+  <module name="MET">
+   <field name="Data da Consulta" type="date"/>
+   <field name="Peso" type="number" unit="Kg"/>
+   <field name="GER" type="number" unit="Kcal/24h"/>
+   <field name="Tempo de Sono" type="number" unit="horas"/>
+   <list name="Atividades Físicas">
+    <field name="Tipo de Atividade" type="dropdown">
+     <option value="Caminhada leve (3km/h)"/>
+     <option value="Corrida (10km/h)"/>
+     <option value="Natação"/>
+     <option value="Musculação"/>
+    </field>
+    <field name="Duração da Atividade" type="number"/>
+   </list>
+   <field name="Descrição da Atividade Principal" type="text"/>
+   <field name="Tempo Gasto" type="number"/>
+   <field name="METS da Atividade Laboral" type="number"/>
+   <field name="Fator de Atividade Ocupacional" type="dropdown">
+    <option value="Leve"/>
+    <option value="Moderada"/>
+    <option value="Intensa"/>
+   </field>
+   <list name="Outras Atividades">
+    <field name="Tipo de Atividade" type="text"/>
+    <field name="Duração da Atividade" type="number"/>
+   </list>
+  </module>
+  <module name="Macronutrientes e Calorias">
+   <field name="GET" type="number" unit="Kcal/dia"/>
+   <field name="Objetivo Calórico" type="dropdown">
+    <option value="Manutenção"/>
+    <option value="Perda de Peso"/>
+    <option value="Ganho de Massa"/>
+   </field>
+   <field name="Ajuste Calórico" type="number"/>
+   <subsection name="Distribuição de Macronutrientes">
+    <field name="Proteínas (% do VET)" type="number"/>
+    <field name="Carboidratos (% do VET)" type="number"/>
+    <field name="Lipídios (% do VET)" type="number"/>
+    <field name="Proteínas (g/kg)" type="number"/>
+    <field name="Carboidratos (g/kg)" type="number"/>
+    <field name="Lipídios (g/kg)" type="number"/>
+   </subsection>
+   <field name="Peso para Cálculo" type="number" unit="Kg"/>
+   <field name="Fator Atividade" type="number"/>
+   <field name="Fator Injúria/Estresse" type="number"/>
+   <field name="Considerações Específicas" type="text"/>
+  </module>
+  <module name="Micronutrientes">
+   <field name="Paciente" type="link" target="Cadastro"/>
+   <field name="Idade" type="number" source="Cadastro"/>
+   <field name="Sexo" type="dropdown" source="Cadastro">
+    <option value="Masculino"/>
+    <option value="Feminino"/>
+   </field>
+   <field name="Condições Especiais" type="multiselect">
+    <option value="Gestante"/>
+    <option value="Lactante"/>
+    <option value="Idoso"/>
+    <option value="Atleta"/>
+    <option value="Deficiências específicas diagnosticadas"/>
+   </field>
+   <list name="Micronutrientes">
+    <field name="Nome do Micronutriente" type="dropdown">
+     <option value="Vitamina A"/>
+     <option value="Vitamina C"/>
+     <option value="Vitamina D"/>
+     <option value="Vitamina E"/>
+     <option value="Tiamina"/>
+           <option value="Riboflavina"/>
+           <option value="Niacina"/>
+           <option value="Vitamina B6"/>
+           <option value="Folato"/>
+           <option value="Vitamina B12"/>
+           <option value="Cálcio"/>
+           <option value="Fósforo"/>
+           <option value="Magnésio"/>
+           <option value="Ferro"/>
+           <option value="Zinco"/>
+           <option value="Cobre"/>
+           <option value="Selênio"/>
+           <option value="Iodo"/>
+           <option value="Sódio"/>
+           <option value="Potássio"/>
+           <option value="Cloreto"/>
+    </field>
+    <field name="Recomendação Específica" type="text"/>
+    <field name="Suplementação Prescrita" type="text"/>
+   </list>
+  </module>
+ </dataStructure>
