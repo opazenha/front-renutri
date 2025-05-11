@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/components/login/login.component'; // Import LoginComponent
 import { RegisterComponent } from './features/auth/components/register/register.component'; // Import RegisterComponent
+import { DashboardComponent } from './features/dashboard/components/dashboard/dashboard.component'; // Import DashboardComponent
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
+    { path: 'dashboard', component: DashboardComponent }, // TODO: Add AuthGuard here in Subtask 2.11
     // TODO: Add a default route, e.g., redirect to login or a home page
     { path: '', redirectTo: '/login', pathMatch: 'full' }, 
     // TODO: Add a wildcard route for 404 handling

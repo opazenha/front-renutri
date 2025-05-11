@@ -27,6 +27,7 @@ export class RegisterComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isLoading: boolean = false;
+  submitted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -49,29 +50,36 @@ export class RegisterComponent implements OnInit {
   get confirmPassword() { return this.registerForm.get('confirmPassword'); }
 
   onSubmit(): void {
+    this.submitted = true;
+    this.errorMessage = null;
+
     if (this.registerForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields correctly and ensure passwords match.';
-      this.registerForm.markAllAsTouched();
+      console.log('Registration form is invalid');
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = null;
-    this.successMessage = null;
-
-    // Exclude confirmPassword from the request payload
     const { confirmPassword, ...registrationData } = this.registerForm.value;
     const payload: RegisterRequest = registrationData;
 
     this.authService.register(payload).subscribe({
       next: (response) => {
-        this.isLoading = false;
-        this.successMessage = response.message + ' You will be redirected to login shortly.';
         console.log('Registration successful:', response);
-        // Navigate to login page after a short delay to show success message
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 3000); // 3-second delay
+        // Automatically log in the user after successful registration
+        this.authService.login({ email: payload.email, password: payload.password }).subscribe({
+          next: (loginResponse) => {
+            this.isLoading = false;
+            console.log('Auto-login after registration successful:', loginResponse);
+            this.router.navigate(['/dashboard']);
+          },
+          error: (loginErr) => {
+            this.isLoading = false;
+            this.errorMessage = loginErr.error?.error || loginErr.error?.message || 'Auto-login failed after registration. Please try logging in manually.';
+            console.error('Auto-login after registration failed:', loginErr);
+            // Optionally navigate to login page or display a specific message
+            // this.router.navigate(['/login']); 
+          }
+        });
       },
       error: (err) => {
         this.isLoading = false;

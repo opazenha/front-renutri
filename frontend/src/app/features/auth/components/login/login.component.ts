@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup; // Definite assignment assertion
   errorMessage: string | null = null;
   isLoading: boolean = false;
+  submitted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,27 +38,23 @@ export class LoginComponent implements OnInit {
   get password() { return this.loginForm.get('password'); }
 
   onSubmit(): void {
+    this.submitted = true;
+    this.errorMessage = null; // Reset error message
+
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields correctly.';
-      // Mark all fields as touched to display validation errors
-      this.loginForm.markAllAsTouched();
+      console.log('Login form is invalid');
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = null;
-
     const credentials: LoginRequest = this.loginForm.value;
-
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        this.isLoading = false;
-        console.log('Login successful:', response);
-        // Token storage and state management will be handled in Subtask 2.8
-        // For now, navigate to a placeholder dashboard
-        this.router.navigate(['/dashboard']); // TODO: Create dashboard route and component later
+        console.log('Login successful', response);
+        // Navigate to a protected route or dashboard
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
+        console.error('Login failed', err);
         this.isLoading = false;
         this.errorMessage = err.error?.error || err.error?.message || 'Login failed. Please check your credentials and try again.';
         console.error('Login error:', err);
