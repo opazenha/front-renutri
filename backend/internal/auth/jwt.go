@@ -43,5 +43,32 @@ func GenerateJWT(nutritionistID string) (string, error) {
 	return tokenString, nil
 }
 
-// TODO: Add ValidateJWT function later if needed by middleware or other services directly.
-// For now, middleware will handle parsing and validation.
+// ValidateJWT parses and validates a JWT string. 
+// It returns the claims if the token is valid, otherwise an error.
+func ValidateJWT(tokenString string) (*Claims, error) {
+	if config.AppConfig == nil || config.AppConfig.JWTSecretKey == "" {
+		return nil, fmt.Errorf("JWT secret key not configured")
+	}
+
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		// Check the signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(config.AppConfig.JWTSecretKey), nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse token: %w", err)
+	}
+
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		// Check if token is expired (though ParseWithClaims usually handles this for 'exp' claim)
+		if time.Unix(claims.ExpiresAt.Unix(), 0).Before(time.Now()) {
+			return nil, fmt.Errorf("token is expired")
+		}
+		return claims, nil
+	}
+
+	return nil, fmt.Errorf("invalid token")
+}

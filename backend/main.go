@@ -11,6 +11,8 @@ import (
 	"github.com/zenha/front-renutri/backend/internal/config"
 	"github.com/zenha/front-renutri/backend/internal/database"
 	"github.com/zenha/front-renutri/backend/internal/handlers"
+	"github.com/zenha/front-renutri/backend/internal/middleware"
+	"github.com/zenha/front-renutri/backend/internal/auth"
 )
 
 // Logger is a middleware function to log requests
@@ -80,6 +82,34 @@ func main() {
 			// Logout route will be added here later (POST /logout)
 		}
 		// Other v1 routes can be added here (e.g., for patients, assessments)
+		
+		// Protected routes - require JWT authentication
+		protected := apiV1.Group("")
+		protected.Use(middleware.AuthMiddleware()) // Apply auth middleware to this group
+		{
+			protected.GET("/me", func(c *gin.Context) {
+				// Retrieve claims from context (set by AuthMiddleware)
+				claims, exists := c.Get("currentUserClaims")
+				if !exists {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "User claims not found in context"})
+					return
+				}
+				// Type assert claims to the correct struct (auth.Claims)
+				nutritionistClaims, ok := claims.(*auth.Claims)
+				if !ok {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse user claims"})
+					return
+				}
+
+				c.JSON(http.StatusOK, gin.H{
+					"message":        "Successfully accessed protected route",
+					"nutritionistId": nutritionistClaims.NutritionistID,
+					"issuer":         nutritionistClaims.Issuer,
+					"expiresAt":      nutritionistClaims.ExpiresAt.Time,
+				})
+			})
+			// Add other protected routes here (e.g., GET /patients, POST /assessments)
+		}
 	}
 
 	// Example of how to get a collection (will be used in handlers)
