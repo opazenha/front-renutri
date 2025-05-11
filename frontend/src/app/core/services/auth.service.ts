@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router'; // Import Router
 
 // Define interfaces for request and response types for clarity
 export interface LoginRequest {
@@ -37,7 +38,7 @@ export class AuthService {
   private apiUrl = '/api/v1/auth'; // Base URL for auth endpoints (proxied by Angular CLI in dev)
   private readonly TOKEN_KEY = 'renutri_auth_token';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   private saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -76,5 +77,13 @@ export class AuthService {
     );
   }
 
-  // logout() method will be added in Subtask 2.9
+  logout(): void {
+    this.removeToken();
+    console.log('User logged out, token removed.');
+    // Navigate to login page
+    // Note: It's generally better to handle navigation in the component after calling logout,
+    // or use an auth state observable to react to logout events globally.
+    // For simplicity here, navigating directly. This might cause issues if service is used where Router isn't fully ready.
+    this.router.navigate(['/login']); 
+  }
 }
