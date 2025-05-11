@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   frontend:
     build:
@@ -17,10 +16,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080" # Map host port 8080 to container port 8080 (Gin)
+    env_file:
+      - .env # Load environment variables from .env file
     environment:
-      # Replace with your actual Atlas connection string in a .env file or secrets management
-      - MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database_name>?retryWrites=true&w=majority
-      - GIN_MODE=release # or debug for development
+      - GIN_MODE=${GIN_MODE:-release} # Uses GIN_MODE from .env if set, otherwise defaults to 'release'
     depends_on:
       - mongo # Or remove if connecting directly to Atlas and not running a local mongo instance
     restart: unless-stopped
