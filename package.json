@@ -1,0 +1,16 @@
+{
+  "name": "front-renutri-monorepo",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Root package for front-renutri project, managing frontend and backend scripts.",
+  "scripts": {
+    "lint:frontend": "npm run lint --prefix frontend",
+    "format:frontend": "npm run format --prefix frontend",
+    "lint:backend": "cd backend && golangci-lint run ./...",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "postinstall": "cd frontend && npm install"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}

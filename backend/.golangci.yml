@@ -1,0 +1,129 @@
+run:
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  timeout: 5m
+  # exit code when issues were found, default is 1
+  issues-exit-code: 1
+  # include test files or not, default is true
+  tests: true
+  # list of build tags, all linters use it.
+  # build-tags:
+  #   - mytag
+
+  # Individual linters timeout. Gosec, for example, can be long-running.
+  # default is 1m (same as total timeout), 0 means no timeout
+  # linters-timeout: 5m
+
+linters-settings:
+  errcheck:
+    # report about not checking of errors in type assetions: `a := b.(MyType)`
+    check-type-assertions: true
+    # report about not checking of errors in blank assignments: `_ = Write(buf, []byte("hi"))`
+    check-blank: true
+  govet:
+    # report about shadowed variables
+    check-shadowing: true
+  gocyclo:
+    # minimal code complexity to report, 30 by default (but often too high)
+    min-complexity: 15
+  maligned:
+    # print struct with more effective memory layout or not, false by default
+    suggest-new: true
+  goconst:
+    # minimal length of string constant, 3 by default
+    min-len: 2
+    # minimal occurrences of string constant, 3 by default
+    min-occurrences: 2
+  misspell:
+    # Correct spellings using locale preferences for US or UK. Options: "US" or "UK" (case-sensitive). Default is "US".
+    locale: US
+  lll:
+    # max line length, lines longer will be reported. Default is 120.
+    line-length: 120
+  unused:
+    # treat code as a program (not a library) and report unused exported types, methods, and functions.
+    # default is false.
+    check-exported: false
+  unparam:
+    # Inspect exported functions, default is false.
+    check-exported: false
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - whyNoLint # Wont complain about whyNoLint comments
+  dogsled:
+    max-blank-identifiers: 2
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - exhaustive
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - wastedassign
+    # - lll # Can be noisy, enable if desired
+    # - maligned # Useful for struct memory layout, but can be opinionated
+    # - prealloc # Useful but sometimes too aggressive
+
+issues:
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  exclude-rules:
+    # Exclude some linters from running on test files.
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec # Often test code has simplified error handling or security
+
+    # Example of excluding a specific linter from a specific directory
+    # - path: internal/generated/
+    #   linters:
+    #     - staticcheck
+
+  max-issues-per-linter: 0 # Unlimited
+  max-same-issues: 0 # Unlimited
+
+# output configuration options
+output:
+  # colored-line-number|line-number|json|tab|checkstyle|code-climate|html|junit-xml|github-actions
+  # default is colored-line-number
+  format: colored-line-number
+  # print lines of code with issue, default is true
+  print-issued-lines: true
+  # print linter name in the end of issue text, default is true
+  print-linter-name: true
+  # uniq by verbose needed for GitHub Actions output format
+  uniq-by-line: true
