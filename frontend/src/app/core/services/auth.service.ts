@@ -8,6 +8,13 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  // confirmPassword is for frontend validation, not sent to backend
+}
+
 export interface AuthResponse {
   message: string;
   token: string;
@@ -16,6 +23,11 @@ export interface AuthResponse {
     name: string;
     email: string;
   };
+}
+
+export interface RegisterResponse {
+  message: string;
+  nutritionistId: string; // Or whatever ID is returned
 }
 
 @Injectable({
@@ -37,6 +49,14 @@ export class AuthService {
     );
   }
 
-  // register() method will be added in Subtask 2.7
+  register(details: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, details).pipe(
+      tap(response => {
+        console.log('Registration successful:', response);
+        // Typically, after registration, you might navigate to login or show a success message.
+      })
+    );
+  }
+
   // logout() method will be added in Subtask 2.9
 }
