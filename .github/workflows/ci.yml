@@ -1,0 +1,72 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-lint:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Node.js (Frontend) Setup & Operations
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x' # Compatible with Angular 19
+        cache: 'npm'
+        # Ensure both root and frontend lock files are used for cache invalidation
+        cache-dependency-path: |
+          package-lock.json
+          frontend/package-lock.json
+
+    - name: Install Node.js dependencies (root & frontend workspace)
+      run: npm ci # npm ci in root should handle workspaces defined in root package.json
+
+    - name: Lint Frontend
+      run: npm run lint:frontend # Uses script from root package.json
+
+    - name: Build Frontend
+      # ng build needs to run within the frontend directory context.
+      run: npm run build --prefix frontend
+
+    # Go (Backend) Setup & Operations
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22' # Match project's Go version
+
+    - name: Cache golangci-lint
+      id: cache-golangci-lint # Give an id to refer to its outputs
+      uses: actions/cache@v4
+      with:
+        # Cache the golangci-lint binary itself
+        path: $(go env GOPATH)/bin/golangci-lint
+        # Key includes OS and a fixed version string for golangci-lint
+        key: ${{ runner.os }}-golangci-lint-v1.59.1
+
+    - name: Install golangci-lint
+      # Run only if not found in cache
+      if: steps.cache-golangci-lint.outputs.cache-hit != 'true'
+      run: |
+        echo "golangci-lint not found in cache. Installing v1.59.1..."
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.59.1
+    
+    - name: Add GOBIN to GITHUB_PATH
+      # Ensures golangci-lint (and other Go binaries) are in PATH for subsequent steps
+      run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+    - name: Lint Backend
+      # This uses the script from the root package.json, which cds into backend
+      run: npm run lint:backend
+
+    - name: Build Backend
+      working-directory: ./backend # Explicitly set working directory for go build
+      run: go build -v -o ./app ./main.go
+      # The output binary 'app' will be in the 'backend' directory
