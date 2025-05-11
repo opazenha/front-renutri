@@ -7,7 +7,8 @@ import (
 
 // Nutritionist represents a nutritionist user in the system.
 // BSON tags are for MongoDB mapping.
-// Validate tags are for request body validation (e.g., using go-playground/validator).	ype Nutritionist struct {
+// Validate tags are for request body validation (e.g., using go-playground/validator)
+type Nutritionist struct {
 	ID                      primitive.ObjectID `bson:"_id,omitempty"`
 	Name                    string             `bson:"name" validate:"required,min=2,max=100"`
 	Email                   string             `bson:"email" validate:"required,email"`
