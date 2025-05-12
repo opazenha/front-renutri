@@ -15,10 +15,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
-import { cn } from "@/lib/utils";
+import { DateDropdowns } from "@/components/ui/date-dropdowns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { Patient } from "@/types";
+import type { Patient, MaritalStatus } from "@/types";
 import { getYear } from "date-fns";
 
 interface PatientFormClientProps {
@@ -28,6 +27,7 @@ interface PatientFormClientProps {
 }
 
 const CURRENT_YEAR = getYear(new Date());
+const maritalStatusOptions: MaritalStatus[] = ["Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viúvo(a)", "Outro"];
 
 export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFormClientProps) {
   const form = useForm<PatientFormData>({
@@ -36,10 +36,16 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
       name: patient.name,
       dob: patient.dob,
       gender: patient.gender,
+      schooling: patient.schooling || "",
+      maritalStatus: patient.maritalStatus,
+      profession: patient.profession || "",
     } : {
       name: "",
-      dob: "", // react-hook-form expects string for controlled DateDropdowns
+      dob: "", 
       gender: undefined,
+      schooling: "",
+      maritalStatus: undefined,
+      profession: "",
     },
   });
 
@@ -106,6 +112,57 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="schooling"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Escolaridade</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: Ensino Médio Completo" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="maritalStatus"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Estado Civil</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o estado civil" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {maritalStatusOptions.map(status => (
+                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="profession"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Profissão</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: Engenheiro(a), Professor(a)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Salvando..." : (patient ? "Atualizar Paciente" : "Adicionar Paciente")}
@@ -114,3 +171,5 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
     </Form>
   );
 }
+
+    

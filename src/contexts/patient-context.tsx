@@ -1,22 +1,36 @@
 
 "use client";
 
-import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender } from "@/types";
-import type { AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData, AppointmentFormData } from "@/lib/schemas";
+import type { 
+  Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, 
+  ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender,
+  ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment
+} from "@/types";
+import type { 
+  AnthropometricFormData, LabExamFormData, EnergyExpenditureFormData, MacronutrientPlanFormData, 
+  MicronutrientRecommendationFormData, ActivityDetailFormData, WorkActivityDetailFormData, MicronutrientDetailFormData, 
+  AppointmentFormData, ClinicalAssessmentFormData, FoodAssessmentFormData, BehavioralAssessmentFormData, BiochemicalAssessmentFormData
+} from "@/lib/schemas";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
-import { mockPatients } from "@/lib/mock-data"; // Import mock data
-import type { AppointmentStatus } from "@/lib/schemas"; // Explicitly import AppointmentStatus
+import { v4 as uuidv4 } from "uuid";
+import { mockPatients } from "@/lib/mock-data";
+import type { AppointmentStatus } from "@/lib/schemas";
 import { calculateAge } from "@/types";
 
 interface PatientContextType {
   patients: Patient[];
-  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments">) => Patient;
+  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments" | "clinicalAssessments" | "foodAssessments" | "behavioralAssessments" | "biochemicalAssessments">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
+  
+  updatePatientClinicalAssessment: (patientId: string, data: ClinicalAssessmentFormData) => void;
+  updatePatientFoodAssessment: (patientId: string, data: FoodAssessmentFormData) => void;
+  updatePatientBehavioralAssessment: (patientId: string, data: BehavioralAssessmentFormData) => void;
   updatePatientAnthropometry: (patientId: string, data: AnthropometricFormData) => void;
+  updatePatientBiochemicalAssessment: (patientId: string, data: BiochemicalAssessmentFormData) => void;
   updatePatientEnergyExpenditure: (patientId: string, data: EnergyExpenditureFormData) => void;
   updatePatientMacronutrientPlan: (patientId: string, data: MacronutrientPlanFormData) => void;
   updatePatientMicronutrientRecommendation: (patientId: string, data: MicronutrientRecommendationFormData) => void;
+  
   isLoading: boolean;
 
   appointments: Appointment[];
@@ -46,19 +60,48 @@ useEffect(() => {
       const storedPatientsJson = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
       if (storedPatientsJson) {
         const parsedPatients = JSON.parse(storedPatientsJson) as Patient[];
-        if (Array.isArray(parsedPatients) && parsedPatients.length > 0) {
-          patientsToSet = parsedPatients;
-        } else {
-          // If localStorage has an empty array or is invalid, use mock data.
-          patientsToSet = mockPatients;
+        // Ensure all necessary arrays exist for each patient
+        patientsToSet = parsedPatients.map(p => ({
+          ...p,
+          anthropometricData: p.anthropometricData || [],
+          energyExpenditureRecords: p.energyExpenditureRecords || [],
+          macronutrientPlans: p.macronutrientPlans || [],
+          micronutrientRecommendations: p.micronutrientRecommendations || [],
+          clinicalAssessments: p.clinicalAssessments || [],
+          foodAssessments: p.foodAssessments || [],
+          behavioralAssessments: p.behavioralAssessments || [],
+          biochemicalAssessments: p.biochemicalAssessments || [],
+          appointments: p.appointments || [],
+        }));
+
+        if (patientsToSet.length === 0) { // If localStorage was valid but empty
+             patientsToSet = mockPatients.map(p => ({ // Ensure mock patients also have all arrays
+                ...p,
+                clinicalAssessments: p.clinicalAssessments || [],
+                foodAssessments: p.foodAssessments || [],
+                behavioralAssessments: p.behavioralAssessments || [],
+                biochemicalAssessments: p.biochemicalAssessments || [],
+             }));
         }
+
       } else {
-        // No patients in localStorage, use mock data.
-        patientsToSet = mockPatients;
+        patientsToSet = mockPatients.map(p => ({ // Ensure mock patients also have all arrays
+            ...p,
+            clinicalAssessments: p.clinicalAssessments || [],
+            foodAssessments: p.foodAssessments || [],
+            behavioralAssessments: p.behavioralAssessments || [],
+            biochemicalAssessments: p.biochemicalAssessments || [],
+         }));
       }
     } catch (error) {
       console.error("Failed to parse patients from localStorage, using mock data.", error);
-      patientsToSet = mockPatients; // Fallback to mock data on error
+      patientsToSet = mockPatients.map(p => ({ // Ensure mock patients also have all arrays
+        ...p,
+        clinicalAssessments: p.clinicalAssessments || [],
+        foodAssessments: p.foodAssessments || [],
+        behavioralAssessments: p.behavioralAssessments || [],
+        biochemicalAssessments: p.biochemicalAssessments || [],
+     }));
     }
     setPatients(patientsToSet);
 
@@ -69,10 +112,9 @@ useEffect(() => {
             if (Array.isArray(parsedAppointments)) {
                 appointmentsToSet = parsedAppointments;
             } else {
-                appointmentsToSet = []; // Default to empty if localStorage is invalid
+                appointmentsToSet = [];
             }
         } else {
-             // Initialize appointments for mock patients if they don't exist in localStorage
              const initialAppointments: Appointment[] = [];
              patientsToSet.forEach(p => {
                 if(p.appointments && p.appointments.length > 0) {
@@ -118,7 +160,7 @@ useEffect(() => {
   }, [appointments, isLoading]);
 
 
-  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments">) => {
+  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments" | "clinicalAssessments" | "foodAssessments" | "behavioralAssessments" | "biochemicalAssessments">) => {
     const newPatient: Patient = {
       ...patientData,
       id: uuidv4(),
@@ -128,9 +170,59 @@ useEffect(() => {
       macronutrientPlans: [],
       micronutrientRecommendations: [],
       appointments: [], 
+      clinicalAssessments: [],
+      foodAssessments: [],
+      behavioralAssessments: [],
+      biochemicalAssessments: [],
     };
     setPatients((prevPatients) => [...prevPatients, newPatient]);
     return newPatient;
+  };
+
+  const updatePatientClinicalAssessment = (patientId: string, data: ClinicalAssessmentFormData) => {
+    setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newRecord: ClinicalAssessment = { id: uuidv4(), ...data };
+        const updatedRecords = [...(p.clinicalAssessments || []), newRecord].sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+        return { ...p, clinicalAssessments: updatedRecords };
+      }
+      return p;
+    }));
+  };
+
+  const updatePatientFoodAssessment = (patientId: string, data: FoodAssessmentFormData) => {
+    setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newRecord: FoodAssessment = { 
+          id: uuidv4(), 
+          ...data,
+          dietaryRecall24h: data.dietaryRecall24h?.map(item => ({...item, id: item.id || uuidv4()})),
+          foodFrequency: data.foodFrequency?.map(item => ({...item, id: item.id || uuidv4()})),
+        };
+        const updatedRecords = [...(p.foodAssessments || []), newRecord].sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+        return { ...p, foodAssessments: updatedRecords };
+      }
+      return p;
+    }));
+  };
+  
+  const updatePatientBehavioralAssessment = (patientId: string, data: BehavioralAssessmentFormData) => {
+    setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newRecord: BehavioralAssessment = { 
+          id: uuidv4(), 
+          ...data,
+          alcohol: data.alcohol ? {
+            ...data.alcohol,
+            beverages: data.alcohol.beverages?.map(bev => ({...bev, id: bev.id || uuidv4()}))
+          } : undefined,
+          physicalActivitiesDetails: data.physicalActivitiesDetails?.map(act => ({...act, id: act.id || uuidv4()})),
+        };
+        const updatedRecords = [...(p.behavioralAssessments || []), newRecord].sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+        return { ...p, behavioralAssessments: updatedRecords };
+      }
+      return p;
+    }));
   };
 
   const updatePatientAnthropometry = (patientId: string, data: AnthropometricFormData) => {
@@ -140,8 +232,7 @@ useEffect(() => {
           let bmi: number | undefined = undefined;
           if (data.weightKg && data.heightCm && data.heightCm > 0) {
             const heightInMeters = data.heightCm / 100;
-            const calculatedBmi = data.weightKg / (heightInMeters * heightInMeters);
-            bmi = parseFloat(calculatedBmi.toFixed(2));
+            bmi = parseFloat((data.weightKg / (heightInMeters * heightInMeters)).toFixed(2));
           }
           
           const newRecord: AnthropometricRecord = { 
@@ -174,19 +265,6 @@ useEffect(() => {
             humerusBiepicondylarDiameter: data.humerusBiepicondylarDiameter,
             femurBiepicondylarDiameter: data.femurBiepicondylarDiameter,
             assessmentObjective: data.assessmentObjective,
-            labExams: data.labExams?.map((exam: LabExamFormData) => ({
-              ...exam,
-              id: exam.id || uuidv4(), 
-              result: exam.result as number, 
-            } as LabExamRecord)) || [],
-            smokingHabit: data.smokingHabit,
-            smokingDetails: data.smokingDetails,
-            alcoholConsumption: data.alcoholConsumption,
-            alcoholDetails: data.alcoholDetails?.map(ad => ({...ad, id: ad.id || uuidv4()})),
-            physicalActivityPractice: data.physicalActivityPractice,
-            physicalActivitiesDetails: data.physicalActivitiesDetails?.map(pad => ({...pad, id: pad.id || uuidv4()})),
-            stressLevel: data.stressLevel,
-            perceivedQualityOfLife: data.perceivedQualityOfLife,
           };
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           return { ...p, anthropometricData: updatedAnthropometricData };
@@ -196,16 +274,27 @@ useEffect(() => {
     );
   };
 
+  const updatePatientBiochemicalAssessment = (patientId: string, data: BiochemicalAssessmentFormData) => {
+    setPatients(prevPatients => prevPatients.map(p => {
+      if (p.id === patientId) {
+        const newRecord: BiochemicalAssessment = { 
+          id: uuidv4(), 
+          assessmentDate: data.assessmentDate, // Or a fixed date like new Date().toISOString() if not part of form
+          exams: data.exams.map(exam => ({...exam, id: exam.id || uuidv4()}) as LabExamRecord)
+        };
+        const updatedRecords = [...(p.biochemicalAssessments || []), newRecord].sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+        return { ...p, biochemicalAssessments: updatedRecords };
+      }
+      return p;
+    }));
+  };
+
   const updatePatientEnergyExpenditure = (patientId: string, data: EnergyExpenditureFormData) => {
     setPatients(prevPatients => prevPatients.map(p => {
       if (p.id === patientId) {
         const newRecord: EnergyExpenditureRecord = {
           id: uuidv4(),
-          consultationDate: data.consultationDate,
-          weightKg: data.weightKg,
-          restingEnergyExpenditure: data.restingEnergyExpenditure,
-          gerFormula: data.gerFormula,
-          sleepDuration: data.sleepDuration,
+          ...data,
           physicalActivities: data.physicalActivities?.map((act: ActivityDetailFormData) => ({ ...act, id: act.id || uuidv4() } as ActivityDetail)) || [],
           workActivity: data.workActivity ? { ...data.workActivity, id: data.workActivity.id || uuidv4() } as WorkActivityDetail : undefined,
           otherActivities: data.otherActivities?.map((act: ActivityDetailFormData) => ({ ...act, id: act.id || uuidv4() } as ActivityDetail)) || [],
@@ -220,23 +309,7 @@ useEffect(() => {
   const updatePatientMacronutrientPlan = (patientId: string, data: MacronutrientPlanFormData) => {
      setPatients(prevPatients => prevPatients.map(p => {
       if (p.id === patientId) {
-        const newPlan: MacronutrientPlan = {
-          id: uuidv4(),
-          date: data.date,
-          totalEnergyExpenditure: data.totalEnergyExpenditure,
-          caloricObjective: data.caloricObjective,
-          caloricAdjustment: data.caloricAdjustment,
-          proteinPercentage: data.proteinPercentage,
-          carbohydratePercentage: data.carbohydratePercentage,
-          lipidPercentage: data.lipidPercentage,
-          proteinGramsPerKg: data.proteinGramsPerKg,
-          carbohydrateGramsPerKg: data.carbohydrateGramsPerKg,
-          lipidGramsPerKg: data.lipidGramsPerKg,
-          weightForCalculation: data.weightForCalculation,
-          activityFactor: data.activityFactor,
-          injuryStressFactor: data.injuryStressFactor,
-          specificConsiderations: data.specificConsiderations,
-        };
+        const newPlan: MacronutrientPlan = { id: uuidv4(), ...data };
         const updatedPlans = [...(p.macronutrientPlans || []), newPlan].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         return { ...p, macronutrientPlans: updatedPlans };
       }
@@ -252,10 +325,9 @@ useEffect(() => {
 
         const newRecommendation: MicronutrientRecommendation = {
           id: uuidv4(),
-          date: data.date,
-          ageAtTimeOfRec: patientAge, // Use patient's current age
-          sexAtTimeOfRec: patientGender, // Use patient's gender
-          specialConditions: data.specialConditions || [],
+          ...data,
+          ageAtTimeOfRec: patientAge,
+          sexAtTimeOfRec: patientGender,
           recommendations: data.recommendations?.map((rec: MicronutrientDetailFormData) => ({ 
             ...rec, 
             id: rec.id || uuidv4(),
@@ -319,7 +391,11 @@ useEffect(() => {
       patients, 
       addPatient, 
       getPatientById, 
+      updatePatientClinicalAssessment,
+      updatePatientFoodAssessment,
+      updatePatientBehavioralAssessment,
       updatePatientAnthropometry, 
+      updatePatientBiochemicalAssessment,
       updatePatientEnergyExpenditure,
       updatePatientMacronutrientPlan,
       updatePatientMicronutrientRecommendation,
@@ -343,4 +419,4 @@ export const usePatientContext = () => {
   return context;
 };
 
-
+    

@@ -1,9 +1,9 @@
-import type { Patient, AnthropometricRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, LabExamRecord, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender } from '@/types';
+
+import type { Patient, AnthropometricRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, LabExamRecord, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment, MealRecord, FoodFrequencyRecord, AlcoholicBeverageRecord } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { format, subDays, subMonths, subYears, addMonths } from 'date-fns';
 import { calculateAge } from '@/types';
 
-// Helper to create dates relative to today
 const today = new Date();
 const formatDateISO = (date: Date): string => date.toISOString();
 const formatDateYYYYMMDD = (date: Date): string => format(date, "yyyy-MM-dd");
@@ -31,11 +31,24 @@ const createLabExams = (count: number = 2): LabExamRecord[] => {
   return exams;
 };
 
-const createAnthropometricRecords = (patientId: string, baseWeight: number, baseHeight: number, numRecords: number = 2): AnthropometricRecord[] => {
+const createBiochemicalAssessments = (numRecords: number = 1): BiochemicalAssessment[] => {
+  const assessments: BiochemicalAssessment[] = [];
+  for (let i = 0; i < numRecords; i++) {
+    assessments.push({
+      id: uuidv4(),
+      assessmentDate: formatDateYYYYMMDD(subMonths(today, i * 3)),
+      exams: createLabExams(Math.floor(Math.random() * 3) + 2), // 2 to 4 exams per assessment
+    });
+  }
+  return assessments.sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+};
+
+
+const createAnthropometricRecords = (numRecords: number = 2, baseWeight: number, baseHeight: number): AnthropometricRecord[] => {
   const records: AnthropometricRecord[] = [];
   for (let i = 0; i < numRecords; i++) {
-    const recordDate = subMonths(today, i * 3); // Records every 3 months approx
-    const currentWeight = baseWeight - i * 2; // Simulating weight change
+    const recordDate = subMonths(today, i * 3);
+    const currentWeight = baseWeight - i * 2;
     const heightInMeters = baseHeight / 100;
     const bmi = parseFloat((currentWeight / (heightInMeters * heightInMeters)).toFixed(2));
 
@@ -45,19 +58,17 @@ const createAnthropometricRecords = (patientId: string, baseWeight: number, base
       weightKg: currentWeight,
       heightCm: baseHeight,
       bmi: bmi,
-      usualWeightKg: baseWeight + 5,
-      desiredWeightKg: baseWeight - 10,
+      usualWeightKg: baseWeight + 2,
+      desiredWeightKg: baseWeight - 5,
       waistCircumference: 80 + i * 1.5,
       hipCircumference: 95 + i * 1,
       assessmentObjective: "Perda de peso e melhoria da saúde geral",
-      labExams: i === 0 ? createLabExams(2) : [], // Add exams only to the latest record for simplicity
-      // Add more fields as needed
     });
   }
   return records.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
-const createEnergyExpenditureRecords = (patientId: string, weight: number, numRecords: number = 1): EnergyExpenditureRecord[] => {
+const createEnergyExpenditureRecords = (weight: number, numRecords: number = 1): EnergyExpenditureRecord[] => {
   const records: EnergyExpenditureRecord[] = [];
   for (let i = 0; i < numRecords; i++) {
     records.push({
@@ -69,7 +80,6 @@ const createEnergyExpenditureRecords = (patientId: string, weight: number, numRe
       sleepDuration: "7.5",
       physicalActivities: [
         { id: uuidv4(), type: "Caminhada leve (3km/h)", duration: "30 min/dia", mets: 3.0, intensity: "Leve" },
-        { id: uuidv4(), type: "Yoga", duration: "2x semana, 60 min", mets: 2.5, intensity: "Leve" }
       ],
       workActivity: { id: uuidv4(), description: "Trabalho de escritório", timeSpent: "8 horas/dia", occupationalActivityFactor: "1.2" },
       otherActivities: [],
@@ -78,7 +88,7 @@ const createEnergyExpenditureRecords = (patientId: string, weight: number, numRe
   return records.sort((a,b) => new Date(b.consultationDate).getTime() - new Date(a.consultationDate).getTime());
 };
 
-const createMacronutrientPlans = (patientId: string, baseTEE: number, numRecords: number = 1): MacronutrientPlan[] => {
+const createMacronutrientPlans = (baseTEE: number, weight: number, numRecords: number = 1): MacronutrientPlan[] => {
   const plans: MacronutrientPlan[] = [];
   for (let i = 0; i < numRecords; i++) {
     plans.push({
@@ -90,7 +100,7 @@ const createMacronutrientPlans = (patientId: string, baseTEE: number, numRecords
       proteinPercentage: 20,
       carbohydratePercentage: 50,
       lipidPercentage: 30,
-      weightForCalculation: 70 - (i * 2),
+      weightForCalculation: weight - (i * 2),
       specificConsiderations: "Aumentar ingestão de fibras e água.",
     });
   }
@@ -106,7 +116,7 @@ const createMicronutrientRecommendations = (patient: Patient, numRecords: number
       ageAtTimeOfRec: calculateAge(patient.dob),
       sexAtTimeOfRec: patient.gender as Gender,
       specialConditions: i % 2 === 0 ? ["Baixa exposição solar"] : [],
-      recommendations: commonMicronutrientsList.slice(0, 5).map(name => ({
+      recommendations: commonMicronutrientsList.slice(0, 3).map(name => ({
         id: uuidv4(),
         nutrientName: name,
         specificRecommendation: name === "Vitamina D" ? "2000 UI/dia" : "",
@@ -117,6 +127,91 @@ const createMicronutrientRecommendations = (patient: Patient, numRecords: number
   return recs.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
+const createClinicalAssessments = (numRecords: number = 1): ClinicalAssessment[] => {
+    const assessments: ClinicalAssessment[] = [];
+    for (let i = 0; i < numRecords; i++) {
+        assessments.push({
+            id: uuidv4(),
+            assessmentDate: formatDateYYYYMMDD(subMonths(today, i * 4)),
+            queixaPrincipal: "Cansaço excessivo e dificuldade para perder peso.",
+            historiaDoencaAtual: "Paciente relata ganho de peso progressivo nos últimos 2 anos, associado a sedentarismo e aumento do estresse.",
+            historiaMedicaPregressa: "Nega comorbidades prévias significativas. Nega cirurgias.",
+            historiaFamiliar: "Mãe com DM2, pai com HAS.",
+            habits: {
+                horasSono: 6,
+                qualidadeSono: "Regular",
+                fuma: "Não",
+                consomeBebidaAlcoolica: "Sim",
+                tipoBebidaAlcoolica: "Cerveja",
+                frequenciaBebidaAlcoolica: "Fins de semana",
+                quantidadeBebidaAlcoolica: "3-4 latas",
+            },
+            signsAndSymptoms: {
+                obstipacao: "Sim",
+                distensaoAbdominal: "Sim",
+                cansacoFadiga: "Sim",
+                alteracoesApetite: "Aumentado",
+            },
+            specificQuestions: {
+                nasceuDeParto: "A termo",
+                funcionamentoIntestinal: "Obstipado",
+                corDaUrina: "Clara (normal)",
+                usoMedicamentos: "Nenhum regular."
+            }
+        });
+    }
+    return assessments.sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+};
+
+const createFoodAssessments = (numRecords: number = 1): FoodAssessment[] => {
+    const assessments: FoodAssessment[] = [];
+    for (let i = 0; i < numRecords; i++) {
+        assessments.push({
+            id: uuidv4(),
+            assessmentDate: formatDateYYYYMMDD(subMonths(today, i * 4)),
+            previousNutritionalCounseling: "Sim",
+            objectiveOfPreviousCounseling: "Perda de peso",
+            counselingProfessional: "Nutricionista",
+            appetite: "Aumentado",
+            mealLocation: "Casa e trabalho",
+            mealPreparer: "Próprio / Restaurante",
+            waterConsumption: "1.5L/dia",
+            dietaryRecall24h: [
+                {id: uuidv4(), mealType: "Desjejum", time: "08:00", foodItem: "Pão francês com manteiga, café com açúcar", quantity: "2 unidades, 1 xícara"},
+                {id: uuidv4(), mealType: "Almoço", time: "13:00", foodItem: "Arroz, feijão, bife grelhado, salada de alface e tomate", quantity: "4 col sopa, 1 concha, 1 unidade média, à vontade"},
+                {id: uuidv4(), mealType: "Jantar", time: "20:00", foodItem: "Pizza", quantity: "3 fatias"},
+            ],
+            foodFrequency: [
+                {id: uuidv4(), foodOrGroup: "Refrigerantes", consumptionFrequency: "Diário", usualPortion: "2 copos"},
+                {id: uuidv4(), foodOrGroup: "Frutas", consumptionFrequency: "X vezes/semana", usualPortion: "1-2 porções"},
+            ]
+        });
+    }
+    return assessments.sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+};
+
+const createBehavioralAssessments = (numRecords: number = 1): BehavioralAssessment[] => {
+    const assessments: BehavioralAssessment[] = [];
+    for (let i = 0; i < numRecords; i++) {
+        assessments.push({
+            id: uuidv4(),
+            assessmentDate: formatDateYYYYMMDD(subMonths(today, i*4)),
+            smoking: { status: "Não" },
+            alcohol: {
+                status: "Sim",
+                inicioConsumo: "20 anos",
+                beverages: [
+                    {id: uuidv4(), type: "Chopp/cerveja", frequency: "2x/semana", quantityPerOccasion: 3, unitOfMeasure: "Canecas", alcoholContent: 5},
+                ]
+            },
+            physicalActivityPractice: "Não",
+            stressLevel: "Moderado",
+            perceivedQualityOfLife: "Regular, poderia ser melhor."
+        });
+    }
+    return assessments.sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
+}
+
 
 export const mockPatients: Patient[] = [
   {
@@ -124,61 +219,60 @@ export const mockPatients: Patient[] = [
     name: "Ana Silva",
     dob: "1990-05-15",
     gender: "female",
+    schooling: "Ensino Superior Completo",
+    maritalStatus: "Casado(a)",
+    profession: "Advogada",
     registrationDate: formatDateISO(subYears(today, 2)),
-    anthropometricData: createAnthropometricRecords("1", 75, 165, 3),
-    energyExpenditureRecords: createEnergyExpenditureRecords("1", 75, 2),
-    macronutrientPlans: createMacronutrientPlans("1", 2000, 2),
-    micronutrientRecommendations: [], // Will be populated by the helper
-    appointments: [],
+    clinicalAssessments: createClinicalAssessments(2),
+    foodAssessments: createFoodAssessments(1),
+    behavioralAssessments: createBehavioralAssessments(1),
+    anthropometricData: createAnthropometricRecords(3, 75, 165),
+    biochemicalAssessments: createBiochemicalAssessments(2),
+    energyExpenditureRecords: createEnergyExpenditureRecords(75, 2),
+    macronutrientPlans: createMacronutrientPlans(2000, 75, 2),
+    micronutrientRecommendations: [], // Will be populated later
+    appointments: [
+        { id: uuidv4(), patientId: "1", patientName: "Ana Silva", date: formatDateYYYYMMDD(addMonths(today,1)), time: "10:00", description: "Consulta de retorno", status: "scheduled" },
+        { id: uuidv4(), patientId: "1", patientName: "Ana Silva", date: formatDateYYYYMMDD(today), time: "14:30", description: "Avaliação inicial", status: "scheduled" },
+    ],
   },
   {
     id: "2",
     name: "Bruno Costa",
     dob: "1985-09-20",
     gender: "male",
+    schooling: "Mestrado",
+    maritalStatus: "Solteiro(a)",
+    profession: "Engenheiro de Software",
     registrationDate: formatDateISO(subYears(today, 1)),
-    anthropometricData: createAnthropometricRecords("2", 85, 180, 2),
-    energyExpenditureRecords: [
-      { 
-        id: uuidv4(), 
-        consultationDate: formatDateYYYYMMDD(subMonths(today, 1)), 
-        weightKg: 85,
-        restingEnergyExpenditure: 1800,
-        physicalActivities: [
-          { id: uuidv4(), type: "Musculação pesada", duration: "5x semana, 90 min", mets: 6.0, intensity: "Intensa" },
-          { id: uuidv4(), type: "Corrida (10km/h)", duration: "3x semana, 45 min", mets: 10.0, intensity: "Intensa" },
-        ],
-        workActivity: { id: uuidv4(), description: "Engenheiro de Software", timeSpent: "8 horas/dia", occupationalActivityFactor: "1.3" },
-        otherActivities: [],
-        sleepDuration: "7",
-      }
-    ],
-    macronutrientPlans: [
-      {
-        id: uuidv4(),
-        date: formatDateYYYYMMDD(subMonths(today, 1)),
-        totalEnergyExpenditure: 2800,
-        caloricObjective: "Ganho de Massa",
-        caloricAdjustment: 500,
-        proteinGramsPerKg: 2.0, // Example of g/kg
-        carbohydratePercentage: 50,
-        lipidPercentage: 25, // Protein % will be calculated from g/kg and total calories
-        weightForCalculation: 85,
-        specificConsiderations: "Foco em recuperação muscular e hidratação.",
-      }
-    ],
+    clinicalAssessments: createClinicalAssessments(1),
+    foodAssessments: createFoodAssessments(1),
+    behavioralAssessments: createBehavioralAssessments(1),
+    anthropometricData: createAnthropometricRecords(2, 85, 180),
+    biochemicalAssessments: createBiochemicalAssessments(1),
+    energyExpenditureRecords: createEnergyExpenditureRecords(85, 1),
+    macronutrientPlans: createMacronutrientPlans(2800, 85, 1),
     micronutrientRecommendations: [],
-    appointments: [],
+    appointments: [
+         { id: uuidv4(), patientId: "2", patientName: "Bruno Costa", date: formatDateYYYYMMDD(subDays(today,5)), time: "09:00", description: "Acompanhamento", status: "completed" }
+    ],
   },
   {
     id: "3",
     name: "Carla Dias",
     dob: "1978-02-10",
     gender: "female",
+    schooling: "Doutorado",
+    maritalStatus: "Divorciado(a)",
+    profession: "Professora Universitária",
     registrationDate: formatDateISO(subYears(today, 3)),
-    anthropometricData: createAnthropometricRecords("3", 65, 160, 3),
-    energyExpenditureRecords: createEnergyExpenditureRecords("3", 65, 1),
-    macronutrientPlans: createMacronutrientPlans("3", 1800, 1),
+    clinicalAssessments: createClinicalAssessments(3),
+    foodAssessments: createFoodAssessments(2),
+    behavioralAssessments: createBehavioralAssessments(2),
+    anthropometricData: createAnthropometricRecords(3, 65, 160),
+    biochemicalAssessments: createBiochemicalAssessments(3),
+    energyExpenditureRecords: createEnergyExpenditureRecords(65, 1),
+    macronutrientPlans: createMacronutrientPlans(1800, 65, 1),
     micronutrientRecommendations: [],
     appointments: [],
   },
@@ -187,36 +281,17 @@ export const mockPatients: Patient[] = [
     name: "Daniel Faria",
     dob: "2000-11-30",
     gender: "male",
+    schooling: "Ensino Médio Completo",
+    maritalStatus: "Solteiro(a)",
+    profession: "Estudante",
     registrationDate: formatDateISO(subMonths(today, 6)),
-    anthropometricData: createAnthropometricRecords("4", 95, 175, 2),
-    energyExpenditureRecords: [
-       { 
-        id: uuidv4(), 
-        consultationDate: formatDateYYYYMMDD(subMonths(today, 1)), 
-        weightKg: 95,
-        restingEnergyExpenditure: 1900,
-        physicalActivities: [
-          { id: uuidv4(), type: "Nenhuma regular", duration: "", intensity: "Leve" },
-        ],
-        workActivity: { id: uuidv4(), description: "Estudante", timeSpent: "6 horas/dia sentado", occupationalActivityFactor: "1.1" },
-        otherActivities: [],
-        sleepDuration: "8",
-      }
-    ],
-    macronutrientPlans: [
-      {
-        id: uuidv4(),
-        date: formatDateYYYYMMDD(subMonths(today, 1)),
-        totalEnergyExpenditure: 2200,
-        caloricObjective: "Perda de Peso",
-        caloricAdjustment: -400,
-        proteinPercentage: 25,
-        carbohydratePercentage: 45,
-        lipidPercentage: 30,
-        weightForCalculation: 95,
-        specificConsiderations: "Incentivar início de atividade física leve.",
-      }
-    ],
+    clinicalAssessments: createClinicalAssessments(1),
+    foodAssessments: createFoodAssessments(1),
+    behavioralAssessments: createBehavioralAssessments(1),
+    anthropometricData: createAnthropometricRecords(2, 95, 175),
+    biochemicalAssessments: createBiochemicalAssessments(1),
+    energyExpenditureRecords: createEnergyExpenditureRecords(95,1),
+    macronutrientPlans: createMacronutrientPlans(2200, 95,1),
     micronutrientRecommendations: [],
     appointments: [],
   },
@@ -225,42 +300,24 @@ export const mockPatients: Patient[] = [
     name: "Elisa Moreira",
     dob: "1995-07-01",
     gender: "female",
+    schooling: "Ensino Superior Completo",
+    maritalStatus: "Solteiro(a)",
+    profession: "Personal Trainer",
     registrationDate: formatDateISO(subYears(today, 1)),
-    anthropometricData: createAnthropometricRecords("5", 60, 170, 2),
-    energyExpenditureRecords: [
-      { 
-        id: uuidv4(), 
-        consultationDate: formatDateYYYYMMDD(subMonths(today, 2)), 
-        weightKg: 60,
-        restingEnergyExpenditure: 1400,
-        physicalActivities: [
-          { id: uuidv4(), type: "Corrida de Longa Distância", duration: "4x semana, 75 min", mets: 9.0, intensity: "Intensa" },
-          { id: uuidv4(), type: "Treinamento de Força", duration: "2x semana, 60 min", mets: 5.0, intensity: "Moderada" },
-        ],
-        workActivity: { id: uuidv4(), description: "Personal Trainer", timeSpent: "6 horas/dia", occupationalActivityFactor: "1.6" },
-        otherActivities: [],
-        sleepDuration: "7",
-      }
-    ],
-    macronutrientPlans: [
-       {
-        id: uuidv4(),
-        date: formatDateYYYYMMDD(subMonths(today, 2)),
-        totalEnergyExpenditure: 2500,
-        caloricObjective: "Manutenção",
-        proteinGramsPerKg: 1.8,
-        carbohydratePercentage: 55,
-        lipidPercentage: 25, // Approx
-        weightForCalculation: 60,
-        specificConsiderations: "Adequar hidratação e reposição de eletrólitos. Monitorar ferro.",
-      }
-    ],
+    clinicalAssessments: createClinicalAssessments(1),
+    foodAssessments: createFoodAssessments(1),
+    behavioralAssessments: createBehavioralAssessments(1),
+    anthropometricData: createAnthropometricRecords(2, 60, 170),
+    biochemicalAssessments: createBiochemicalAssessments(1),
+    energyExpenditureRecords: createEnergyExpenditureRecords(60,1),
+    macronutrientPlans: createMacronutrientPlans(2500, 60,1),
     micronutrientRecommendations: [],
     appointments: [],
   },
 ];
 
-// Populate micronutrient recommendations after patients are defined
 mockPatients.forEach(patient => {
   patient.micronutrientRecommendations = createMicronutrientRecommendations(patient, 1);
 });
+
+    
