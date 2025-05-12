@@ -167,7 +167,7 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
               </Card>
 
               <Card>
-                <CardHeader><CardTitle className="text-lg">Frequência Alimentar</CardHeader></CardHeader>
+                <CardHeader><CardTitle className="text-lg">Frequência Alimentar</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   {frequencyFields.map((field, index) => (
                     <Card key={field.id} className="p-4 relative">
@@ -218,5 +218,3 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
     </div>
   );
 }
-
-    
