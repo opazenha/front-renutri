@@ -3,7 +3,7 @@
 
 import type { BiochemicalAssessmentFormData, LabExamFormData } from "@/lib/schemas";
 import { BiochemicalAssessmentSchema } from "@/lib/schemas";
-import type { Patient } from "@/types";
+import type { Patient, LabExamRecord } from "@/types";
 import { usePatientContext } from "@/contexts/patient-context";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { v4 as uuidv4 } from "uuid";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BiochemicalAssessmentSectionProps {
   patient: Patient;
@@ -168,7 +169,7 @@ export function BiochemicalAssessmentSection({ patient }: BiochemicalAssessmentS
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {assessment.exams.map((exam) => (
+                      {assessment.exams.map((exam: LabExamRecord) => (
                         <TableRow key={exam.id}>
                           <TableCell>{new Date(exam.collectionDate).toLocaleDateString('pt-BR')}</TableCell>
                           <TableCell>{exam.examName}</TableCell>
