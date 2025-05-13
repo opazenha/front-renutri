@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Patient } from "@/types";
@@ -40,19 +39,19 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
       <PatientOverviewCard patient={patient} />
 
       <Tabs defaultValue="clinical-anamnesis" className="w-full">
-        <div className="mb-6 space-y-2">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="mb-4 space-y-2">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 h-auto">
             {tabsRow1.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value} className="flex-1">
-                <tab.icon className="mr-2 h-4 w-4 sm:inline hidden" />
+              <TabsTrigger key={tab.value} value={tab.value} className="flex-1 py-2 text-xs sm:text-sm">
+                <tab.icon className="mr-1.5 h-4 w-4 sm:mr-2 sm:inline" />
                 {tab.label}
               </TabsTrigger>
             ))}
           </TabsList>
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 h-auto">
             {tabsRow2.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value} className="flex-1">
-                <tab.icon className="mr-2 h-4 w-4 sm:inline hidden" />
+              <TabsTrigger key={tab.value} value={tab.value} className="flex-1 py-2 text-xs sm:text-sm">
+                <tab.icon className="mr-1.5 h-4 w-4 sm:mr-2 sm:inline" />
                 {tab.label}
               </TabsTrigger>
             ))}
@@ -94,3 +93,4 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
     </div>
   );
 }
+

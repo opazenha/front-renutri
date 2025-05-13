@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
@@ -15,6 +14,9 @@ import { format, parseISO, isValid, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { WeekView } from "./week-view";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+
 
 export function AgendaClient() {
   const { patients, appointments, addAppointment, getAppointmentsByDate, updateAppointmentStatus, updateAppointment, isLoading } = usePatientContext();
@@ -112,7 +114,7 @@ export function AgendaClient() {
 
   const appointmentsForSelectedDate = useMemo(() => {
     return getAppointmentsByDate(selectedDateString);
-  }, [selectedDateString, getAppointmentsByDate, appointments]); // Added appointments to dependency array
+  }, [selectedDateString, getAppointmentsByDate, appointments]); 
 
   const appointmentDatesForMonthCalendar = useMemo(() => {
     return appointments.filter(app => app.date && isValid(parseISO(app.date))).map(app => parseISO(app.date));
@@ -123,9 +125,9 @@ export function AgendaClient() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_minmax(0,1fr)_auto] gap-4 h-full">
-      {/* Left Column: Month Calendar */}
-      <div>
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,auto)_1fr_minmax(300px,auto)] gap-4 h-full">
+      {/* Left Column: Month Calendar - Stacks on top for small screens */}
+      <div className="lg:order-1">
         <Card className="shadow-md h-full">
           <CardHeader className="pb-2 flex flex-col items-center">
             <CardTitle className="text-lg flex items-center">
@@ -145,6 +147,16 @@ export function AgendaClient() {
                 booked: { fontWeight: 'bold', color: 'hsl(var(--primary))' },
                 today: { border: '1px solid hsl(var(--primary))' }
               }}
+              classNames={{
+                caption: "flex justify-center pt-1 relative items-center",
+                caption_label: "text-sm font-medium",
+                nav_button: cn(
+                  buttonVariants({ variant: "outline" }),
+                  "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+                ),
+                nav_button_previous: "absolute left-1",
+                nav_button_next: "absolute right-1",
+              }}
               footer={
                 <p className="text-xs text-center p-2 text-muted-foreground">
                   Selecionado: {format(currentDate, "PPP", { locale: ptBR })}.
@@ -155,18 +167,18 @@ export function AgendaClient() {
         </Card>
       </div>
 
-      {/* Middle Column: Week View */}
-      <div>
+      {/* Middle Column: Week View - Takes full width or second position */}
+      <div className="lg:order-2">
         <WeekView 
           currentDate={currentDate} 
           appointments={appointments} 
           onDateChange={handleWeekViewDateChange}
-          onAppointmentClick={handleEditAppointmentClick} // Changed to open edit form
+          onAppointmentClick={handleEditAppointmentClick}
         />
       </div>
 
-      {/* Right Column: Daily Appointments List */}
-      <div>
+      {/* Right Column: Daily Appointments List - Stacks or third position */}
+      <div className="lg:order-3">
         <Card className="shadow-md h-full">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
@@ -196,7 +208,7 @@ export function AgendaClient() {
                             app.status === 'completed' ? 'default' : 
                             app.status === 'cancelled' ? 'destructive' : 
                             'secondary'
-                          } className="capitalize text-xs h-5 px-1.5">
+                          } className="capitalize text-xs h-5 px-1.5 shrink-0">
                           {app.status === 'scheduled' && <Clock className="mr-1 h-2.5 w-2.5" />}
                           {app.status === 'completed' && <CheckCircle className="mr-1 h-2.5 w-2.5" />}
                           {app.status === 'cancelled' && <XCircle className="mr-1 h-2.5 w-2.5" />}
@@ -265,7 +277,7 @@ export function AgendaClient() {
             <AppointmentForm
               onSubmit={handleEditFormSubmit}
               onCancel={() => { setIsEditFormOpen(false); setEditingAppointment(null);}}
-              initialData={editingAppointment} // Pass the full appointment object
+              initialData={editingAppointment} 
               isSubmitting={isSubmitting}
               isEditing={true}
             />
@@ -275,3 +287,4 @@ export function AgendaClient() {
     </div>
   );
 }
+

@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Patient } from "@/types";
@@ -26,9 +25,9 @@ export function PatientListClient({ patients, searchTerm }: PatientListClientPro
 
     return (
         <Card className="w-full text-center shadow-md">
-            <CardContent className="py-10 flex flex-col items-center justify-center min-h-[200px]">
-                <IconComponent className="h-16 w-16 text-muted-foreground opacity-75 mb-4" />
-                <p className="text-lg text-muted-foreground">{message}</p>
+            <CardContent className="py-10 flex flex-col items-center justify-center min-h-[200px] p-4 sm:p-6">
+                <IconComponent className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground opacity-75 mb-4" />
+                <p className="text-base sm:text-lg text-muted-foreground">{message}</p>
                 {!isSearching && (
                     <Button asChild size="lg" className="mt-6">
                         <Link href="/patients/new">
@@ -43,14 +42,14 @@ export function PatientListClient({ patients, searchTerm }: PatientListClientPro
 
   return (
     <Card className="shadow-lg">
-      <CardContent className="pt-6">
+      <CardContent className="p-4 sm:p-6 pt-6">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Idade</TableHead>
-                <TableHead>Gênero</TableHead>
+                <TableHead className="hidden sm:table-cell">Idade</TableHead>
+                <TableHead className="hidden md:table-cell">Gênero</TableHead>
                 <TableHead>Registrado Em</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -58,27 +57,20 @@ export function PatientListClient({ patients, searchTerm }: PatientListClientPro
             <TableBody>
               {patients.map((patient) => (
                 <TableRow key={patient.id}>
-                  <TableCell className="font-medium">{patient.name}</TableCell>
-                  <TableCell>{calculateAge(patient.dob)}</TableCell>
-                  <TableCell>
-                    <Badge variant={patient.gender === 'female' ? 'default' : patient.gender === 'male' ? 'secondary' : 'outline'} className="capitalize">
+                  <TableCell className="font-medium text-sm sm:text-base">{patient.name}</TableCell>
+                  <TableCell className="hidden sm:table-cell text-sm">{calculateAge(patient.dob)}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Badge variant={patient.gender === 'female' ? 'default' : patient.gender === 'male' ? 'secondary' : 'outline'} className="capitalize text-xs">
                       {patient.gender === 'male' ? 'Masculino' : patient.gender === 'female' ? 'Feminino' : 'Outro'}
                     </Badge>
                   </TableCell>
-                  <TableCell>{new Date(patient.registrationDate).toLocaleDateString('pt-BR')}</TableCell>
-                  <TableCell className="text-right space-x-2">
+                  <TableCell className="text-xs sm:text-sm">{new Date(patient.registrationDate).toLocaleDateString('pt-BR')}</TableCell>
+                  <TableCell className="text-right space-x-1 sm:space-x-2">
                     <Button variant="ghost" size="icon" asChild title="Ver Paciente">
                       <Link href={`/patients/${patient.id}`}>
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
-                    {/* Edit and Delete functionality can be added later */}
-                    {/* <Button variant="ghost" size="icon" title="Editar Paciente">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" title="Excluir Paciente" className="text-destructive hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button> */}
                   </TableCell>
                 </TableRow>
               ))}

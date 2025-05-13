@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { AnthropometricFormData } from "@/lib/schemas";
@@ -110,20 +109,20 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center"><PlusCircle className="mr-2 h-6 w-6 text-primary" /> Adicionar Nova Avaliação Antropométrica</CardTitle>
-          <CardDescription>Insira novas medições para {patient.name}.</CardDescription>
+          <CardTitle className="text-lg sm:text-xl flex items-center"><PlusCircle className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-primary" /> Adicionar Nova Avaliação Antropométrica</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Insira novas medições para {patient.name}.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 sm:space-y-8">
               
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center"><HeartPulse className="mr-2 h-5 w-5 text-primary" /> Dados Básicos da Avaliação</CardTitle></CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-3 gap-6">
+                <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><HeartPulse className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Dados Básicos da Avaliação</CardTitle></CardHeader>
+                <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     <FormField
                       control={form.control}
                       name="date"
@@ -152,8 +151,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
               </Card>
 
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center"><Ruler className="mr-2 h-5 w-5 text-primary" /> Circunferências (cm)</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><Ruler className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Circunferências (cm)</CardTitle></CardHeader>
+                <CardContent className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   <FormField control={form.control} name="relaxedArmCircumference" render={({ field }) => (<FormItem><FormLabel>Braço Relaxado</FormLabel><FormControl><Input type="number" step="0.1" placeholder="cm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="contractedArmCircumference" render={({ field }) => (<FormItem><FormLabel>Braço Contraído</FormLabel><FormControl><Input type="number" step="0.1" placeholder="cm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="waistCircumference" render={({ field }) => (<FormItem><FormLabel>Cintura</FormLabel><FormControl><Input type="number" step="0.1" placeholder="cm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
@@ -168,8 +167,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
               </Card>
 
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center"><Ruler className="mr-2 h-5 w-5 text-primary" /> Dobras Cutâneas (mm)</CardTitle><FormDescription>Utilizar adipômetro.</FormDescription></CardHeader>
-                <CardContent className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><Ruler className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Dobras Cutâneas (mm)</CardTitle><FormDescription className="text-xs sm:text-sm">Utilizar adipômetro.</FormDescription></CardHeader>
+                <CardContent className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   <FormField control={form.control} name="bicepsSkinfold" render={({ field }) => (<FormItem><FormLabel>Bicipital</FormLabel><FormControl><Input type="number" step="0.1" placeholder="mm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="tricepsSkinfold" render={({ field }) => (<FormItem><FormLabel>Tricipital</FormLabel><FormControl><Input type="number" step="0.1" placeholder="mm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="subscapularSkinfold" render={({ field }) => (<FormItem><FormLabel>Subescapular</FormLabel><FormControl><Input type="number" step="0.1" placeholder="mm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
@@ -183,16 +182,16 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
               </Card>
               
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center"><Bone className="mr-2 h-5 w-5 text-primary" /> Diâmetros Ósseos (cm)</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
+                <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><Bone className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Diâmetros Ósseos (cm)</CardTitle></CardHeader>
+                <CardContent className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <FormField control={form.control} name="humerusBiepicondylarDiameter" render={({ field }) => (<FormItem><FormLabel>Biepicondiliano do Úmero (Punho)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="cm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="femurBiepicondylarDiameter" render={({ field }) => (<FormItem><FormLabel>Biepicondiliano do Fêmur (Joelho)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="cm" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader><CardTitle className="text-lg flex items-center">Objetivo da Avaliação</CardTitle></CardHeader>
-                <CardContent>
+                <CardHeader><CardTitle className="text-base sm:text-lg flex items-center">Objetivo da Avaliação</CardTitle></CardHeader>
+                <CardContent className="p-4 sm:p-6">
                   <FormField control={form.control} name="assessmentObjective" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Objetivo da avaliação/acompanhamento</FormLabel>
@@ -215,20 +214,20 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
         <>
           <Card className="shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl flex items-center"><LineChart className="mr-2 h-6 w-6 text-primary" />Visualização de Progresso</CardTitle>
-              <CardDescription>Tendências de peso e IMC ao longo do tempo.</CardDescription>
+              <CardTitle className="text-lg sm:text-xl flex items-center"><LineChart className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-primary" />Visualização de Progresso</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Tendências de peso e IMC ao longo do tempo.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <WeightProgressChart data={patient.anthropometricData} />
             </CardContent>
           </Card>
           
           <Card className="shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl">Histórico de Avaliações Antropométricas</CardTitle>
-              <CardDescription>Todas as medições registradas para {patient.name}.</CardDescription>
+              <CardTitle className="text-lg sm:text-xl">Histórico de Avaliações Antropométricas</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Todas as medições registradas para {patient.name}.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -255,13 +254,13 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                         <TableCell>{record.desiredWeightKg?.toFixed(1) || "N/A"}</TableCell>
                         <TableCell>{record.waistCircumference?.toFixed(1) || "N/A"}</TableCell>
                         <TableCell>{record.hipCircumference?.toFixed(1) || "N/A"}</TableCell>
-                        <TableCell className="max-w-xs truncate">{record.assessmentObjective || "N/A"}</TableCell>
+                        <TableCell className="max-w-[150px] sm:max-w-xs truncate">{record.assessmentObjective || "N/A"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
-               <p className="text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
+               <p className="text-xs sm:text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
             </CardContent>
           </Card>
         </>
