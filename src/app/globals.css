@@ -8,37 +8,39 @@ body {
 
 @layer base {
   :root {
-    --background: 60 56% 91%; /* Paper-like #F5F5DC */
-    --foreground: 240 10% 15%; /* Darker gray for better contrast on paper */
-    --card: 60 50% 93%; /* Slightly different paper for cards */
+    --background: 45 70% 97%; /* Whitish-cream (e.g. #FAF9F7) - Changed from paper #F5F5DC */
+    --foreground: 240 10% 15%; /* Darker gray for better contrast */
+    
+    --card: 45 60% 95%; /* Slightly off-white cream for cards */
     --card-foreground: 240 10% 15%;
-    --popover: 60 50% 93%;
+    
+    --popover: 45 60% 95%;
     --popover-foreground: 240 10% 15%;
     
-    --primary: 344 95% 25%; /* Dark Red (#7B0323) */
+    --primary: 344 95% 25%; /* Dark Red (#7B0323) - Updated from Magenta */
     --primary-foreground: 0 0% 100%; /* White */
     
-    --secondary: 60 30% 96%; /* Lighter paper/beige */
-    --secondary-foreground: 240 10% 20%; /* Darker for contrast on secondary */
+    --secondary: 45 50% 92%; /* Lighter cream/beige for secondary elements */
+    --secondary-foreground: 344 80% 30%; /* Darker red for contrast on secondary */
     
-    --muted: 60 40% 94%; /* Muted paper shade */
-    --muted-foreground: 240 5% 45%;
+    --muted: 45 40% 94%; /* Muted cream/beige shade */
+    --muted-foreground: 240 5% 45%; /* Darker gray for muted text */
     
-    --accent: 344 80% 40%; /* Lighter/Brighter Red */
+    --accent: 344 80% 40%; /* Lighter/Brighter Red, complementing the primary */
     --accent-foreground: 0 0% 100%; /* White */
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 60 30% 82%; /* Subtle border for paper theme */
-    --input: 60 30% 88%; /* Slightly different for input fields */
-    --ring: 344 95% 35%; /* Red for focus rings */
+    --border: 45 30% 88%; /* Subtle border, slightly darker cream (e.g. #EAE7E0) */
+    --input: 45 30% 90%; /* Slightly different for input fields, light cream */
+    --ring: 344 95% 35%; /* Dark Red for focus rings */
 
     --chart-1: 344 95% 25%; /* Dark Red, same as primary */
     --chart-2: 210 60% 50%; /* A complementary blue */
-    --chart-3: 30 80% 55%;
+    --chart-3: 30 80% 55%;  /* Orange */
     --chart-4: 120 40% 50%; /* Green */
-    --chart-5: 60 70% 50%; /* Yellow/Orange */
+    --chart-5: 60 70% 50%;  /* Yellow */
     
     --radius: 0.5rem;
 
@@ -56,8 +58,10 @@ body {
   .dark {
     --background: 240 6% 10%; /* Dark blue/gray */
     --foreground: 0 0% 98%; /* Light gray/white */
+    
     --card: 240 6% 12%;
     --card-foreground: 0 0% 98%;
+    
     --popover: 240 6% 12%;
     --popover-foreground: 0 0% 98%;
 
@@ -82,9 +86,9 @@ body {
 
     --chart-1: 344 80% 55%; /* Lighter Red, same as dark primary */
     --chart-2: 210 70% 65%; /* Lighter complementary blue */
-    --chart-3: 30 80% 65%;
+    --chart-3: 30 80% 65%;  /* Lighter Orange */
     --chart-4: 120 50% 60%; /* Lighter Green */
-    --chart-5: 60 70% 60%; /* Lighter Yellow/Orange */
+    --chart-5: 60 70% 60%;  /* Lighter Yellow */
 
     /* Dark Sidebar (can be same as light, or adjusted if needed - keeping original dark for now) */
     --sidebar-background: 240 6% 8%; 
