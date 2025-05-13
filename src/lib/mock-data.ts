@@ -1,5 +1,4 @@
-
-import type { Patient, AnthropometricRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, LabExamRecord, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment, MealRecord, FoodFrequencyRecord, AlcoholicBeverageRecord } from '@/types';
+import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment, MealRecord, FoodFrequencyRecord, AlcoholicBeverageRecord } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { format, subDays, subMonths, subYears, addMonths } from 'date-fns';
 import { calculateAge } from '@/types';
@@ -77,9 +76,9 @@ const createEnergyExpenditureRecords = (weight: number, numRecords: number = 1):
       weightKg: weight - i,
       restingEnergyExpenditure: 1500 + (i * 50),
       gerFormula: "Harris-Benedict",
-      sleepDuration: "7.5",
+      sleepDuration: 7.5, // Changed to number
       physicalActivities: [
-        { id: uuidv4(), type: "Caminhada leve (3km/h)", duration: "30 min/dia", mets: 3.0, intensity: "Leve" },
+        { id: uuidv4(), type: "Caminhada leve (3km/h)", frequency: "3x/semana", duration: "30 min/dia", mets: 3.0, intensity: "Leve" },
       ],
       workActivity: { id: uuidv4(), description: "Trabalho de escritório", timeSpent: "8 horas/dia", occupationalActivityFactor: "1.2" },
       otherActivities: [],
@@ -205,6 +204,9 @@ const createBehavioralAssessments = (numRecords: number = 1): BehavioralAssessme
                 ]
             },
             physicalActivityPractice: "Não",
+            physicalActivitiesDetails: [
+                { id: uuidv4(), type: "Caminhada", frequency: "2x/semana", duration: "30 min", intensity: "Leve", mets: 3.0 }
+            ],
             stressLevel: "Moderado",
             perceivedQualityOfLife: "Regular, poderia ser melhor."
         });
@@ -319,5 +321,3 @@ export const mockPatients: Patient[] = [
 mockPatients.forEach(patient => {
   patient.micronutrientRecommendations = createMicronutrientRecommendations(patient, 1);
 });
-
-    

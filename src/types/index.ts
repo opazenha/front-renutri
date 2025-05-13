@@ -1,4 +1,3 @@
-
 export type Gender = "male" | "female" | "other"; // Patient gender
 export type AiGender = "male" | "female"; // Gender for AI model
 
@@ -195,7 +194,7 @@ export interface LabExamRecord {
 
 export interface BiochemicalAssessment {
   id: string;
-  assessmentDate: string; // Date of overall biochemical assessment if needed, or just rely on individual exam dates. XML shows "Data da Coleta" per list of exams.
+  assessmentDate: string; 
   exams: LabExamRecord[];
 }
 
@@ -226,7 +225,7 @@ export interface AnthropometricRecord {
   bicepsSkinfold?: number;
   tricepsSkinfold?: number;
   subscapularSkinfold?: number;
-  pectoralSkinfold?: number; // Typically for men
+  pectoralSkinfold?: number; 
   midaxillarySkinfold?: number;
   suprailiacSkinfold?: number;
   abdominalSkinfold?: number;
@@ -238,29 +237,29 @@ export interface AnthropometricRecord {
   femurBiepicondylarDiameter?: number;
 
   assessmentObjective?: string;
-  // Lab exams removed, will be in BiochemicalAssessment
 }
 
 
 export function calculateAge(dob: string): number {
-  if (!dob) return 0; // Handle case where dob might be undefined or empty
+  if (!dob) return 0; 
   const birthDate = new Date(dob);
   const today = new Date();
-  if (isNaN(birthDate.getTime())) return 0; // Handle invalid date string
+  if (isNaN(birthDate.getTime())) return 0; 
 
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  return age > 0 ? age : 0; // Ensure age is not negative
+  return age > 0 ? age : 0; 
 }
 
 export interface ActivityDetail {
   id: string;
-  type: string; // Activity name, could be from predefined list or custom
-  duration: string; // e.g., "30 min/dia", "3x semana", "60 minutos"
-  mets?: number; // Optional, for pre-defined or custom
+  type: string; 
+  frequency?: string; // e.g., "3x/semana"
+  duration: string; // e.g., "30 min/dia", "60 minutos"
+  mets?: number; 
   intensity?: IntensityLevel;
 }
 
@@ -269,16 +268,16 @@ export interface WorkActivityDetail {
   description: string;
   timeSpent: string; // e.g., "8 horas/dia"
   mets?: number;
-  occupationalActivityFactor?: string; // e.g., Leve, Moderada, Intensa or a numeric factor
+  occupationalActivityFactor?: string; 
 }
 
 export interface EnergyExpenditureRecord {
   id: string;
   consultationDate: string; // YYYY-MM-DD
-  weightKg?: number; // Can auto-populate
+  weightKg?: number; 
   restingEnergyExpenditure?: number; // GER in Kcal/24h
   gerFormula?: string;
-  sleepDuration?: string; // hours per 24h cycle
+  sleepDuration?: number | null; // hours per 24h cycle, changed to number
   physicalActivities: ActivityDetail[];
   workActivity?: WorkActivityDetail;
   otherActivities: ActivityDetail[];
@@ -291,7 +290,7 @@ export interface MacronutrientPlan {
   date: string; // YYYY-MM-DD
   totalEnergyExpenditure?: number; // GET in Kcal/dia
   caloricObjective: CaloricObjective;
-  caloricAdjustment?: number; // e.g., -500 or +500 Kcal, or %
+  caloricAdjustment?: number; 
   proteinPercentage?: number;
   carbohydratePercentage?: number;
   lipidPercentage?: number;
@@ -335,5 +334,3 @@ export interface Appointment {
   description: string;
   status: AppointmentStatus;
 }
-
-    

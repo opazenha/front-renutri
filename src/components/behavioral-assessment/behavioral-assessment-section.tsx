@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { BehavioralAssessmentFormData, AlcoholicBeverageFormData, ActivityDetailFormData as BehavioralActivityDetailFormData } from "@/lib/schemas"; // Renamed to avoid conflict
@@ -72,7 +71,12 @@ export function BehavioralAssessmentSection({ patient }: BehavioralAssessmentSec
       });
       form.reset({ 
         assessmentDate: format(new Date(), "yyyy-MM-dd"),
-        // Reset other fields as needed
+        smoking: { status: undefined },
+        alcohol: { status: undefined, beverages: [] },
+        physicalActivityPractice: undefined,
+        physicalActivitiesDetails: [],
+        stressLevel: undefined,
+        perceivedQualityOfLife: "",
       });
     } catch (error) {
        toast({
@@ -135,9 +139,9 @@ export function BehavioralAssessmentSection({ patient }: BehavioralAssessmentSec
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         <FormField control={form.control} name={`alcohol.beverages.${index}.type`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Tipo</FormLabel><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione ou digite" /></SelectTrigger></FormControl><SelectContent>{alcoholicBeverageTypeOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`alcohol.beverages.${index}.frequency`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Frequência</FormLabel><FormControl><Input {...itemField} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`alcohol.beverages.${index}.quantityPerOccasion`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Quantidade/Ocasião</FormLabel><FormControl><Input type="number" {...itemField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`alcohol.beverages.${index}.quantityPerOccasion`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Quantidade/Ocasião</FormLabel><FormControl><Input type="number" {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`alcohol.beverages.${index}.unitOfMeasure`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Unidade</FormLabel><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{alcoholicBeverageUnitOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`alcohol.beverages.${index}.alcoholContent`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Teor Alcoólico (%)</FormLabel><FormControl><Input type="number" step="0.1" {...itemField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`alcohol.beverages.${index}.alcoholContent`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Teor Alcoólico (%)</FormLabel><FormControl><Input type="number" step="0.1" {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                       </div>
                     </Card>
                   ))}
@@ -161,10 +165,11 @@ export function BehavioralAssessmentSection({ patient }: BehavioralAssessmentSec
                         <FormField control={form.control} name={`physicalActivitiesDetails.${index}.frequency`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Frequência</FormLabel><FormControl><Input placeholder="Ex: 3x/semana" {...itemField} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`physicalActivitiesDetails.${index}.duration`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Duração</FormLabel><FormControl><Input placeholder="Ex: 60 min" {...itemField} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`physicalActivitiesDetails.${index}.intensity`} render={({ field: itemField }) => (<FormItem><FormLabel className="text-xs">Intensidade</FormLabel><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{intensityOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
+                         <FormField control={form.control} name={`physicalActivitiesDetails.${index}.mets`} render={({ field: itemField }) => (<FormItem className="md:col-span-2"><FormLabel className="text-xs">METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 3.5" {...itemField} value={itemField.value ?? ""}/></FormControl><FormMessage /></FormItem>)} />
                       </div>
                     </Card>
                   ))}
-                   <Button type="button" variant="outline" size="sm" onClick={() => appendPhysicalActivity({id: uuidv4(), type: "", duration: "", intensity: undefined })}>
+                   <Button type="button" variant="outline" size="sm" onClick={() => appendPhysicalActivity({id: uuidv4(), type: "", frequency: "", duration: "", intensity: undefined })}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Atividade Física
                   </Button>
                 </CardContent>
@@ -210,5 +215,3 @@ export function BehavioralAssessmentSection({ patient }: BehavioralAssessmentSec
     </div>
   );
 }
-
-    

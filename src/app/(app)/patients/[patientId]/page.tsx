@@ -10,30 +10,32 @@ import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PatientDetailPageProps {
-  // params can be a promise in newer Next.js versions for dynamic segments
-  params: Promise<{ patientId: string }> | { patientId: string }; 
+  params: { patientId: string }; 
 }
 
-export default function PatientDetailPage({ params: paramsProp }: PatientDetailPageProps) {
-  // Unwrap the params. If it's a promise, React.use will handle it.
-  // If it's already an object, React.use will return it directly.
-  const params = React.use(paramsProp as Promise<{ patientId: string }>); // Cast to satisfy `use` if it expects a promise primarily
+export default function PatientDetailPage({ params }: PatientDetailPageProps) {
+  const patientId = params.patientId; // Direct access for server component, or after React.use if it were a promise
 
   const { getPatientById, isLoading } = usePatientContext();
   const router = useRouter();
   
-  const patient = getPatientById(params.patientId);
+  // If params were a promise, and this was a Client Component primarily relying on it:
+  // const resolvedParams = React.use(params); 
+  // const patientId = resolvedParams.patientId;
+  // But for now, assuming direct access is fine as per Next.js guidance for this setup.
+
+  const patient = getPatientById(patientId);
 
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 space-y-6">
-        <Skeleton className="h-8 w-1/4" />
-        <Skeleton className="h-10 w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+        <Skeleton className="h-8 w-1/4 mb-4" /> {/* Back button placeholder */}
+        <Skeleton className="h-48 w-full mb-6" /> {/* Overview card placeholder */}
+        <div className="space-y-2 mb-6"> {/* TabsList placeholder */}
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
         </div>
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-64 w-full" /> {/* TabsContent placeholder */}
       </div>
     );
   }
@@ -52,7 +54,7 @@ export default function PatientDetailPage({ params: paramsProp }: PatientDetailP
 
   return (
     <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6">
         <Button variant="outline" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
         </Button>
@@ -61,4 +63,3 @@ export default function PatientDetailPage({ params: paramsProp }: PatientDetailP
     </div>
   );
 }
-

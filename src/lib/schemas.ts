@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 // Enums for reusability in schemas
@@ -19,7 +18,7 @@ const counselingProfessionalEnum = z.enum(["Endocrinologista", "Nutricionista", 
 const saltUsageEnum = z.enum(["Pouco", "Moderado", "Muito", "Não usa"]);
 const cookingOilFatQuantityEnum = z.enum(["Pouca", "Moderada", "Muita"]);
 const mealTypeEnum = z.enum(["Desjejum", "Colação", "Almoço", "Lanche", "Jantar", "Ceia", "Antes de dormir"]);
-const consumptionFrequencyEnum = z.enum(["Diário", "X vezes/semana", "X vezes/mês" | "X vezes/mês", "Raramente", "Nunca"]);
+const consumptionFrequencyEnum = z.enum(["Diário", "X vezes/semana", "X vezes/mês", "Raramente", "Nunca"]);
 
 
 export const PatientSchema = z.object({
@@ -151,14 +150,15 @@ const AlcoholicBeverageSchema = z.object({
 });
 export type AlcoholicBeverageFormData = z.infer<typeof AlcoholicBeverageSchema>;
 
-const ActivityDetailSchemaBase = z.object({
+export const ActivityDetailSchema = z.object({
   id: z.string().optional(),
   type: z.string().min(1, "Tipo de atividade é obrigatório."),
+  frequency: z.string().optional(),
   duration: z.string().optional(),
-  mets: z.coerce.number().positive("METS deve ser um número positivo.").optional(),
+  mets: z.coerce.number().positive("METS deve ser um número positivo.").optional().nullable(),
   intensity: intensityLevelEnum.optional(),
 });
-export type ActivityDetailFormData = z.infer<typeof ActivityDetailSchemaBase>;
+export type ActivityDetailFormData = z.infer<typeof ActivityDetailSchema>;
 
 
 export const BehavioralAssessmentSchema = z.object({
@@ -177,7 +177,7 @@ export const BehavioralAssessmentSchema = z.object({
     tempoParou: z.string().optional(),
   }).optional(),
   physicalActivityPractice: physicalActivityPracticeStatusEnum.optional(),
-  physicalActivitiesDetails: z.array(ActivityDetailSchemaBase).optional(),
+  physicalActivitiesDetails: z.array(ActivityDetailSchema).optional(),
   stressLevel: stressLevelTypeEnum.optional(),
   perceivedQualityOfLife: z.string().optional(),
 });
@@ -195,7 +195,7 @@ export const LabExamSchema = z.object({
 export type LabExamFormData = z.infer<typeof LabExamSchema>;
 
 export const BiochemicalAssessmentSchema = z.object({
-  assessmentDate: z.string().refine((date) => !isNaN(new Date(date).getTime()), {message: "Data da avaliação inválida."}), // Optional: if there's an overall assessment date
+  assessmentDate: z.string().refine((date) => !isNaN(new Date(date).getTime()), {message: "Data da avaliação inválida."}), 
   exams: z.array(LabExamSchema),
 });
 export type BiochemicalAssessmentFormData = z.infer<typeof BiochemicalAssessmentSchema>;
@@ -236,24 +236,24 @@ export const AnthropometricSchema = z.object({
 export type AnthropometricFormData = z.infer<typeof AnthropometricSchema>;
 
 
-const WorkActivityDetailSchemaBase = z.object({
+export const WorkActivityDetailSchema = z.object({
   id: z.string().optional(),
   description: z.string().min(1, "Descrição da atividade principal é obrigatória."),
   timeSpent: z.string().min(1, "Tempo gasto é obrigatório."),
   mets: z.coerce.number().positive("METS deve ser um número positivo.").optional().nullable(),
   occupationalActivityFactor: z.string().optional().nullable(),
 });
-export type WorkActivityDetailFormData = z.infer<typeof WorkActivityDetailSchemaBase>;
+export type WorkActivityDetailFormData = z.infer<typeof WorkActivityDetailSchema>;
 
 export const EnergyExpenditureSchema = z.object({
   consultationDate: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data da consulta inválida." }),
   weightKg: z.coerce.number().positive("Peso deve ser positivo.").optional().nullable(),
   restingEnergyExpenditure: z.coerce.number().positive("GER deve ser positivo.").optional().nullable(),
   gerFormula: z.string().optional().nullable(),
-  sleepDuration: z.string().optional().nullable().refine(val => !val || /^\d+(\.\d+)?(\s*horas)?$/.test(val), { message: "Duração do sono deve ser um número (ex: 7.5 ou 7.5 horas)." }),
-  physicalActivities: z.array(ActivityDetailSchemaBase).optional(),
-  workActivity: WorkActivityDetailSchemaBase.optional().nullable(),
-  otherActivities: z.array(ActivityDetailSchemaBase).optional(),
+  sleepDuration: z.coerce.number().positive("Duração do sono deve ser positiva e em horas.").optional().nullable(),
+  physicalActivities: z.array(ActivityDetailSchema).optional(),
+  workActivity: WorkActivityDetailSchema.optional().nullable(),
+  otherActivities: z.array(ActivityDetailSchema).optional(),
 });
 export type EnergyExpenditureFormData = z.infer<typeof EnergyExpenditureSchema>;
 
@@ -284,7 +284,7 @@ export const MacronutrientPlanSchema = z.object({
 });
 export type MacronutrientPlanFormData = z.infer<typeof MacronutrientPlanSchema>;
 
-const MicronutrientDetailSchemaBase = z.object({
+export const MicronutrientDetailSchema = z.object({
   id: z.string().optional(),
   nutrientName: z.string().min(1, "Nome do micronutriente é obrigatório."),
   specificRecommendation: z.string().optional().nullable(),
@@ -294,14 +294,14 @@ const MicronutrientDetailSchemaBase = z.object({
     duration: z.string().optional().nullable(),
   }).optional().nullable(),
 });
-export type MicronutrientDetailFormData = z.infer<typeof MicronutrientDetailSchemaBase>;
+export type MicronutrientDetailFormData = z.infer<typeof MicronutrientDetailSchema>;
 
 export const MicronutrientRecommendationSchema = z.object({
   date: z.string().refine((date) => !isNaN(new Date(date).getTime()), { message: "Data da recomendação inválida." }),
   ageAtTimeOfRec: z.coerce.number().int().positive("Idade deve ser um número positivo.").optional().nullable(),
   sexAtTimeOfRec: z.enum(["male", "female", "other"]).optional().nullable(),
   specialConditions: z.array(z.string()).optional(),
-  recommendations: z.array(MicronutrientDetailSchemaBase).optional(),
+  recommendations: z.array(MicronutrientDetailSchema).optional(),
 });
 export type MicronutrientRecommendationFormData = z.infer<typeof MicronutrientRecommendationSchema>;
 
@@ -321,5 +321,3 @@ export const AppointmentTypeSchema = AppointmentSchema.extend({
 export type Appointment = z.infer<typeof AppointmentTypeSchema>;
 
 export type AppointmentStatus = z.infer<typeof AppointmentSchema.shape.status>;
-
-    

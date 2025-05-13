@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { EnergyExpenditureFormData, ActivityDetailFormData, WorkActivityDetailFormData } from "@/lib/schemas";
@@ -11,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PlusCircle, Trash2, Flame, Bed, Bike, Briefcase, Sparkles } from "lucide-react";
-import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
+import { DateDropdowns } from "@/components/ui/date-dropdowns"; 
 import { format, getYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,17 +107,17 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                               onChange={field.onChange}
                               disableFuture={true}
                               maxYear={CURRENT_YEAR}
-                              minYear={CURRENT_YEAR - 10} // Example: last 10 years
+                              minYear={CURRENT_YEAR - 10} 
                             />
                           </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField control={form.control} name="weightKg" render={({ field }) => (<FormItem><FormLabel>Peso (kg)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 70,5" {...field} /></FormControl><FormDescription>Pode ser preenchido automaticamente pela antropometria.</FormDescription><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="restingEnergyExpenditure" render={({ field }) => (<FormItem><FormLabel>Gasto Energético de Repouso (GER - Kcal/24h)</FormLabel><FormControl><Input type="number" placeholder="Ex: 1500" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="weightKg" render={({ field }) => (<FormItem><FormLabel>Peso (kg)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 70,5" {...field} value={field.value ?? ""} /></FormControl><FormDescription>Pode ser preenchido automaticamente pela antropometria.</FormDescription><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="restingEnergyExpenditure" render={({ field }) => (<FormItem><FormLabel>Gasto Energético de Repouso (GER - Kcal/24h)</FormLabel><FormControl><Input type="number" placeholder="Ex: 1500" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="gerFormula" render={({ field }) => (<FormItem><FormLabel>Fórmula GER Utilizada (se aplicável)</FormLabel><FormControl><Input placeholder="Ex: Harris-Benedict, Calorimetria" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="sleepDuration" render={({ field }) => (<FormItem><FormLabel>Tempo de Sono (horas/dia)</FormLabel><FormControl><Input type="number" step="0.5" placeholder="Ex: 7.5" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="sleepDuration" render={({ field }) => (<FormItem><FormLabel>Tempo de Sono (horas/dia)</FormLabel><FormControl><Input type="number" step="0.5" placeholder="Ex: 7.5" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
 
@@ -133,7 +132,7 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                       <FormField control={form.control} name={`physicalActivities.${index}.type`} render={({ field: actField }) => (<FormItem><FormLabel>Tipo de Atividade</FormLabel><FormControl><Input placeholder="Ex: Caminhada leve (3km/h)" {...actField} /></FormControl><FormMessage /></FormItem>)} />
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <FormField control={form.control} name={`physicalActivities.${index}.duration`} render={({ field: actField }) => (<FormItem><FormLabel>Duração</FormLabel><FormControl><Input placeholder="Ex: 30 min/dia" {...actField} /></FormControl><FormDescription>min/dia ou vezes/semana</FormDescription><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`physicalActivities.${index}.mets`} render={({ field: actField }) => (<FormItem><FormLabel>METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 3.5" {...actField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`physicalActivities.${index}.mets`} render={({ field: actField }) => (<FormItem><FormLabel>METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 3.5" {...actField} value={actField.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`physicalActivities.${index}.intensity`} render={({ field: actField }) => (<FormItem><FormLabel>Intensidade Percebida</FormLabel><Select onValueChange={actField.onChange} defaultValue={actField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{activityIntensityOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
                       </div>
                     </Card>
@@ -150,7 +149,7 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                       <FormField control={form.control} name="workActivity.description" render={({ field }) => (<FormItem><FormLabel>Descrição da Atividade Principal</FormLabel><FormControl><Input placeholder="Ex: Trabalho de escritório, Construção" {...field} /></FormControl><FormMessage /></FormItem>)} />
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <FormField control={form.control} name="workActivity.timeSpent" render={({ field }) => (<FormItem><FormLabel>Tempo Gasto</FormLabel><FormControl><Input placeholder="Ex: 8 horas/dia" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                          <FormField control={form.control} name="workActivity.mets" render={({ field }) => (<FormItem><FormLabel>METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 1.5" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                          <FormField control={form.control} name="workActivity.mets" render={({ field: actField }) => (<FormItem><FormLabel>METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 1.5" {...actField} value={actField.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                           <FormField control={form.control} name="workActivity.occupationalActivityFactor" render={({ field }) => (<FormItem><FormLabel>Fator Atividade Ocupacional</FormLabel><FormControl><Input placeholder="Ex: Leve, Moderada, 1.2" {...field} /></FormControl><FormDescription>Ou use METs.</FormDescription><FormMessage /></FormItem>)} />
                       </div>
                   </CardContent>
@@ -167,7 +166,7 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
                       <FormField control={form.control} name={`otherActivities.${index}.type`} render={({ field: actField }) => (<FormItem><FormLabel>Tipo de Atividade</FormLabel><FormControl><Input placeholder="Ex: Tarefas domésticas, Estudo" {...actField} /></FormControl><FormMessage /></FormItem>)} />
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField control={form.control} name={`otherActivities.${index}.duration`} render={({ field: actField }) => (<FormItem><FormLabel>Duração</FormLabel><FormControl><Input placeholder="Ex: 1 hora/dia" {...actField} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`otherActivities.${index}.mets`} render={({ field: actField }) => (<FormItem><FormLabel>METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 2.0" {...actField} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`otherActivities.${index}.mets`} render={({ field: actField }) => (<FormItem><FormLabel>METs (Opcional)</FormLabel><FormControl><Input type="number" step="0.1" placeholder="Ex: 2.0" {...actField} value={actField.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
                       </div>
                     </Card>
                   ))}
