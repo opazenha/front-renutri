@@ -42,15 +42,15 @@ body {
     
     --radius: 0.5rem;
 
-    /* Sidebar specific variables */
-    --sidebar-background: 240 6% 12%; /* Dark grey for contrast */
-    --sidebar-foreground: 0 0% 95%; /* Light text for dark sidebar */
-    --sidebar-primary: 344 80% 55%; /* Lighter Red for active items in dark sidebar */
-    --sidebar-primary-foreground: 0 0% 100%; /* White text on sidebar-primary */
-    --sidebar-accent: 240 4% 20%; /* Slightly lighter dark grey for hover */
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 25%;
-    --sidebar-ring: 344 80% 55%; /* Lighter Red for focus rings in sidebar */
+    /* Light Sidebar specific variables */
+    --sidebar-background: 45 70% 97%; /* Whitish-cream (e.g. #FAF9F7) */
+    --sidebar-foreground: 240 10% 15%; /* Dark gray */
+    --sidebar-primary: 344 95% 25%;    /* Dark Red (#7B0323) */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 45 50% 92%;      /* Cream for hover (e.g. #F5F2E8) */
+    --sidebar-accent-foreground: 344 95% 25%; /* Dark Red for text on cream hover */
+    --sidebar-border: 45 30% 88%;     /* Subtle border, slightly darker cream (e.g. #EAE7E0) */
+    --sidebar-ring: 344 95% 35%;      /* Dark Red for focus rings */
   }
 
   .dark {
@@ -86,15 +86,15 @@ body {
     --chart-4: 120 50% 60%; /* Lighter Green */
     --chart-5: 60 70% 60%; /* Lighter Yellow/Orange */
 
-    /* Dark Sidebar (can be same as light, or adjusted if needed) */
-    --sidebar-background: 240 6% 8%; /* Even darker for depth */
+    /* Dark Sidebar (can be same as light, or adjusted if needed - keeping original dark for now) */
+    --sidebar-background: 240 6% 8%; 
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 344 80% 55%; /* Consistent with dark theme primary */
-    --sidebar-primary-foreground: 344 95% 15%; /* Consistent with dark theme primary-foreground */
+    --sidebar-primary: 344 80% 55%; 
+    --sidebar-primary-foreground: 344 95% 15%; 
     --sidebar-accent: 240 4% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 4% 18%;
-    --sidebar-ring: 344 80% 55%; /* Consistent with dark theme ring */
+    --sidebar-ring: 344 80% 55%; 
   }
 }
 

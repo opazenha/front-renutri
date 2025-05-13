@@ -11,7 +11,7 @@ export default function AppLayout({
 }) {
   return (
     <PatientProvider>
-      <SidebarProvider defaultOpen={false}>
+      <SidebarProvider defaultOpen={false}> {/* Ensure defaultOpen is false */}
         <AppSidebarClient />
         <SidebarInset className="flex flex-col">
           <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 md:hidden">
@@ -32,4 +32,3 @@ export default function AppLayout({
     </PatientProvider>
   );
 }
-
