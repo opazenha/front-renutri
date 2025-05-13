@@ -14,16 +14,13 @@ interface PatientDetailPageProps {
 }
 
 export default function PatientDetailPage({ params }: PatientDetailPageProps) {
-  const patientId = params.patientId; // Direct access for server component, or after React.use if it were a promise
+  // Use React.use to unwrap the params promise
+  const resolvedParams = React.use(params);
+  const patientId = resolvedParams.patientId;
 
   const { getPatientById, isLoading } = usePatientContext();
   const router = useRouter();
   
-  // If params were a promise, and this was a Client Component primarily relying on it:
-  // const resolvedParams = React.use(params); 
-  // const patientId = resolvedParams.patientId;
-  // But for now, assuming direct access is fine as per Next.js guidance for this setup.
-
   const patient = getPatientById(patientId);
 
   if (isLoading) {
@@ -63,3 +60,4 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
     </div>
   );
 }
+
