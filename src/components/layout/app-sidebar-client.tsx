@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -10,30 +9,35 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   useSidebar,
+  SidebarMenuBadge,
 } from "@/components/ui/sidebar";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, LogOut, Settings, UserCircle, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, Settings, UserCircle, CalendarDays, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { usePatientContext } from "@/contexts/patient-context";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Painel", tooltip: "Painel de Controle" },
   { href: "/patients", icon: Users, label: "Pacientes", tooltip: "Gerenciar Pacientes" },
   { href: "/agenda", icon: CalendarDays, label: "Agenda", tooltip: "Consultar Agenda" },
+  { href: "/messages", icon: MessageSquare, label: "Mensagens", tooltip: "Ver Mensagens" },
 ];
 
 export function AppSidebarClient() {
   const { open } = useSidebar();
   const pathname = usePathname();
+  const { getTotalUnreadMessagesCount, isLoading } = usePatientContext();
+  const totalUnreadMessages = isLoading ? 0 : getTotalUnreadMessagesCount();
 
   return (
     <Sidebar collapsible="icon" variant="inset" side="left">
-      <SidebarHeader className={cn("p-2", !open && "items-center justify-center p-2")}> {/* Changed p-4 to p-2 */}
-        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 6 : 6} /> {/* Changed iconSize for open state */}
+      <SidebarHeader className={cn("p-2", !open && "items-center justify-center p-2")}>
+        <Logo className={cn(open ? "" : "justify-center")} iconSize={open ? 6 : 6} />
       </SidebarHeader>
-      <SidebarContent className="p-1 flex-1"> {/* Changed p-2 to p-1 */}
+      <SidebarContent className="p-1 flex-1">
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
@@ -45,13 +49,16 @@ export function AppSidebarClient() {
                 >
                   <item.icon className="shrink-0" />
                   <span className={cn(open ? "" : "sr-only")}>{item.label}</span>
+                   {item.href === "/messages" && totalUnreadMessages > 0 && (
+                    <SidebarMenuBadge>{totalUnreadMessages}</SidebarMenuBadge>
+                  )}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="p-2 flex flex-col gap-2"> {/* Changed p-4 to p-2 */}
+      <SidebarFooter className="p-2 flex flex-col gap-2">
         <Link href="/profile" passHref legacyBehavior>
             <Button variant="ghost" className={cn("w-full justify-start", open ? "" : "justify-center")}>
                 <UserCircle className="shrink-0"/>

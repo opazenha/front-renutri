@@ -1,9 +1,8 @@
-
 "use client";
 
 import type { 
   Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, 
-  ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender,
+  ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, Message, // Added Message
   ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment
 } from "@/types";
 import type { 
@@ -19,7 +18,7 @@ import { calculateAge } from "@/types";
 
 interface PatientContextType {
   patients: Patient[];
-  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments" | "clinicalAssessments" | "foodAssessments" | "behavioralAssessments" | "biochemicalAssessments">) => Patient;
+  addPatient: (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments" | "clinicalAssessments" | "foodAssessments" | "behavioralAssessments" | "biochemicalAssessments" | "messages">) => Patient;
   getPatientById: (id: string) => Patient | undefined;
   
   updatePatientClinicalAssessment: (patientId: string, data: ClinicalAssessmentFormData) => void;
@@ -38,6 +37,13 @@ interface PatientContextType {
   getAppointmentsByDate: (date: string) => Appointment[];
   updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => void;
   updateAppointment: (appointmentId: string, data: AppointmentFormData) => void;
+
+  // Message related functions
+  getMessagesByPatientId: (patientId: string) => Message[];
+  getAllMessages: () => Message[];
+  markMessageAsRead: (messageId: string, patientId: string) => void;
+  getUnreadMessagesCountForPatient: (patientId: string) => number;
+  getTotalUnreadMessagesCount: () => number;
 }
 
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
@@ -60,7 +66,6 @@ useEffect(() => {
       const storedPatientsJson = localStorage.getItem(LOCAL_STORAGE_KEY_PATIENTS);
       if (storedPatientsJson) {
         const parsedPatients = JSON.parse(storedPatientsJson) as Patient[];
-        // Ensure all necessary arrays exist for each patient
         patientsToSet = parsedPatients.map(p => ({
           ...p,
           anthropometricData: p.anthropometricData || [],
@@ -72,35 +77,39 @@ useEffect(() => {
           behavioralAssessments: p.behavioralAssessments || [],
           biochemicalAssessments: p.biochemicalAssessments || [],
           appointments: p.appointments || [],
+          messages: p.messages || [], // Ensure messages array exists
         }));
 
-        if (patientsToSet.length === 0) { // If localStorage was valid but empty
-             patientsToSet = mockPatients.map(p => ({ // Ensure mock patients also have all arrays
+        if (patientsToSet.length === 0) { 
+             patientsToSet = mockPatients.map(p => ({
                 ...p,
                 clinicalAssessments: p.clinicalAssessments || [],
                 foodAssessments: p.foodAssessments || [],
                 behavioralAssessments: p.behavioralAssessments || [],
                 biochemicalAssessments: p.biochemicalAssessments || [],
+                messages: p.messages || [],
              }));
         }
 
       } else {
-        patientsToSet = mockPatients.map(p => ({ // Ensure mock patients also have all arrays
+        patientsToSet = mockPatients.map(p => ({
             ...p,
             clinicalAssessments: p.clinicalAssessments || [],
             foodAssessments: p.foodAssessments || [],
             behavioralAssessments: p.behavioralAssessments || [],
             biochemicalAssessments: p.biochemicalAssessments || [],
+            messages: p.messages || [],
          }));
       }
     } catch (error) {
       console.error("Failed to parse patients from localStorage, using mock data.", error);
-      patientsToSet = mockPatients.map(p => ({ // Ensure mock patients also have all arrays
+      patientsToSet = mockPatients.map(p => ({
         ...p,
         clinicalAssessments: p.clinicalAssessments || [],
         foodAssessments: p.foodAssessments || [],
         behavioralAssessments: p.behavioralAssessments || [],
         biochemicalAssessments: p.biochemicalAssessments || [],
+        messages: p.messages || [],
      }));
     }
     setPatients(patientsToSet);
@@ -160,7 +169,7 @@ useEffect(() => {
   }, [appointments, isLoading]);
 
 
-  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments" | "clinicalAssessments" | "foodAssessments" | "behavioralAssessments" | "biochemicalAssessments">) => {
+  const addPatient = (patientData: Omit<Patient, "id" | "registrationDate" | "anthropometricData" | "energyExpenditureRecords" | "macronutrientPlans" | "micronutrientRecommendations" | "appointments" | "clinicalAssessments" | "foodAssessments" | "behavioralAssessments" | "biochemicalAssessments" | "messages">) => {
     const newPatient: Patient = {
       ...patientData,
       id: uuidv4(),
@@ -174,6 +183,7 @@ useEffect(() => {
       foodAssessments: [],
       behavioralAssessments: [],
       biochemicalAssessments: [],
+      messages: [],
     };
     setPatients((prevPatients) => [...prevPatients, newPatient]);
     return newPatient;
@@ -279,7 +289,7 @@ useEffect(() => {
       if (p.id === patientId) {
         const newRecord: BiochemicalAssessment = { 
           id: uuidv4(), 
-          assessmentDate: data.assessmentDate, // Or a fixed date like new Date().toISOString() if not part of form
+          assessmentDate: data.assessmentDate,
           exams: data.exams.map(exam => ({...exam, id: exam.id || uuidv4()}) as LabExamRecord)
         };
         const updatedRecords = [...(p.biochemicalAssessments || []), newRecord].sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
@@ -385,6 +395,42 @@ useEffect(() => {
     });
   };
 
+  // Message specific functions
+  const getMessagesByPatientId = (patientId: string): Message[] => {
+    const patient = patients.find(p => p.id === patientId);
+    return patient?.messages || [];
+  };
+
+  const getAllMessages = (): Message[] => {
+    return patients.reduce((acc, p) => acc.concat(p.messages || []), [] as Message[])
+                   .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  };
+
+  const markMessageAsRead = (messageId: string, patientId: string) => {
+    setPatients(prevPatients => 
+      prevPatients.map(p => {
+        if (p.id === patientId) {
+          return {
+            ...p,
+            messages: (p.messages || []).map(msg => 
+              msg.id === messageId ? { ...msg, isRead: true } : msg
+            ),
+          };
+        }
+        return p;
+      })
+    );
+  };
+
+  const getUnreadMessagesCountForPatient = (patientId: string): number => {
+    const patient = patients.find(p => p.id === patientId);
+    return (patient?.messages || []).filter(msg => !msg.isRead).length;
+  };
+
+  const getTotalUnreadMessagesCount = (): number => {
+    return patients.reduce((count, p) => count + (p.messages || []).filter(msg => !msg.isRead).length, 0);
+  };
+
 
   return (
     <PatientContext.Provider value={{ 
@@ -405,6 +451,11 @@ useEffect(() => {
       getAppointmentsByDate,
       updateAppointmentStatus,
       updateAppointment,
+      getMessagesByPatientId,
+      getAllMessages,
+      markMessageAsRead,
+      getUnreadMessagesCountForPatient,
+      getTotalUnreadMessagesCount,
     }}>
       {children}
     </PatientContext.Provider>
@@ -418,5 +469,3 @@ export const usePatientContext = () => {
   }
   return context;
 };
-
-    

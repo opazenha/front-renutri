@@ -6,22 +6,16 @@ import { User, Mail } from "lucide-react";
 import { calculateAge } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+import { usePatientContext } from "@/contexts/patient-context";
 
 interface PatientOverviewCardProps {
   patient: Patient;
 }
 
 export function PatientOverviewCard({ patient }: PatientOverviewCardProps) {
-  const { toast } = useToast();
-
-  const handleOpenMessages = () => {
-    toast({
-      title: "Funcionalidade Indisponível",
-      description: "O sistema de mensagens para pacientes estará disponível em breve.",
-      variant: "default",
-    });
-  };
+  const { getUnreadMessagesCountForPatient, isLoading } = usePatientContext();
+  const unreadCount = isLoading ? 0 : getUnreadMessagesCountForPatient(patient.id);
 
   return (
     <Card className="shadow-lg">
@@ -34,8 +28,18 @@ export function PatientOverviewCard({ patient }: PatientOverviewCardProps) {
               <CardDescription className="text-xs sm:text-sm">Informações básicas do paciente.</CardDescription>
             </div>
           </div>
-          <Button variant="outline" size="icon" onClick={handleOpenMessages} aria-label="Abrir mensagens do paciente" className="shrink-0">
-            <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
+          <Button variant="outline" size="icon" asChild aria-label="Abrir mensagens do paciente" className="shrink-0 relative">
+            <Link href={`/messages?patientId=${patient.id}`}>
+              <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 w-5 sm:h-6 sm:w-6 rounded-full flex items-center justify-center text-xs p-0.5"
+                >
+                  {unreadCount}
+                </Badge>
+              )}
+            </Link>
           </Button>
         </div>
       </CardHeader>
@@ -68,4 +72,3 @@ export function PatientOverviewCard({ patient }: PatientOverviewCardProps) {
     </Card>
   );
 }
-

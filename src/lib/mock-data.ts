@@ -1,6 +1,6 @@
-import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment, MealRecord, FoodFrequencyRecord, AlcoholicBeverageRecord } from '@/types';
+import type { Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment, MealRecord, FoodFrequencyRecord, AlcoholicBeverageRecord, Message } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
-import { format, subDays, subMonths, subYears, addMonths } from 'date-fns';
+import { format, subDays, subMonths, subYears, addMonths, subHours } from 'date-fns';
 import { calculateAge } from '@/types';
 
 const today = new Date();
@@ -212,10 +212,30 @@ const createBehavioralAssessments = (numRecords: number = 1): BehavioralAssessme
         });
     }
     return assessments.sort((a,b) => new Date(b.assessmentDate).getTime() - new Date(a.assessmentDate).getTime());
-}
+};
+
+const createMessages = (patientId: string, patientName: string, count: number): Message[] => {
+  const messages: Message[] = [];
+  const sources: Array<'whatsapp' | 'gmail'> = ['whatsapp', 'gmail'];
+  for (let i = 0; i < count; i++) {
+    const isRead = Math.random() > 0.5;
+    const source = sources[Math.floor(Math.random() * sources.length)];
+    messages.push({
+      id: uuidv4(),
+      patientId,
+      patientName,
+      source,
+      sender: source === 'whatsapp' ? `+55 11 98765-432${i}` : `paciente${i}@example.com`,
+      timestamp: subHours(subDays(today, i), Math.floor(Math.random() * 24)).toISOString(),
+      content: `Esta é uma mensagem de teste número ${i + 1} de ${patientName} via ${source}. ${isRead ? '(Lida)' : '(Não lida)'} Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+      isRead,
+    });
+  }
+  return messages.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+};
 
 
-export const mockPatients: Patient[] = [
+export let mockPatients: Patient[] = [
   {
     id: "1",
     name: "Ana Silva",
@@ -237,6 +257,7 @@ export const mockPatients: Patient[] = [
         { id: uuidv4(), patientId: "1", patientName: "Ana Silva", date: formatDateYYYYMMDD(addMonths(today,1)), time: "10:00", description: "Consulta de retorno", status: "scheduled" },
         { id: uuidv4(), patientId: "1", patientName: "Ana Silva", date: formatDateYYYYMMDD(today), time: "14:30", description: "Avaliação inicial", status: "scheduled" },
     ],
+    messages: [], // Will be populated later
   },
   {
     id: "2",
@@ -258,6 +279,7 @@ export const mockPatients: Patient[] = [
     appointments: [
          { id: uuidv4(), patientId: "2", patientName: "Bruno Costa", date: formatDateYYYYMMDD(subDays(today,5)), time: "09:00", description: "Acompanhamento", status: "completed" }
     ],
+    messages: [],
   },
   {
     id: "3",
@@ -277,6 +299,7 @@ export const mockPatients: Patient[] = [
     macronutrientPlans: createMacronutrientPlans(1800, 65, 1),
     micronutrientRecommendations: [],
     appointments: [],
+    messages: [],
   },
   {
     id: "4",
@@ -296,6 +319,7 @@ export const mockPatients: Patient[] = [
     macronutrientPlans: createMacronutrientPlans(2200, 95,1),
     micronutrientRecommendations: [],
     appointments: [],
+    messages: [],
   },
   {
     id: "5",
@@ -315,9 +339,12 @@ export const mockPatients: Patient[] = [
     macronutrientPlans: createMacronutrientPlans(2500, 60,1),
     micronutrientRecommendations: [],
     appointments: [],
+    messages: [],
   },
 ];
 
-mockPatients.forEach(patient => {
+mockPatients = mockPatients.map(patient => {
   patient.micronutrientRecommendations = createMicronutrientRecommendations(patient, 1);
+  patient.messages = createMessages(patient.id, patient.name, Math.floor(Math.random() * 5) + 1); // 1 to 5 messages
+  return patient;
 });

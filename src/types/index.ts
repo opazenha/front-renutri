@@ -26,6 +26,16 @@ export type ConsumptionFrequency = "Diário" | "X vezes/semana" | "X vezes/mês"
 export type AlcoholicBeverageType = "Absinto" | "Cachaça" | "Chopp/cerveja" | "Ice" | "Rum/gim" | string; // string for custom
 export type AlcoholicBeverageUnit = "Cálices" | "Canecas" | "Copos americanos" | "Copos duplos" | "Doses" | string; // string for custom
 
+export interface Message {
+  id: string;
+  patientId: string;
+  patientName?: string; // Optional, can be derived
+  source: 'whatsapp' | 'gmail';
+  sender: string; // email address or phone number
+  timestamp: string; // ISO string
+  content: string;
+  isRead: boolean;
+}
 
 export interface Patient {
   id: string;
@@ -46,6 +56,7 @@ export interface Patient {
   macronutrientPlans?: MacronutrientPlan[];
   micronutrientRecommendations?: MicronutrientRecommendation[];
   appointments?: Appointment[];
+  messages?: Message[];
 }
 
 export interface ClinicalAssessmentHabits {
