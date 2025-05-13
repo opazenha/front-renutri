@@ -22,7 +22,7 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = "8.5rem"; // Adjusted from 10rem to be more compact
+const SIDEBAR_WIDTH = "8.5rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "2.5rem" 
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
@@ -35,6 +35,8 @@ type SidebarContext = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  variant?: "sidebar" | "floating" | "inset" // Added variant
+  side?: "left" | "right" // Added side
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -54,6 +56,9 @@ const SidebarProvider = React.forwardRef<
     defaultOpen?: boolean
     open?: boolean
     onOpenChange?: (open: boolean) => void
+    // Props to store the actual variant and side of the Sidebar child
+    sidebarVariant?: "sidebar" | "floating" | "inset"
+    sidebarSide?: "left" | "right"
   }
 >(
   (
@@ -64,6 +69,8 @@ const SidebarProvider = React.forwardRef<
       className,
       style,
       children,
+      sidebarVariant, // consumed from Sidebar child
+      sidebarSide,   // consumed from Sidebar child
       ...props
     },
     ref
@@ -132,6 +139,15 @@ const SidebarProvider = React.forwardRef<
 
     const state = open ? "expanded" : "collapsed"
 
+    // Find the Sidebar child to get its variant and side
+    const sidebarChild = React.Children.toArray(children).find(
+      (child) => React.isValidElement(child) && child.type === Sidebar
+    ) as React.ReactElement<React.ComponentProps<typeof Sidebar>> | undefined;
+
+    const actualSidebarVariant = sidebarChild?.props?.variant || "sidebar";
+    const actualSidebarSide = sidebarChild?.props?.side || "left";
+
+
     const contextValue = React.useMemo<SidebarContext>(
       () => ({
         state,
@@ -141,8 +157,10 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        variant: actualSidebarVariant,
+        side: actualSidebarSide,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, actualSidebarVariant, actualSidebarSide]
     )
 
     return (
@@ -197,7 +215,7 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+            "flex h-full w-[var(--sidebar-width)] flex-col bg-sidebar text-sidebar-foreground",
             className
           )}
           ref={ref}
@@ -245,25 +263,33 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             "duration-200 relative h-svh bg-transparent transition-[width] ease-in-out",
-            !isMobile && (open ? "w-[var(--sidebar-width)]" : (isIconCollapsible ? "w-[var(--sidebar-width-icon)]" : "w-0")),
-            !isMobile && (variant === "floating" || variant === "inset") && (
-               open ? "w-[var(--sidebar-width)]" : (isIconCollapsible ? "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]" : "w-0")
-            ),
+            !isMobile && (open ? 
+              (variant === "inset" ? "w-[calc(var(--sidebar-width)-theme(spacing.2))]" : "w-[var(--sidebar-width)]") 
+              : (isIconCollapsible ? 
+                  (variant === "inset" ? "w-[calc(var(--sidebar-width-icon)+theme(spacing.2))]" : "w-[var(--sidebar-width-icon)]") 
+                  : "w-0")),
             "group-data-[side=right]:rotate-180"
           )}
         />
         <div
           className={cn(
             "duration-200 fixed inset-y-0 z-10 hidden h-svh transition-[left,right,width] ease-in-out md:flex",
-            !isMobile && (open ? "w-[var(--sidebar-width)]" : (isIconCollapsible ? "w-[var(--sidebar-width-icon)]" : "w-0")),
+            !isMobile && (
+              open 
+                ? (variant === "inset" ? "w-[calc(var(--sidebar-width)-theme(spacing.2))]" : "w-[var(--sidebar-width)]") 
+                : (isIconCollapsible 
+                    ? (variant === "inset" ? "w-[calc(var(--sidebar-width-icon)+theme(spacing.2))]" : "w-[var(--sidebar-width-icon)]") 
+                    : "w-0")
+            ),
             side === "left"
               ? "left-0" 
               : "right-0",
             !isMobile && (collapsible === "offcanvas" && !open) && (side === "left" ? "left-[calc(var(--sidebar-width)*-1)]" : "right-[calc(var(--sidebar-width)*-1)]"),
             variant === "floating" || variant === "inset"
-              ? "p-2"
+              ? side === "left"
+                ? "py-2 pl-2 pr-0" // Adjusted for left sidebar inset for 1px gap
+                : "py-2 pr-2 pl-0" // Adjusted for right sidebar inset for 1px gap
               : (side === "left" ? "border-r" : "border-l"),
-            !isMobile && (variant === "floating" || variant === "inset") && (isIconCollapsible && !open) && "w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]",
             className
           )}
           {...props}
@@ -272,7 +298,7 @@ const Sidebar = React.forwardRef<
             data-sidebar="sidebar"
             className={cn(
                 "flex h-full w-full flex-col bg-sidebar",
-                variant === "floating" && "rounded-lg border border-sidebar-border shadow"
+                (variant === "floating" || variant === "inset") && "rounded-lg border border-sidebar-border shadow"
             )}
           >
             {children}
@@ -352,47 +378,40 @@ const SidebarInset = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"main">
 >(({ className, ...props }, ref) => {
-  const { open, isMobile } = useSidebar();
+  const { open, isMobile, variant: sidebarPeerVariant } = useSidebar();
   const isIconCollapsible = true; 
 
-  let baseMarginLeftClass = "ml-0"; 
+  let marginLeftClass = "ml-0";
   if (!isMobile) {
-    if (open) {
-      baseMarginLeftClass = "md:ml-[var(--sidebar-width)]";
-    } else if (isIconCollapsible) {
-      baseMarginLeftClass = "md:ml-[var(--sidebar-width-icon)]";
-    } 
+    if (sidebarPeerVariant === "inset") {
+      if (open) {
+        marginLeftClass = "md:ml-[calc(var(--sidebar-width)-theme(spacing.2))]";
+      } else if (isIconCollapsible) {
+        marginLeftClass = "md:ml-[calc(var(--sidebar-width-icon)+theme(spacing.2))]";
+      }
+    } else { // Default behavior for non-inset or other variants
+      if (open) {
+        marginLeftClass = "md:ml-[var(--sidebar-width)]";
+      } else if (isIconCollapsible) {
+        marginLeftClass = "md:ml-[var(--sidebar-width-icon)]";
+      }
+    }
   }
   
-  const insetMlCollapsed = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px_+_theme(spacing.2))]';
-  const insetMlExpanded = 'md:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width)_+_theme(spacing.2))]';
-  
-  let insetMarginLeftClass = "";
-  if(!isMobile) {
-     if (!open && isIconCollapsible) {
-        insetMarginLeftClass = insetMlCollapsed;
-     } else if (open) {
-        insetMarginLeftClass = insetMlExpanded;
-     } else { 
-        insetMarginLeftClass = 'md:peer-data-[variant=inset]:ml-2'; 
-     }
-  }
-
-
-  const insetBaseClasses = `
-    peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] 
-    md:peer-data-[variant=inset]:m-2 
-    md:peer-data-[variant=inset]:rounded-xl 
-    md:peer-data-[variant=inset]:shadow
-  `;
-
   return (
     <main
       ref={ref}
       className={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background transition-[margin-left] duration-200 ease-in-out",
-        baseMarginLeftClass, 
-        "peer-data-[variant=inset]" ? cn(insetBaseClasses, insetMarginLeftClass) : "", 
+        marginLeftClass,
+        // Apply inset-specific container styles IF the sidebar is inset
+        // These ensure the main content also visually appears "inset" but respects the 1px gap
+        "peer-data-[variant=inset]:md:my-2",
+        "peer-data-[variant=inset]:md:mr-2", // Assuming sidebar is on the left for mr-2
+        // If sidebar could be on the right, this would need to be md:ml-2
+        "peer-data-[variant=inset]:md:min-h-[calc(100svh-theme(spacing.4))]",
+        "peer-data-[variant=inset]:md:rounded-xl",
+        "peer-data-[variant=inset]:md:shadow",
         className
       )}
       {...props}
