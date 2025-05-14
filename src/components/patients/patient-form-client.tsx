@@ -80,7 +80,7 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
             render={({ field }) => {
               let controlElement;
               if (item.component === Input) {
-                controlElement = <Input placeholder={item.placeholder} type={item.type} {...field} />;
+                controlElement = <Input placeholder={item.placeholder} type={item.type} {...field} value={field.value ?? ""} />;
               } else if (item.component === DateDropdowns) {
                 controlElement = <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />;
               } else if (item.component === Select) {
@@ -97,11 +97,11 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
                   </Select>
                 );
               } else {
-                controlElement = <Input {...field} />; // Fallback
+                controlElement = <Input {...field} value={field.value ?? ""} />; // Fallback
               }
 
               return (
-                <FormItem className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${index % 2 === 0 ? "bg-muted/30" : "bg-transparent"}`}>
+                <FormItem className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
                   <FormLabel className="md:w-1/4 md:text-right mb-1 md:mb-0 text-sm font-medium">{item.label}</FormLabel>
                   <div className="md:w-3/4">
                     <FormControl>

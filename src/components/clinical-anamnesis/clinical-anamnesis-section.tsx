@@ -83,24 +83,24 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
   }
   
   const renderField = (item: any, index: number, field: any) => {
-    const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`;
-    const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`;
+    const isTextarea = item.component === Textarea;
+    const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${isTextarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`;
+    const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${isTextarea ? '' : 'sm:text-right'}`;
     
     let controlElement;
     if (item.component === Input) {
-      controlElement = <Input type={item.type || "text"} placeholder={item.placeholder} {...field} value={field.value || ""} />;
+      controlElement = <Input type={item.type || "text"} placeholder={item.placeholder} {...field} value={field.value ?? ""} />;
     } else if (item.component === Textarea) {
-      controlElement = <Textarea placeholder={item.placeholder} {...field} value={field.value || ""} />;
+      controlElement = <Textarea placeholder={item.placeholder} {...field} value={field.value ?? ""} />;
     } else if (item.component === Select) {
       controlElement = (
         <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
-          <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
+          <FormControl><SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger></FormControl>
           <SelectContent>{item.options?.map((opt: string | {value: string, label: string}) => <SelectItem key={typeof opt === 'string' ? opt : opt.value} value={typeof opt === 'string' ? opt : opt.value}>{typeof opt === 'string' ? opt : opt.label}</SelectItem>)}</SelectContent>
         </Select>
       );
     } else {
-      // Fallback for unsupported component types, or handle error
-      controlElement = <Input type="text" {...field} value={field.value || ""} />;
+      controlElement = <Input type="text" {...field} value={field.value ?? ""} />; // Fallback
     }
 
     return (
@@ -138,7 +138,7 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
 
   const signsAndSymptomsFields = Object.keys(ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape).map(key => ({
     name: `signsAndSymptoms.${key as keyof ClinicalAssessmentFormData['signsAndSymptoms']}`,
-    label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+    label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()), // Auto-generate label from key
     component: Select,
     options: (ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape[key as keyof ClinicalAssessmentFormData['signsAndSymptoms']].unwrap()._def.innerType?.options || yesNoUnknownOptions).map((o: string) => ({label: o, value: o}))
   }));
@@ -167,7 +167,7 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
                 control={form.control}
                 name="assessmentDate"
                 render={({ field }) => (
-                   <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/30`}>
+                   <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50`}>
                     <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Data da Avaliação</FormLabel>
                     <div className="sm:w-2/3">
                     <FormControl>
@@ -190,31 +190,39 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
 
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Hábitos</CardTitle></CardHeader>
-                <CardContent className="space-y-0 md:grid md:grid-cols-2 md:gap-x-6">
-                  {habitsFields.map((item, index) => {
-                    const fieldName = item.name as keyof ClinicalAssessmentFormData;
-                    const shouldRender = item.condition ? item.condition(form.getValues()) : true;
-                    if (!shouldRender) return null;
-                    return <FormField key={item.name} control={form.control} name={fieldName} render={({ field }) => renderField(item, index, field)} />
-                  })}
+                <CardContent className="space-y-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-0">
+                    {habitsFields.map((item, index) => {
+                      const fieldName = item.name as keyof ClinicalAssessmentFormData;
+                      const shouldRender = item.condition ? item.condition(form.getValues()) : true;
+                      if (!shouldRender) return null;
+                      // Calculate an alternating index for direct children of this grid
+                      const itemIndexWithinGrid = habitsFields.filter(f => f.condition ? f.condition(form.getValues()) : true).indexOf(item);
+                      return <FormField key={item.name} control={form.control} name={fieldName} render={({ field }) => renderField(item, itemIndexWithinGrid, field)} />;
+                    })}
+                  </div>
                 </CardContent>
               </Card>
 
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Sinais e Sintomas</CardTitle></CardHeader>
-                <CardContent className="space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-x-6">
-                  {signsAndSymptomsFields.map((item, index) => (
-                    <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
-                  ))}
+                <CardContent className="space-y-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-x-0">
+                    {signsAndSymptomsFields.map((item, index) => (
+                      <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
               
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Questões Específicas</CardTitle></CardHeader>
-                <CardContent className="space-y-0 md:grid md:grid-cols-2 md:gap-x-6">
-                   {specificQuestionsFields.map((item, index) => (
-                    <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
-                  ))}
+                <CardContent className="space-y-0">
+                   <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-0">
+                    {specificQuestionsFields.map((item, index) => (
+                      <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
               
@@ -245,8 +253,8 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {patient.clinicalAssessments.map((record, index) => (
-                    <TableRow key={record.id} className={index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}>
+                  {patient.clinicalAssessments.map((record, tblIndex) => (
+                    <TableRow key={record.id} className={tblIndex % 2 === 0 ? "bg-muted/50" : "bg-transparent"}>
                       <TableCell>{new Date(record.assessmentDate).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell className="max-w-xs truncate">{record.queixaPrincipal || "N/A"}</TableCell>
                       <TableCell>{record.habits?.fuma || "N/A"}</TableCell>

@@ -56,7 +56,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
         status: initialData.status || "scheduled",
       });
     }
-  }, [initialData, form.reset, form]); // Added form to dependency array as per hook best practices
+  }, [initialData, form]); 
 
 
   const handleSubmitInternal = (data: AppointmentFormData) => {
@@ -82,28 +82,29 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             name={item.name as keyof AppointmentFormData}
             render={({ field }) => {
               let controlElement;
+              const isTextarea = item.component === Textarea;
               if (item.component === Input) {
-                controlElement = <Input type={item.type} {...field} disabled={isSubmitting} />;
+                controlElement = <Input type={item.type} {...field} disabled={isSubmitting} value={field.value ?? ""} />;
               } else if (item.component === Textarea) {
-                controlElement = <Textarea placeholder={item.placeholder} {...field} disabled={isSubmitting} />;
+                controlElement = <Textarea placeholder={item.placeholder} {...field} disabled={isSubmitting} value={field.value ?? ""} />;
               } else if (item.component === DateDropdowns) {
                 controlElement = <DateDropdowns value={field.value as string} onChange={field.onChange} disabled={isSubmitting} {...item.props} />;
               } else if (item.component === Select) {
                 controlElement = (
                   <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined} disabled={isSubmitting}>
-                    <SelectTrigger> <SelectValue placeholder={item.placeholder} /> </SelectTrigger>
+                     <FormControl><SelectTrigger> <SelectValue placeholder={item.placeholder} /> </SelectTrigger></FormControl>
                     <SelectContent>
                       {item.options?.map(opt => ( <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem> ))}
                     </SelectContent>
                   </Select>
                 );
               } else {
-                controlElement = <Input {...field} disabled={isSubmitting} />; // Fallback
+                controlElement = <Input {...field} disabled={isSubmitting} value={field.value ?? ""} />; // Fallback
               }
 
               return (
-                <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
-                  <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
+                <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${isTextarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
+                  <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${isTextarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
                   <div className="sm:w-2/3">
                     <FormControl>
                       {controlElement}
@@ -121,7 +122,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             control={form.control}
             name={statusField.name as keyof AppointmentFormData}
             render={({ field }) => (
-               <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 ${(formFields.length) % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+               <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 ${(formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
                 <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">{statusField.label}</FormLabel>
                 <div className="sm:w-2/3">
                   <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined} disabled={isSubmitting}>

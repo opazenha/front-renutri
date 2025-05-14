@@ -81,9 +81,8 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
         title: "Avaliação Alimentar Atualizada",
         description: "Novo registro alimentar adicionado com sucesso.",
       });
-      // Optionally reset form here, or parts of it
       form.reset({ 
-        ...form.getValues(), // Keep current general info
+        ...form.getValues(), 
         assessmentDate: format(new Date(), "yyyy-MM-dd"),
         dietaryRecall24h: [],
         foodFrequency: [],
@@ -132,7 +131,7 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 control={form.control}
                 name="assessmentDate"
                 render={({ field }) => (
-                  <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/30`}>
+                  <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50`}>
                     <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Data da Avaliação</FormLabel>
                     <div className="sm:w-2/3">
                       <FormControl>
@@ -154,6 +153,7 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                       name={item.name as keyof FoodAssessmentFormData}
                       render={({ field }) => {
                         let controlElement;
+                        const isTextarea = item.component === Textarea;
                         if (item.component === Input) {
                           controlElement = <Input placeholder={item.placeholder} type={item.type} {...field} value={field.value || ''}/>;
                         } else if (item.component === Textarea) {
@@ -161,7 +161,7 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                         } else if (item.component === Select) {
                           controlElement = (
                             <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
-                              <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
+                              <FormControl><SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger></FormControl>
                               <SelectContent>
                                 {item.options?.map(opt => (<SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>))}
                               </SelectContent>
@@ -172,8 +172,8 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                         }
                         
                         return (
-                          <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
-                            <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
+                          <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${isTextarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
+                            <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${isTextarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
                             <div className="sm:w-2/3">
                               <FormControl>
                                 {controlElement}
@@ -192,17 +192,17 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 <CardHeader><CardTitle className="text-lg">Recordatório Alimentar 24h / Diário Alimentar</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   {recallFields.map((field, index) => (
-                    <Card key={field.id} className={`p-4 relative ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                    <Card key={field.id} className={`p-4 relative ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
                        <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive h-6 w-6" onClick={() => removeRecall(index)}>
                         <Trash2 className="h-4 w-4" /><span className="sr-only">Remover</span>
                       </Button>
-                      <div className="space-y-3">
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.mealType`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Refeição</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{mealTypeOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.time`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Horário</FormLabel><div className="sm:w-2/3"><FormControl><Input type="time" {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.foodItem`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.quantity`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Quantidade</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.preparationMethod`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Modo de Preparo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.observations`} render={({ field: itemField }) => (<FormItem><FormLabel>Observações</FormLabel><FormControl><Textarea {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></FormItem>)} />
+                      <div className="space-y-0">
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.mealType`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Refeição</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{mealTypeOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.time`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Horário</FormLabel><div className="sm:w-2/3"><FormControl><Input type="time" {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.foodItem`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.quantity`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Quantidade</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.preparationMethod`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Modo de Preparo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.observations`} render={({ field: itemField }) => (<FormItem className="p-2"><FormLabel>Observações</FormLabel><FormControl><Textarea {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></FormItem>)} />
                       </div>
                     </Card>
                   ))}
@@ -216,14 +216,14 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 <CardHeader><CardTitle className="text-lg">Frequência Alimentar</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   {frequencyFields.map((field, index) => (
-                    <Card key={field.id} className={`p-4 relative ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                    <Card key={field.id} className={`p-4 relative ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive h-6 w-6" onClick={() => removeFrequency(index)}>
                         <Trash2 className="h-4 w-4" /><span className="sr-only">Remover</span>
                       </Button>
-                      <div className="space-y-3">
-                        <FormField control={form.control} name={`foodFrequency.${index}.foodOrGroup`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento/Grupo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`foodFrequency.${index}.consumptionFrequency`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Frequência de Consumo</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{consumptionFrequencyOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
-                        <FormField control={form.control} name={`foodFrequency.${index}.usualPortion`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Porção Habitual</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                      <div className="space-y-0">
+                        <FormField control={form.control} name={`foodFrequency.${index}.foodOrGroup`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento/Grupo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`foodFrequency.${index}.consumptionFrequency`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Frequência de Consumo</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{consumptionFrequencyOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`foodFrequency.${index}.usualPortion`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Porção Habitual</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
                       </div>
                     </Card>
                   ))}
@@ -251,8 +251,8 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
               <Table>
                 <TableHeader><TableRow><TableHead>Data</TableHead><TableHead>Apetite</TableHead><TableHead>Nº Itens Recordatório</TableHead></TableRow></TableHeader>
                 <TableBody>
-                  {patient.foodAssessments.map((record) => (
-                    <TableRow key={record.id} className={patient.foodAssessments.indexOf(record) % 2 === 0 ? "bg-muted/20" : "bg-transparent"}>
+                  {patient.foodAssessments.map((record, tblIndex) => (
+                    <TableRow key={record.id} className={tblIndex % 2 === 0 ? "bg-muted/50" : "bg-transparent"}>
                       <TableCell>{new Date(record.assessmentDate).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell>{record.appetite || "N/A"}</TableCell>
                       <TableCell>{record.dietaryRecall24h?.length || 0}</TableCell>

@@ -30,8 +30,8 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
   const tabsRow2 = [
     { value: "biochemical-assessment", label: "Av. Bioquímica", icon: FlaskConical },
     { value: "energy-expenditure", label: "Gasto Energético", icon: Flame },
-    { value: "macronutrient-plan", label: "Plano de Macros", icon: Target },
-    { value: "micronutrient-recommendations", label: "Recom. de Micros", icon: Leaf },
+    { value: "macronutrient-plan", label: "Macronutrientes", icon: Target },
+    { value: "micronutrient-recommendations", label: "Micronutrientes", icon: Leaf },
   ];
 
   return (
@@ -93,4 +93,3 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
     </div>
   );
 }
-

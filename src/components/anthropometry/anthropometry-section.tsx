@@ -69,9 +69,27 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
       heightCm: latestAnthropometricData.heightCm ?? patient.anthropometricData.find(d => d.heightCm)?.heightCm ?? undefined,
       usualWeightKg: latestAnthropometricData.usualWeightKg ?? undefined,
       desiredWeightKg: latestAnthropometricData.desiredWeightKg ?? undefined,
-      // Initialize other fields similarly or leave as undefined for RHF to handle
       relaxedArmCircumference: latestAnthropometricData.relaxedArmCircumference ?? undefined,
-      // ... and so on for all fields
+      contractedArmCircumference: latestAnthropometricData.contractedArmCircumference ?? undefined,
+      waistCircumference: latestAnthropometricData.waistCircumference ?? undefined,
+      abdomenCircumference: latestAnthropometricData.abdomenCircumference ?? undefined,
+      hipCircumference: latestAnthropometricData.hipCircumference ?? undefined,
+      proximalThighCircumference: latestAnthropometricData.proximalThighCircumference ?? undefined,
+      medialThighCircumference: latestAnthropometricData.medialThighCircumference ?? undefined,
+      calfCircumference: latestAnthropometricData.calfCircumference ?? undefined,
+      neckCircumference: latestAnthropometricData.neckCircumference ?? undefined,
+      wristCircumference: latestAnthropometricData.wristCircumference ?? undefined,
+      bicepsSkinfold: latestAnthropometricData.bicepsSkinfold ?? undefined,
+      tricepsSkinfold: latestAnthropometricData.tricepsSkinfold ?? undefined,
+      subscapularSkinfold: latestAnthropometricData.subscapularSkinfold ?? undefined,
+      pectoralSkinfold: latestAnthropometricData.pectoralSkinfold ?? undefined,
+      midaxillarySkinfold: latestAnthropometricData.midaxillarySkinfold ?? undefined,
+      suprailiacSkinfold: latestAnthropometricData.suprailiacSkinfold ?? undefined,
+      abdominalSkinfold: latestAnthropometricData.abdominalSkinfold ?? undefined,
+      thighSkinfold: latestAnthropometricData.thighSkinfold ?? undefined,
+      medialCalfSkinfold: latestAnthropometricData.medialCalfSkinfold ?? undefined,
+      humerusBiepicondylarDiameter: latestAnthropometricData.humerusBiepicondylarDiameter ?? undefined,
+      femurBiepicondylarDiameter: latestAnthropometricData.femurBiepicondylarDiameter ?? undefined,
       assessmentObjective: latestAnthropometricData.assessmentObjective || "",
     },
   });
@@ -87,8 +105,17 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
         date: format(new Date(), "yyyy-MM-dd"),
         weightKg: undefined, 
         heightCm: data.heightCm, 
-        // Reset other numerical fields to undefined, keep relevant ones like objective
         assessmentObjective: data.assessmentObjective,
+        // Reset other fields as needed
+        usualWeightKg: undefined, desiredWeightKg: undefined,
+        relaxedArmCircumference: undefined, contractedArmCircumference: undefined,
+        waistCircumference: undefined, abdomenCircumference: undefined, hipCircumference: undefined,
+        proximalThighCircumference: undefined, medialThighCircumference: undefined, calfCircumference: undefined,
+        neckCircumference: undefined, wristCircumference: undefined,
+        bicepsSkinfold: undefined, tricepsSkinfold: undefined, subscapularSkinfold: undefined,
+        pectoralSkinfold: undefined, midaxillarySkinfold: undefined, suprailiacSkinfold: undefined,
+        abdominalSkinfold: undefined, thighSkinfold: undefined, medialCalfSkinfold: undefined,
+        humerusBiepicondylarDiameter: undefined, femurBiepicondylarDiameter: undefined,
       });
     } catch (error) {
        toast({
@@ -100,8 +127,9 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
   }
 
   const renderFormField = (item: any, index: number, field: any) => {
-    const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`;
-    const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`;
+    const isTextarea = item.component === Textarea;
+    const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${isTextarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`;
+    const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${isTextarea ? '' : 'sm:text-right'}`;
     
     let controlElement;
     if (item.component === Input) {
@@ -143,17 +171,15 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
               <Card>
                 <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><HeartPulse className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Dados Básicos da Avaliação</CardTitle></CardHeader>
                 <CardContent className="p-0 sm:p-0 space-y-0">
-                  <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1"> {/* Changed to 1 column for one-liner items */}
-                    {basicDataFields.map((item, index) => (
-                       <FormField key={item.name} control={form.control} name={item.name as keyof AnthropometricFormData} render={({ field }) => renderFormField(item, index, field)} />
-                    ))}
-                  </div>
+                  {basicDataFields.map((item, index) => (
+                     <FormField key={item.name} control={form.control} name={item.name as keyof AnthropometricFormData} render={({ field }) => renderFormField(item, index, field)} />
+                  ))}
                 </CardContent>
               </Card>
 
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><Ruler className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Circunferências (cm)</CardTitle></CardHeader>
-                <CardContent className="p-0 sm:p-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-0">
+                <CardContent className="p-0 sm:p-0 grid grid-cols-1 md:grid-cols-2 gap-x-0">
                   {circumferenceFields.map((item, index) => (
                      <FormField key={item.name} control={form.control} name={item.name as keyof AnthropometricFormData} render={({ field }) => renderFormField(item, index, field)} />
                   ))}
@@ -162,7 +188,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
 
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><Ruler className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Dobras Cutâneas (mm)</CardTitle><FormDescription className="text-xs sm:text-sm pl-6 pt-1">Utilizar adipômetro.</FormDescription></CardHeader>
-                <CardContent className="p-0 sm:p-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-0">
+                <CardContent className="p-0 sm:p-0 grid grid-cols-1 md:grid-cols-2 gap-x-0">
                    {skinfoldFields.map((item, index) => (
                      <FormField key={item.name} control={form.control} name={item.name as keyof AnthropometricFormData} render={({ field }) => renderFormField(item, index, field)} />
                   ))}
@@ -171,7 +197,7 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
               
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-base sm:text-lg flex items-center"><Bone className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Diâmetros Ósseos (cm)</CardTitle></CardHeader>
-                <CardContent className="p-0 sm:p-0 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-x-0">
+                <CardContent className="p-0 sm:p-0">
                    {boneDiameterFields.map((item, index) => (
                      <FormField key={item.name} control={form.control} name={item.name as keyof AnthropometricFormData} render={({ field }) => renderFormField(item, index, field)} />
                   ))}
@@ -182,8 +208,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                 <CardHeader><CardTitle className="text-base sm:text-lg flex items-center">Objetivo da Avaliação</CardTitle></CardHeader>
                 <CardContent className="p-0 sm:p-0">
                   <FormField control={form.control} name="assessmentObjective" render={({ field }) => (
-                    <FormItem className={`p-3 rounded-md bg-muted/20`}>
-                      <FormLabel>Objetivo da avaliação/acompanhamento</FormLabel>
+                    <FormItem className={`p-3 rounded-md bg-muted/50`}> {/* Single item, apply one of the stripe colors */}
+                      <FormLabel className="mb-1 sm:mb-0">Objetivo da avaliação/acompanhamento</FormLabel>
                       <FormControl><Textarea placeholder="Ex: Perda de peso, Ganho de massa muscular, Manutenção da saúde" {...field} value={field.value ?? ""} /></FormControl>
                       <FormMessage className="mt-1 text-xs"/>
                     </FormItem>
@@ -234,8 +260,8 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {patient.anthropometricData.map((record, index) => (
-                      <TableRow key={record.id} className={index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}>
+                    {patient.anthropometricData.map((record, tblIndex) => (
+                      <TableRow key={record.id} className={tblIndex % 2 === 0 ? "bg-muted/50" : "bg-transparent"}>
                         <TableCell>{new Date(record.date).toLocaleDateString('pt-BR')}</TableCell>
                         <TableCell>{record.weightKg?.toFixed(1) || "N/A"}</TableCell>
                         <TableCell>{record.heightCm?.toFixed(1) || "N/A"}</TableCell>
