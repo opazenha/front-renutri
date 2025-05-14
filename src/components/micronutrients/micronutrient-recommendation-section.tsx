@@ -1,242 +1,149 @@
-
 "use client";
 
-import type { MicronutrientRecommendationFormData, MicronutrientDetailFormData } from "@/lib/schemas";
-import { MicronutrientRecommendationSchema } from "@/lib/schemas";
-import type { Patient, MicronutrientRecommendation, MicronutrientDetail, Gender } from "@/types";
+import type { Patient, Gender } from "@/types";
 import { calculateAge } from "@/types";
-import { usePatientContext } from "@/contexts/patient-context";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PlusCircle, Trash2, Leaf, Pill, Stethoscope } from "lucide-react";
-import { DateDropdowns } from "@/components/ui/date-dropdowns"; // Changed import
-import { format, getYear } from "date-fns";
-import { cn } from "@/lib/utils";
+import {
+  getInternalGender,
+  type MicronutrientInput,
+  // Mineral Getters
+  getCalciumRecommendation,
+  getCopperRecommendation,
+  getChromiumRecommendation,
+  getIronRecommendation,
+  getPhosphorusRecommendation,
+  getIodineRecommendation,
+  getMagnesiumRecommendation,
+  getManganeseRecommendation,
+  getPotassiumRecommendation,
+  getSeleniumRecommendation,
+  getSodiumRecommendation,
+  getZincRecommendation,
+  // Vitamin Getters
+  getThiaminRecommendation, // B1
+  getRiboflavinRecommendation, // B2
+  getNiacinRecommendation, // B3
+  getPantothenicAcidRecommendation, // B5
+  getPyridoxineRecommendation, // B6
+  getBiotinRecommendation, // B7
+  getCholineRecommendation,
+  getFolateRecommendation, // B9
+  getCobalaminRecommendation, // B12
+  getVitaminCRecommendation,
+  getVitaminARecommendation,
+  getVitaminDRecommendation,
+  getVitaminERecommendation,
+} from "@/lib/nutrition-calculator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Leaf } from "lucide-react";
+import React from 'react'; 
 
 interface MicronutrientRecommendationSectionProps {
   patient: Patient;
 }
 
-const commonMicronutrients = [
-  "Vitamina A", "Vitamina C", "Vitamina D", "Vitamina E", "Tiamina (B1)", 
-  "Riboflavina (B2)", "Niacina (B3)", "Vitamina B6", "Folato (B9)", "Vitamina B12",
-  "Cálcio", "Fósforo", "Magnésio", "Ferro", "Zinco", "Cobre", "Selênio", "Iodo",
-  "Sódio", "Potássio", "Cloreto"
-];
-
-const CURRENT_YEAR = getYear(new Date());
+interface DisplayNutrient {
+  name: string;
+  value: string | number;
+}
 
 export function MicronutrientRecommendationSection({ patient }: MicronutrientRecommendationSectionProps) {
-  const { updatePatientMicronutrientRecommendation } = usePatientContext();
-  const { toast } = useToast();
+  const age = calculateAge(patient.dob);
+  const internalGender = getInternalGender(patient.gender as Gender); // Cast because patient.gender might be broader
 
-  const latestRecommendation = patient.micronutrientRecommendations?.[0] || {};
-  
-  const initialRecommendations: MicronutrientDetailFormData[] = commonMicronutrients.map(name => {
-    const existing = latestRecommendation.recommendations?.find(r => r.nutrientName === name);
-    return {
-      nutrientName: name,
-      specificRecommendation: existing?.specificRecommendation || "",
-      prescribedSupplementation: {
-        dose: existing?.prescribedSupplementation?.dose || "",
-        frequency: existing?.prescribedSupplementation?.frequency || "",
-        duration: existing?.prescribedSupplementation?.duration || "",
-      }
-    };
-  });
+  // Get special conditions from the latest recommendation, if available
+  const latestRecommendation = patient.micronutrientRecommendations?.[0];
+  const specialConditions = latestRecommendation?.specialConditions || [];
 
+  const isPregnant = specialConditions.some((condition: string) => 
+    condition.toLowerCase().includes('gestante') || condition.toLowerCase().includes('pregnant')
+  );
+  const isLactating = specialConditions.some((condition: string) => 
+    condition.toLowerCase().includes('lactante') || condition.toLowerCase().includes('lactating')
+  );
 
-  const form = useForm<MicronutrientRecommendationFormData>({
-    resolver: zodResolver(MicronutrientRecommendationSchema),
-    defaultValues: {
-      date: format(new Date(), "yyyy-MM-dd"),
-      ageAtTimeOfRec: calculateAge(patient.dob),
-      sexAtTimeOfRec: patient.gender,
-      specialConditions: latestRecommendation.specialConditions || [],
-      recommendations: initialRecommendations,
-    },
-  });
-
-  const { fields: recommendationFields, append: appendRecommendation, remove: removeRecommendation, replace } = useFieldArray({
-    control: form.control,
-    name: "recommendations",
-  });
-
-  const resetToDefaultMicronutrients = () => {
-    const defaultRecs = commonMicronutrients.map(name => ({
-      nutrientName: name,
-      specificRecommendation: "",
-      prescribedSupplementation: { dose: "", frequency: "", duration: "" }
-    }));
-    replace(defaultRecs);
+  const micronutrientInput: MicronutrientInput = {
+    age,
+    gender: internalGender,
+    isPregnant,
+    isLactating,
   };
 
+  const minerals: DisplayNutrient[] = [
+    { name: "Cálcio (mg/dia)", value: getCalciumRecommendation(micronutrientInput) },
+    { name: "Cobre (mcg/dia)", value: getCopperRecommendation() }, 
+    { name: "Cromo (mcg/dia)", value: getChromiumRecommendation(micronutrientInput) },
+    { name: "Ferro (mg/dia)", value: getIronRecommendation(micronutrientInput) },
+    { name: "Fósforo (mg/dia)", value: getPhosphorusRecommendation() }, 
+    { name: "Iodo (mcg/dia)", value: getIodineRecommendation(micronutrientInput) },
+    { name: "Magnésio (mg/dia)", value: getMagnesiumRecommendation(micronutrientInput) },
+    { name: "Manganês (mg/dia)", value: getManganeseRecommendation(micronutrientInput) },
+    { name: "Potássio (mg/dia)", value: getPotassiumRecommendation(micronutrientInput) },
+    { name: "Selênio (mcg/dia)", value: getSeleniumRecommendation() }, 
+    { name: "Sódio (mg/dia)", value: getSodiumRecommendation() }, 
+    { name: "Zinco (mg/dia)", value: getZincRecommendation(micronutrientInput) },
+  ];
 
-  function handleSubmit(data: MicronutrientRecommendationFormData) {
-    try {
-      updatePatientMicronutrientRecommendation(patient.id, data);
-      toast({
-        title: "Recomendações de Micronutrientes Atualizadas",
-        description: "Novas recomendações adicionadas com sucesso.",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Falha ao adicionar recomendações. Por favor, tente novamente.",
-        variant: "destructive",
-      });
-    }
-  }
+  const vitamins: DisplayNutrient[] = [
+    { name: "Tiamina ou B1 (mg/dia)", value: getThiaminRecommendation(micronutrientInput) },
+    { name: "Riboflavina ou B2 (mg/dia)", value: getRiboflavinRecommendation(micronutrientInput) },
+    { name: "Niacina ou B3 (mg/dia)", value: getNiacinRecommendation(micronutrientInput) },
+    { name: "Ácido pantotênico ou B5 (mg/dia)", value: getPantothenicAcidRecommendation() }, 
+    { name: "Piridoxina ou B6 (mg/dia)", value: getPyridoxineRecommendation(micronutrientInput) },
+    { name: "Biotina ou B7 (mcg/dia)", value: getBiotinRecommendation() }, 
+    { name: "Colina (mg/dia)", value: getCholineRecommendation(micronutrientInput) }, 
+    { name: "Folato ou B9 (mcg/dia)", value: getFolateRecommendation(micronutrientInput) },
+    { name: "Cianocobalamina ou B12 (mcg/dia)", value: getCobalaminRecommendation() }, 
+    { name: "Vitamina C (mg/dia)", value: getVitaminCRecommendation(micronutrientInput) },
+    { name: "Vitamina A (mcg RAE/dia)", value: getVitaminARecommendation(micronutrientInput) }, 
+    { name: "Vitamina D (mcg/dia)", value: getVitaminDRecommendation(micronutrientInput) },
+    { name: "Vitamina E (mg/dia)", value: getVitaminERecommendation() }, 
+  ];
+
+  const renderTable = (title: string, data: DisplayNutrient[]) => (
+    <Card className="shadow-md mt-6">
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[70%]">Micronutriente</TableHead>
+              <TableHead className="text-right">Recomendação (DRI)</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((nutrient) => (
+              <TableRow key={nutrient.name}>
+                <TableCell>{nutrient.name}</TableCell>
+                <TableCell className="text-right">{nutrient.value}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="space-y-8">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center"><Leaf className="mr-2 h-6 w-6 text-primary" /> Adicionar Recomendações de Micronutrientes</CardTitle>
-          <CardDescription>Defina as recomendações e suplementações para {patient.name}. Baseado em DRIs ou necessidades específicas.</CardDescription>
+          <CardTitle className="text-xl flex items-center"><Leaf className="mr-2 h-6 w-6 text-primary" /> Recomendações de Micronutrientes</CardTitle>
+          <CardDescription>
+            Valores de referência para ingestão de micronutrientes (DRIs) para {patient.name}, calculados com base na idade ({age} anos),
+            sexo ({patient.gender}), {isPregnant ? 'gestante, ' : ''}{isLactating ? 'lactante.' : '.'}
+            {(isPregnant || isLactating) && specialConditions.length > 0 && 
+             !specialConditions.some((c: string) => c.toLowerCase().includes('gestante') || c.toLowerCase().includes('lactante')) &&
+             '(Status de gestação/lactação inferido de condições especiais. Verifique os dados do paciente para confirmação.)'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-              <Card>
-                <CardHeader><CardTitle className="text-lg">Informações Gerais da Recomendação</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Data da Recomendação</FormLabel>
-                          <FormControl>
-                            <DateDropdowns
-                              value={field.value}
-                              onChange={field.onChange}
-                              disableFuture={true}
-                              maxYear={CURRENT_YEAR}
-                              minYear={CURRENT_YEAR -10} // Example: last 10 years
-                            />
-                          </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField control={form.control} name="ageAtTimeOfRec" render={({ field }) => (<FormItem><FormLabel>Idade (anos)</FormLabel><FormControl><Input type="number" disabled {...field} /></FormControl><FormDescription>Calculado automaticamente.</FormDescription><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="sexAtTimeOfRec" render={({ field }) => (<FormItem><FormLabel>Sexo Biológico</FormLabel><FormControl><Input disabled {...field} className="capitalize"/></FormControl><FormDescription>Considerado para DRIs.</FormDescription><FormMessage /></FormItem>)} />
-                   <FormField control={form.control} name="specialConditions" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Condições Especiais (separadas por vírgula)</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Ex: Gestante, Lactante, Idoso, Atleta" 
-                            value={Array.isArray(field.value) ? field.value.join(", ") : ""}
-                            onChange={(e) => field.onChange(e.target.value.split(",").map(s => s.trim()).filter(s => s))} 
-                          />
-                        </FormControl>
-                        <FormDescription>Afetam as necessidades de micronutrientes.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-lg flex items-center"><Stethoscope className="mr-2 h-5 w-5 text-primary" /> Detalhes dos Micronutrientes</CardTitle>
-                    <Button type="button" variant="outline" size="sm" onClick={resetToDefaultMicronutrients}>
-                        Zerar Recomendações
-                    </Button>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {recommendationFields.map((field, index) => (
-                    <Card key={field.id} className="p-4 space-y-3 relative shadow-sm border">
-                      <div className="flex justify-between items-center">
-                        <FormField control={form.control} name={`recommendations.${index}.nutrientName`} render={({ field: recField }) => (
-                            <FormItem className="flex-1 mr-2">
-                                <FormLabel>Micronutriente</FormLabel>
-                                <FormControl><Input placeholder="Ex: Vitamina D" {...recField} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                        <Button type="button" variant="ghost" size="icon" className="text-destructive hover:text-destructive mt-6" onClick={() => removeRecommendation(index)}>
-                            <Trash2 className="h-4 w-4" /><span className="sr-only">Remover Micronutriente</span>
-                        </Button>
-                      </div>
-                      
-                      <FormField control={form.control} name={`recommendations.${index}.specificRecommendation`} render={({ field: recField }) => (
-                          <FormItem>
-                              <FormLabel>Recomendação Específica (se diferente da DRI)</FormLabel>
-                              <FormControl><Input placeholder="Ex: 2000 UI/dia ou 50 mcg/dia" {...recField} /></FormControl>
-                              <FormDescription>Valor e unidade. Deixar em branco para usar DRIs padrão (se implementado).</FormDescription>
-                              <FormMessage />
-                          </FormItem>
-                      )} />
-
-                      <Card className="p-3 bg-muted/50">
-                        <FormLabel className="text-sm font-medium mb-2 block"><Pill className="inline mr-1 h-4 w-4" />Suplementação Prescrita (Opcional)</FormLabel>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <FormField control={form.control} name={`recommendations.${index}.prescribedSupplementation.dose`} render={({ field: supField }) => (<FormItem><FormLabel className="text-xs">Dose</FormLabel><FormControl><Input placeholder="Ex: 1000 UI" {...supField} /></FormControl><FormMessage /></FormItem>)} />
-                          <FormField control={form.control} name={`recommendations.${index}.prescribedSupplementation.frequency`} render={({ field: supField }) => (<FormItem><FormLabel className="text-xs">Frequência</FormLabel><FormControl><Input placeholder="Ex: 1x/dia" {...supField} /></FormControl><FormMessage /></FormItem>)} />
-                          <FormField control={form.control} name={`recommendations.${index}.prescribedSupplementation.duration`} render={({ field: supField }) => (<FormItem><FormLabel className="text-xs">Duração</FormLabel><FormControl><Input placeholder="Ex: 3 meses" {...supField} /></FormControl><FormMessage /></FormItem>)} />
-                        </div>
-                      </Card>
-                    </Card>
-                  ))}
-                  <Button type="button" variant="outline" onClick={() => appendRecommendation({ nutrientName: "", specificRecommendation: "", prescribedSupplementation: { dose: "", frequency: "", duration: "" } })}>
-                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Outro Micronutriente
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Salvando..." : "Adicionar Recomendações"}
-              </Button>
-            </form>
-          </Form>
+          {renderTable("Minerais e Eletrólitos", minerals)}
+          {renderTable("Vitaminas", vitamins)}
         </CardContent>
       </Card>
-
-      {patient.micronutrientRecommendations && patient.micronutrientRecommendations.length > 0 && (
-        <Card className="shadow-md">
-          <CardHeader><CardTitle className="text-xl">Histórico de Recomendações de Micronutrientes</CardTitle></CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Idade (anos)</TableHead>
-                    <TableHead>Cond. Especiais</TableHead>
-                    <TableHead>Nº de Recomendações Detalhadas</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {patient.micronutrientRecommendations.map((rec) => (
-                    <TableRow key={rec.id}>
-                      <TableCell>{new Date(rec.date).toLocaleDateString('pt-BR')}</TableCell>
-                      <TableCell>{rec.ageAtTimeOfRec || "N/A"}</TableCell>
-                      <TableCell>
-                        {rec.specialConditions && rec.specialConditions.length > 0 
-                          ? rec.specialConditions.map(cond => <Badge key={cond} variant="secondary" className="mr-1">{cond}</Badge>) 
-                          : "Nenhuma"}
-                      </TableCell>
-                      <TableCell>{rec.recommendations.length}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

@@ -35,6 +35,29 @@ const cookingOilFatQuantityOptions: CookingOilFatQuantity[] = ["Pouca", "Moderad
 const mealTypeOptions: MealType[] = ["Desjejum", "Colação", "Almoço", "Lanche", "Jantar", "Ceia", "Antes de dormir"];
 const consumptionFrequencyOptions: ConsumptionFrequency[] = ["Diário", "X vezes/semana", "X vezes/mês", "Raramente", "Nunca"];
 
+const foodGroupOptions = [
+  'Arroz, vegetal C e similares',
+  'Pão, farinhas e similares',
+  'Cereais e derivados integrais',
+  'Hortaliças',
+  'Frutas',
+  'Sucos',
+  'Feijão e similares',
+  'Carne bovina',
+  'Carne de aves',
+  'Carne suína',
+  'Outras carnes',
+  'Ovos',
+  'Embutidos',
+  'Leite e derivados',
+  'Castanhas',
+  'Açúcar e doces',
+  'Frituras/Gorduras',
+  'Refrigerantes',
+  'Adoçante',
+  'Produtos diet & light',
+];
+
 export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
   const { updatePatientFoodAssessment } = usePatientContext();
   const { toast } = useToast();
@@ -221,7 +244,22 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                         <Trash2 className="h-4 w-4" /><span className="sr-only">Remover</span>
                       </Button>
                       <div className="space-y-0">
-                        <FormField control={form.control} name={`foodFrequency.${index}.foodOrGroup`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento/Grupo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`foodFrequency.${index}.foodOrGroup`} render={({ field: itemField }) => (
+  <FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4">
+    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Grupo Alimentar</FormLabel>
+    <div className="sm:w-2/3">
+      <Select onValueChange={itemField.onChange} defaultValue={itemField.value}>
+        <FormControl><SelectTrigger><SelectValue placeholder="Selecione o grupo" /></SelectTrigger></FormControl>
+        <SelectContent>
+          {foodGroupOptions.map(opt => (
+            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <FormMessage className="mt-1 text-xs"/>
+    </div>
+  </FormItem>
+)} />
                         <FormField control={form.control} name={`foodFrequency.${index}.consumptionFrequency`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Frequência de Consumo</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{consumptionFrequencyOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
                         <FormField control={form.control} name={`foodFrequency.${index}.usualPortion`} render={({ field: itemField }) => (<FormItem className="p-2 flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Porção Habitual</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} value={itemField.value ?? ""} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
                       </div>

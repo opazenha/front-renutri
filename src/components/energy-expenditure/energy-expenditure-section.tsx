@@ -123,7 +123,6 @@ export function EnergyExpenditureSection({ patient }: EnergyExpenditureSectionPr
     { name: "consultationDate", label: "Data da Consulta", component: DateDropdowns, props: { disableFuture: true, maxYear: CURRENT_YEAR, minYear: CURRENT_YEAR - 10 } },
     { name: "weightKg", label: "Peso (kg)", component: Input, type: "number", step: "0.1", placeholder: "Ex: 70,5", description: "Pode ser preenchido automaticamente pela antropometria." },
     { name: "restingEnergyExpenditure", label: "Gasto Energético de Repouso (GER - Kcal/24h)", component: Input, type: "number", placeholder: "Ex: 1500" },
-    { name: "gerFormula", label: "Fórmula GER Utilizada (se aplicável)", component: Input, placeholder: "Ex: Harris-Benedict, Calorimetria" },
     { name: "sleepDuration", label: "Tempo de Sono (horas/dia)", component: Input, type: "number", step: "0.5", placeholder: "Ex: 7.5" },
   ] as const;
 
