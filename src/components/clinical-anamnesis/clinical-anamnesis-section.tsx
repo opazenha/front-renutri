@@ -82,24 +82,33 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
     }
   }
   
-  // Helper for rendering form fields
   const renderField = (item: any, index: number, field: any) => {
     const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`;
     const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`;
     
+    let controlElement;
+    if (item.component === Input) {
+      controlElement = <Input type={item.type || "text"} placeholder={item.placeholder} {...field} value={field.value || ""} />;
+    } else if (item.component === Textarea) {
+      controlElement = <Textarea placeholder={item.placeholder} {...field} value={field.value || ""} />;
+    } else if (item.component === Select) {
+      controlElement = (
+        <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+          <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
+          <SelectContent>{item.options?.map((opt: string | {value: string, label: string}) => <SelectItem key={typeof opt === 'string' ? opt : opt.value} value={typeof opt === 'string' ? opt : opt.value}>{typeof opt === 'string' ? opt : opt.label}</SelectItem>)}</SelectContent>
+        </Select>
+      );
+    } else {
+      // Fallback for unsupported component types, or handle error
+      controlElement = <Input type="text" {...field} value={field.value || ""} />;
+    }
+
     return (
       <FormItem className={formItemClass}>
         <FormLabel className={formLabelClass}>{item.label}</FormLabel>
         <div className="sm:w-2/3">
           <FormControl>
-            {item.component === Input && <Input type={item.type || "text"} placeholder={item.placeholder} {...field} value={field.value || ""} />}
-            {item.component === Textarea && <Textarea placeholder={item.placeholder} {...field} value={field.value || ""} />}
-            {item.component === Select && (
-              <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
-                <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
-                <SelectContent>{item.options?.map((opt: string | {value: string, label: string}) => <SelectItem key={typeof opt === 'string' ? opt : opt.value} value={typeof opt === 'string' ? opt : opt.value}>{typeof opt === 'string' ? opt : opt.label}</SelectItem>)}</SelectContent>
-              </Select>
-            )}
+            {controlElement}
           </FormControl>
           <FormMessage className="mt-1 text-xs" />
         </div>

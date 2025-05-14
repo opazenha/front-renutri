@@ -80,27 +80,39 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             key={item.name}
             control={form.control}
             name={item.name as keyof AppointmentFormData}
-            render={({ field }) => (
-              <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
-                <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
-                <div className="sm:w-2/3">
-                  <FormControl>
-                    {item.component === Input && <Input type={item.type} {...field} disabled={isSubmitting} />}
-                    {item.component === Textarea && <Textarea placeholder={item.placeholder} {...field} disabled={isSubmitting} />}
-                    {item.component === DateDropdowns && <DateDropdowns value={field.value as string} onChange={field.onChange} disabled={isSubmitting} {...item.props} />}
-                    {item.component === Select && (
-                       <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined} disabled={isSubmitting}>
-                        <SelectTrigger> <SelectValue placeholder={item.placeholder} /> </SelectTrigger>
-                        <SelectContent>
-                          {item.options?.map(opt => ( <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem> ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </FormControl>
-                  <FormMessage className="mt-1 text-xs"/>
-                </div>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              let controlElement;
+              if (item.component === Input) {
+                controlElement = <Input type={item.type} {...field} disabled={isSubmitting} />;
+              } else if (item.component === Textarea) {
+                controlElement = <Textarea placeholder={item.placeholder} {...field} disabled={isSubmitting} />;
+              } else if (item.component === DateDropdowns) {
+                controlElement = <DateDropdowns value={field.value as string} onChange={field.onChange} disabled={isSubmitting} {...item.props} />;
+              } else if (item.component === Select) {
+                controlElement = (
+                  <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined} disabled={isSubmitting}>
+                    <SelectTrigger> <SelectValue placeholder={item.placeholder} /> </SelectTrigger>
+                    <SelectContent>
+                      {item.options?.map(opt => ( <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem> ))}
+                    </SelectContent>
+                  </Select>
+                );
+              } else {
+                controlElement = <Input {...field} disabled={isSubmitting} />; // Fallback
+              }
+
+              return (
+                <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                  <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
+                  <div className="sm:w-2/3">
+                    <FormControl>
+                      {controlElement}
+                    </FormControl>
+                    <FormMessage className="mt-1 text-xs"/>
+                  </div>
+                </FormItem>
+              );
+            }}
           />
         ))}
         

@@ -99,20 +99,34 @@ export function AnthropometrySection({ patient }: AnthropometrySectionProps) {
     }
   }
 
-  const renderFormField = (item: any, index: number, field: any) => (
-    <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
-      <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
-      <div className="sm:w-2/3">
-        <FormControl>
-          {item.component === Input && <Input type={item.type} step={item.step} placeholder={item.placeholder} {...field} value={field.value ?? ""} />}
-          {item.component === DateDropdowns && <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />}
-          {item.component === Textarea && <Textarea placeholder={item.placeholder} {...field} value={field.value ?? ""} />}
-        </FormControl>
-        {item.description && <FormDescription className="text-xs mt-1">{item.description}</FormDescription>}
-        <FormMessage className="mt-1 text-xs" />
-      </div>
-    </FormItem>
-  );
+  const renderFormField = (item: any, index: number, field: any) => {
+    const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`;
+    const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`;
+    
+    let controlElement;
+    if (item.component === Input) {
+      controlElement = <Input type={item.type} step={item.step} placeholder={item.placeholder} {...field} value={field.value ?? ""} />;
+    } else if (item.component === DateDropdowns) {
+      controlElement = <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />;
+    } else if (item.component === Textarea) {
+      controlElement = <Textarea placeholder={item.placeholder} {...field} value={field.value ?? ""} />;
+    } else {
+      controlElement = <Input type="text" {...field} value={field.value ?? ""} />; // Fallback
+    }
+
+    return (
+      <FormItem className={formItemClass}>
+        <FormLabel className={formLabelClass}>{item.label}</FormLabel>
+        <div className="sm:w-2/3">
+          <FormControl>
+            {controlElement}
+          </FormControl>
+          {item.description && <FormDescription className="text-xs mt-1">{item.description}</FormDescription>}
+          <FormMessage className="mt-1 text-xs" />
+        </div>
+      </FormItem>
+    );
+  };
 
 
   return (

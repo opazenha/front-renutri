@@ -152,26 +152,37 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                       key={item.name}
                       control={form.control}
                       name={item.name as keyof FoodAssessmentFormData}
-                      render={({ field }) => (
-                        <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
-                          <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
-                          <div className="sm:w-2/3">
-                            <FormControl>
-                              {item.component === Input && <Input placeholder={item.placeholder} type={item.type} {...field} value={field.value || ''}/>}
-                              {item.component === Textarea && <Textarea placeholder={item.placeholder} {...field} value={field.value || ''} />}
-                              {item.component === Select && (
-                                <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
-                                  <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
-                                  <SelectContent>
-                                    {item.options?.map(opt => (<SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            </FormControl>
-                            <FormMessage className="mt-1 text-xs"/>
-                          </div>
-                        </FormItem>
-                      )}
+                      render={({ field }) => {
+                        let controlElement;
+                        if (item.component === Input) {
+                          controlElement = <Input placeholder={item.placeholder} type={item.type} {...field} value={field.value || ''}/>;
+                        } else if (item.component === Textarea) {
+                          controlElement = <Textarea placeholder={item.placeholder} {...field} value={field.value || ''} />;
+                        } else if (item.component === Select) {
+                          controlElement = (
+                            <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+                              <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
+                              <SelectContent>
+                                {item.options?.map(opt => (<SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>))}
+                              </SelectContent>
+                            </Select>
+                          );
+                        } else {
+                           controlElement = <Input {...field} value={field.value || ''} />; // Fallback
+                        }
+                        
+                        return (
+                          <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                            <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
+                            <div className="sm:w-2/3">
+                              <FormControl>
+                                {controlElement}
+                              </FormControl>
+                              <FormMessage className="mt-1 text-xs"/>
+                            </div>
+                          </FormItem>
+                        );
+                      }}
                     />
                   ))}
                 </CardContent>

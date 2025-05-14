@@ -77,30 +77,41 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
             key={item.name}
             control={form.control}
             name={item.name as keyof PatientFormData}
-            render={({ field }) => (
-              <FormItem className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${index % 2 === 0 ? "bg-muted/30" : "bg-transparent"}`}>
-                <FormLabel className="md:w-1/4 md:text-right mb-1 md:mb-0 text-sm font-medium">{item.label}</FormLabel>
-                <div className="md:w-3/4">
-                  <FormControl>
-                    {item.component === Input && <Input placeholder={item.placeholder} type={item.type} {...field} />}
-                    {item.component === DateDropdowns && <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />}
-                    {item.component === Select && (
-                      <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={item.placeholder} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {item.options?.map(opt => (
-                            <SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </FormControl>
-                  <FormMessage className="mt-1 text-xs" />
-                </div>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              let controlElement;
+              if (item.component === Input) {
+                controlElement = <Input placeholder={item.placeholder} type={item.type} {...field} />;
+              } else if (item.component === DateDropdowns) {
+                controlElement = <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />;
+              } else if (item.component === Select) {
+                controlElement = (
+                  <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={item.placeholder} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {item.options?.map(opt => (
+                        <SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                );
+              } else {
+                controlElement = <Input {...field} />; // Fallback
+              }
+
+              return (
+                <FormItem className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${index % 2 === 0 ? "bg-muted/30" : "bg-transparent"}`}>
+                  <FormLabel className="md:w-1/4 md:text-right mb-1 md:mb-0 text-sm font-medium">{item.label}</FormLabel>
+                  <div className="md:w-3/4">
+                    <FormControl>
+                      {controlElement}
+                    </FormControl>
+                    <FormMessage className="mt-1 text-xs" />
+                  </div>
+                </FormItem>
+              );
+            }}
           />
         ))}
         
