@@ -8,97 +8,97 @@ body {
 
 @layer base {
   :root {
-    --background: 60 56% 91%; /* Pale Cream (Paper Beige, e.g., #F5F5DC) */
-    --foreground: 240 10% 15%; /* Darker gray for better contrast */
+    --background: 50 83% 88%; /* #fbf1c7 - Pale Beige */
+    --foreground: 20 5% 23%; /* #3c3836 - Dark Gray/Brown */
     
-    --card: 60 50% 95%; /* Light Cream for cards, consistent with new background */
-    --card-foreground: 240 10% 15%;
+    --card: 46 50% 81%; /* #ebdbb2 - Slightly darker Beige */
+    --card-foreground: 20 5% 23%; /* #3c3836 */
     
-    --popover: 60 50% 95%; /* Light Cream for popovers */
-    --popover-foreground: 240 10% 15%;
+    --popover: 46 50% 81%; /* #ebdbb2 */
+    --popover-foreground: 20 5% 23%; /* #3c3836 */
     
-    --primary: 344 95% 25%; /* Dark Red (#7B0323) */
+    --primary: 25 87% 45%; /* #d65d0e - Muted Orange */
     --primary-foreground: 0 0% 100%; /* White */
     
-    --secondary: 45 50% 92%; /* Lighter cream/beige for secondary elements */
-    --secondary-foreground: 344 80% 30%; /* Darker red for contrast on secondary */
+    --secondary: 46 50% 81%; /* #ebdbb2 - Slightly darker Beige */
+    --secondary-foreground: 20 5% 23%; /* #3c3836 */
     
-    --muted: 45 40% 94%; /* Muted cream/beige shade */
-    --muted-foreground: 240 5% 45%; /* Darker gray for muted text */
+    --muted: 48 60% 85%; /* Lighter beige for muted states */
+    --muted-foreground: 20 5% 45%; /* Mid-tone gray for muted text */
     
-    --accent: 344 80% 40%; /* Lighter/Brighter Red, complementing the primary */
+    --accent: 60 69% 35%; /* #98971a - Light Olive Green */
     --accent-foreground: 0 0% 100%; /* White */
     
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84.2% 60.2%; /* Keeping original destructive for now */
     --destructive-foreground: 0 0% 98%;
     
-    --border: 45 30% 88%; /* Subtle border, slightly darker cream (e.g. #EAE7E0) */
-    --input: 45 30% 90%; /* Slightly different for input fields, light cream */
-    --ring: 344 95% 35%; /* Dark Red for focus rings */
+    --border: 46 40% 75%; /* #d1c5a3 approx - Subtle border derived from secondary */
+    --input: 46 40% 75%; /* Same as border */
+    --ring: 25 87% 45%; /* #d65d0e - Muted Orange for focus rings */
 
-    --chart-1: 344 95% 25%; /* Dark Red, same as primary */
-    --chart-2: 210 60% 50%; /* A complementary blue */
-    --chart-3: 30 80% 55%;  /* Orange */
-    --chart-4: 120 40% 50%; /* Green */
-    --chart-5: 60 70% 50%;  /* Yellow */
+    --chart-1: 25 87% 45%; /* #d65d0e - Primary */
+    --chart-2: 60 69% 35%; /* #98971a - Accent */
+    --chart-3: 182 31% 40%; /* #458588 - Muted Blue/Teal */
+    --chart-4: 337 33% 54%; /* #b16286 - Muted Purple/Magenta */
+    --chart-5: 2 70% 45%;  /* #cc241d - Muted Red */
     
     --radius: 0.5rem;
 
-    /* Light Sidebar specific variables - Kept as they were */
-    --sidebar-background: 45 70% 97%; /* Whitish-cream (e.g. #FAF9F7) */
-    --sidebar-foreground: 240 10% 15%; /* Dark gray */
-    --sidebar-primary: 344 95% 25%;    /* Dark Red (#7B0323) */
+    /* Light Sidebar specific variables */
+    --sidebar-background: 46 50% 81%; /* #ebdbb2 - Secondary Background */
+    --sidebar-foreground: 20 5% 23%; /* #3c3836 - Main Text Color */
+    --sidebar-primary: 25 87% 45%;    /* #d65d0e - Highlight Color */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 45 50% 92%;      /* Cream for hover (e.g. #F5F2E8) */
-    --sidebar-accent-foreground: 344 95% 25%; /* Dark Red for text on cream hover */
-    --sidebar-border: 45 30% 88%;     /* Subtle border, slightly darker cream (e.g. #EAE7E0) */
-    --sidebar-ring: 344 95% 35%;      /* Dark Red for focus rings */
+    --sidebar-accent: 48 60% 85%;      /* Lighter beige for hover */
+    --sidebar-accent-foreground: 25 87% 45%; /* #d65d0e - Highlight for text on hover */
+    --sidebar-border: 46 40% 70%;     /* Slightly darker than sidebar-background for subtle border */
+    --sidebar-ring: 25 87% 45%;      /* #d65d0e - Highlight Color for focus rings */
   }
 
   .dark {
-    --background: 240 6% 10%; /* Dark blue/gray */
-    --foreground: 0 0% 98%; /* Light gray/white */
+    --background: 30 10% 12%; /* Dark Brown/Olive */
+    --foreground: 50 30% 85%; /* Light Beige/Cream */
     
-    --card: 240 6% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 30 10% 15%; 
+    --card-foreground: 50 30% 85%;
     
-    --popover: 240 6% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 30 10% 15%;
+    --popover-foreground: 50 30% 85%;
 
-    --primary: 344 80% 55%; /* Lighter Red for dark mode primary */
-    --primary-foreground: 344 95% 15%; /* Dark red text on light red primary */
+    --primary: 25 80% 60%; /* Brighter Orange */
+    --primary-foreground: 25 70% 10%; /* Darker text for bright orange */
     
-    --secondary: 240 4% 18%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 30 10% 18%;
+    --secondary-foreground: 50 30% 80%;
     
-    --muted: 240 4% 18%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 30 10% 22%; 
+    --muted-foreground: 50 20% 60%;
     
-    --accent: 344 70% 45%; /* Mid-tone Red for dark mode accent */
-    --accent-foreground: 0 0% 98%; /* White/Light gray text on accent */
+    --accent: 60 50% 50%; /* Brighter Olive Green */
+    --accent-foreground: 60 50% 10%; /* Darker text for bright olive */
     
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 70% 50%; /* Adjusted destructive */
+    --destructive-foreground: 0 0% 95%;
     
-    --border: 240 4% 20%;
-    --input: 240 4% 20%;
-    --ring: 344 80% 55%; /* Lighter Red for focus rings */
+    --border: 30 8% 25%;
+    --input: 30 8% 25%;
+    --ring: 25 80% 60%; /* Brighter Orange for focus rings */
 
-    --chart-1: 344 80% 55%; /* Lighter Red, same as dark primary */
-    --chart-2: 210 70% 65%; /* Lighter complementary blue */
-    --chart-3: 30 80% 65%;  /* Lighter Orange */
-    --chart-4: 120 50% 60%; /* Lighter Green */
-    --chart-5: 60 70% 60%;  /* Lighter Yellow */
+    --chart-1: 25 80% 60%; /* Brighter Orange */
+    --chart-2: 60 50% 50%; /* Brighter Olive Green */
+    --chart-3: 182 40% 55%; /* Lighter Muted Blue/Teal */
+    --chart-4: 337 40% 65%; /* Lighter Muted Purple/Magenta */
+    --chart-5: 2 70% 60%;  /* Lighter Muted Red */
 
-    /* Dark Sidebar (can be same as light, or adjusted if needed - keeping original dark for now) */
-    --sidebar-background: 240 6% 8%; 
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 344 80% 55%; 
-    --sidebar-primary-foreground: 344 95% 15%; 
-    --sidebar-accent: 240 4% 15%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 18%;
-    --sidebar-ring: 344 80% 55%; 
+    /* Dark Sidebar */
+    --sidebar-background: 30 10% 10%; 
+    --sidebar-foreground: 50 30% 85%;
+    --sidebar-primary: 25 80% 60%; 
+    --sidebar-primary-foreground: 25 70% 10%; 
+    --sidebar-accent: 30 10% 14%;
+    --sidebar-accent-foreground: 25 80% 60%;
+    --sidebar-border: 30 8% 20%;
+    --sidebar-ring: 25 80% 60%; 
   }
 }
 
