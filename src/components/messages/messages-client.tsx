@@ -16,18 +16,20 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export function MessagesClient() {
-  const { 
-    patients, 
-    getAllMessages, 
-    getMessagesByPatientId, 
-    markMessageAsRead, 
-    isLoading: isPatientContextLoading 
+  const {
+    patients,
+    getAllMessages,
+    getMessagesByPatientId,
+    markMessageAsRead,
+    isLoading: isPatientContextLoading,
   } = usePatientContext();
-  
+
   const searchParams = useSearchParams();
   const patientIdFromQuery = searchParams.get("patientId");
 
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(patientIdFromQuery);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
+    patientIdFromQuery
+  );
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [displayedMessages, setDisplayedMessages] = useState<Message[]>([]);
 
@@ -44,10 +46,21 @@ export function MessagesClient() {
       } else {
         messagesToDisplay = getAllMessages();
       }
-      setDisplayedMessages(messagesToDisplay.sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+      setDisplayedMessages(
+        messagesToDisplay.sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
+      );
       setIsLoadingMessages(false);
     }
-  }, [selectedPatientId, getAllMessages, getMessagesByPatientId, isPatientContextLoading, patients]); // patients dependency to re-fetch if mock data changes
+  }, [
+    selectedPatientId,
+    getAllMessages,
+    getMessagesByPatientId,
+    isPatientContextLoading,
+    patients,
+  ]); // patients dependency to re-fetch if mock data changes
 
   const handlePatientFilterChange = (patientId: string) => {
     setSelectedPatientId(patientId === "all" ? null : patientId);
@@ -56,16 +69,23 @@ export function MessagesClient() {
   const handleMarkAsRead = (messageId: string, msgPatientId: string) => {
     markMessageAsRead(messageId, msgPatientId);
     // Optimistically update UI or rely on useEffect re-fetch
-    setDisplayedMessages(prev => prev.map(msg => msg.id === messageId ? {...msg, isRead: true} : msg));
+    setDisplayedMessages((prev) =>
+      prev.map((msg) => (msg.id === messageId ? { ...msg, isRead: true } : msg))
+    );
   };
-  
+
   const selectedPatient = useMemo(() => {
-    return selectedPatientId ? patients.find(p => p.id === selectedPatientId) : null;
+    return selectedPatientId
+      ? patients.find((p) => p.id === selectedPatientId)
+      : null;
   }, [selectedPatientId, patients]);
 
-
   if (isPatientContextLoading || isLoadingMessages) {
-    return <p className="text-center py-10 text-muted-foreground">Carregando mensagens...</p>;
+    return (
+      <p className="text-center py-10 text-muted-foreground">
+        Carregando mensagens...
+      </p>
+    );
   }
 
   return (
@@ -79,8 +99,8 @@ export function MessagesClient() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-grow overflow-y-auto pt-0">
-          <Select 
-            value={selectedPatientId || "all"} 
+          <Select
+            value={selectedPatientId || "all"}
             onValueChange={handlePatientFilterChange}
           >
             <SelectTrigger className="w-full mb-4">
@@ -97,9 +117,18 @@ export function MessagesClient() {
           </Select>
           {selectedPatient && (
             <div className="text-sm p-3 border rounded-md bg-muted/50">
-              <p className="font-semibold text-primary">{selectedPatient.name}</p>
-              <p className="text-xs text-muted-foreground">Visualizando mensagens deste paciente.</p>
-              <Button variant="link" size="sm" className="p-0 h-auto text-xs mt-1" asChild>
+              <p className="font-semibold text-primary">
+                {selectedPatient.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Visualizando mensagens deste paciente.
+              </p>
+              <Button
+                variant="link"
+                size="sm"
+                className="p-0 h-auto text-xs mt-1"
+                asChild
+              >
                 <Link href={`/patients/${selectedPatient.id}`}>Ver Perfil</Link>
               </Button>
             </div>
@@ -116,11 +145,23 @@ export function MessagesClient() {
               Mensagens Recebidas
             </CardTitle>
             <CardDescription className="text-xs">
-              {selectedPatient ? `Mensagens de ${selectedPatient.name}` : "Todas as mensagens"}
+              {selectedPatient
+                ? `Mensagens de ${selectedPatient.name}`
+                : "Todas as mensagens"}
             </CardDescription>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setIsLoadingMessages(true)} disabled={isLoadingMessages}> 
-            <RefreshCcw className={cn("mr-2 h-4 w-4", isLoadingMessages && "animate-spin")} />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsLoadingMessages(true)}
+            disabled={isLoadingMessages}
+          >
+            <RefreshCcw
+              className={cn(
+                "mr-2 h-4 w-4",
+                isLoadingMessages && "animate-spin"
+              )}
+            />
             Atualizar
           </Button>
         </CardHeader>
@@ -129,8 +170,8 @@ export function MessagesClient() {
             {displayedMessages.length > 0 ? (
               <ul className="divide-y">
                 {displayedMessages.map((msg) => (
-                  <li 
-                    key={msg.id} 
+                  <li
+                    key={msg.id}
                     className={cn(
                       "p-3 sm:p-4 hover:bg-muted/50 transition-colors",
                       !msg.isRead && "bg-primary/5 border-l-4 border-primary"
@@ -139,28 +180,52 @@ export function MessagesClient() {
                     <div className="flex justify-between items-start gap-2">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                           {!selectedPatientId && msg.patientName && (
-                            <Badge variant="secondary" className="text-xs">{msg.patientName}</Badge>
+                          {!selectedPatientId && msg.patientName && (
+                            <Badge variant="secondary" className="text-xs">
+                              {msg.patientName}
+                            </Badge>
                           )}
-                          <Badge variant={msg.source === 'whatsapp' ? 'default' : 'outline'} className="text-xs">
-                            {msg.source === 'whatsapp' ? 'WhatsApp' : 'Gmail'}
+                          <Badge
+                            variant={
+                              msg.source === "whatsapp" ? "default" : "outline"
+                            }
+                            className="text-xs"
+                          >
+                            {msg.source === "whatsapp" ? "WhatsApp" : "Gmail"}
                           </Badge>
-                          <span className="text-xs text-muted-foreground font-medium">{msg.sender}</span>
+                          <span className="text-xs text-muted-foreground font-medium">
+                            {msg.sender}
+                          </span>
                         </div>
-                        <p className="text-sm text-foreground leading-relaxed">{msg.content}</p>
+                        <p className="text-sm text-foreground leading-relaxed">
+                          {msg.content}
+                        </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-xs text-muted-foreground" title={format(parseISO(msg.timestamp), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })}>
-                          {formatDistanceToNowStrict(parseISO(msg.timestamp), { addSuffix: true, locale: ptBR })}
+                        <p
+                          className="text-xs text-muted-foreground"
+                          title={format(
+                            parseISO(msg.timestamp),
+                            "dd/MM/yyyy HH:mm:ss",
+                            { locale: ptBR }
+                          )}
+                        >
+                          {formatDistanceToNowStrict(parseISO(msg.timestamp), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
                         </p>
                         {!msg.isRead && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             className="mt-1 h-auto p-1 text-xs text-primary hover:text-primary/80"
-                            onClick={() => handleMarkAsRead(msg.id, msg.patientId)}
+                            onClick={() =>
+                              handleMarkAsRead(msg.id, msg.patientId)
+                            }
                           >
-                            <CheckCircle2 className="mr-1 h-3 w-3"/> Marcar como lida
+                            <CheckCircle2 className="mr-1 h-3 w-3" /> Marcar
+                            como lida
                           </Button>
                         )}
                       </div>
@@ -170,8 +235,8 @@ export function MessagesClient() {
               </ul>
             ) : (
               <p className="text-center py-10 text-muted-foreground">
-                {selectedPatientId 
-                  ? "Nenhuma mensagem encontrada para este paciente." 
+                {selectedPatientId
+                  ? "Nenhuma mensagem encontrada para este paciente."
                   : "Nenhuma mensagem encontrada."}
               </p>
             )}
