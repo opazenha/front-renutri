@@ -119,6 +119,7 @@ export interface ClinicalAssessment {
   habits?: ClinicalAssessmentHabits;
   signsAndSymptoms?: ClinicalAssessmentSignsAndSymptoms;
   specificQuestions?: ClinicalAssessmentSpecificQuestions;
+  assessmentObjective?: string;
 }
 
 export interface MealRecord {
@@ -209,14 +210,12 @@ export interface BiochemicalAssessment {
   exams: LabExamRecord[];
 }
 
-
 export interface AnthropometricRecord {
   id: string;
-  date: string; // YYYY-MM-DD ISO String
+  date: string; // YYYY-MM-DD
   weightKg?: number;
   heightCm?: number;
-  bmi?: number; // Calculated
-
+  bmi?: number; // Calculated: weightKg / (heightCm/100)^2
   usualWeightKg?: number;
   desiredWeightKg?: number;
 
@@ -229,27 +228,21 @@ export interface AnthropometricRecord {
   proximalThighCircumference?: number;
   medialThighCircumference?: number;
   calfCircumference?: number;
-  neckCircumference?: number;
-  wristCircumference?: number;
+  thoracicCircumference?: number;
+  cephalicCircumference?: number;
 
   // Skinfolds (mm)
   bicepsSkinfold?: number;
   tricepsSkinfold?: number;
   subscapularSkinfold?: number;
-  pectoralSkinfold?: number; 
+  pectoralSkinfold?: number;
   midaxillarySkinfold?: number;
   suprailiacSkinfold?: number;
   abdominalSkinfold?: number;
   thighSkinfold?: number;
   medialCalfSkinfold?: number;
-
-  // Bone Diameters (cm)
-  humerusBiepicondylarDiameter?: number;
-  femurBiepicondylarDiameter?: number;
-
-  assessmentObjective?: string;
+  observations?: string; // Added observations field
 }
-
 
 export function calculateAge(dob: string): number {
   if (!dob) return 0; 

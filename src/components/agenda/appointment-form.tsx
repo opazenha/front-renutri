@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { AppointmentFormData, Appointment } from "@/lib/schemas";
@@ -91,7 +90,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
                 controlElement = <DateDropdowns value={field.value as string} onChange={field.onChange} disabled={isSubmitting} {...item.props} />;
               } else if (item.component === Select) {
                 controlElement = (
-                  <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined} disabled={isSubmitting}>
+                  <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={isSubmitting}>
                      <FormControl><SelectTrigger> <SelectValue placeholder={item.placeholder} /> </SelectTrigger></FormControl>
                     <SelectContent>
                       {item.options?.map(opt => ( <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem> ))}
@@ -125,7 +124,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
                <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 ${(formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
                 <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">{statusField.label}</FormLabel>
                 <div className="sm:w-2/3">
-                  <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined} disabled={isSubmitting}>
+                  <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={statusField.placeholder} /></SelectTrigger>
                     </FormControl>

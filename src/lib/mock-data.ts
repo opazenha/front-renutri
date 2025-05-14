@@ -124,7 +124,6 @@ const createAnthropometricRecords = (
       desiredWeightKg: baseWeight - 5,
       waistCircumference: 80 + i * 1.5,
       hipCircumference: 95 + i * 1,
-      assessmentObjective: "Perda de peso e melhoria da saúde geral",
     });
   }
   return records.sort(
@@ -238,6 +237,7 @@ const createClinicalAssessments = (
       historiaMedicaPregressa:
         "Nega comorbidades prévias significativas. Nega cirurgias.",
       historiaFamiliar: "Mãe com DM2, pai com HAS.",
+      assessmentObjective: "Avaliação clínica de rotina para acompanhamento nutricional.",
       habits: {
         horasSono: 6,
         qualidadeSono: "Regular",

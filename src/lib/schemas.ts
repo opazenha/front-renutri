@@ -92,6 +92,7 @@ export const ClinicalAssessmentSchema = z.object({
   habits: ClinicalAssessmentHabitsSchema.optional(),
   signsAndSymptoms: ClinicalAssessmentSignsAndSymptomsSchema.optional(),
   specificQuestions: ClinicalAssessmentSpecificQuestionsSchema.optional(),
+  assessmentObjective: z.string().optional(),
 });
 export type ClinicalAssessmentFormData = z.infer<typeof ClinicalAssessmentSchema>;
 
@@ -202,41 +203,37 @@ export type BiochemicalAssessmentFormData = z.infer<typeof BiochemicalAssessment
 
 export const AnthropometricSchema = z.object({
   date: z.string().refine((date) => date === "" || !isNaN(new Date(date).getTime()), {message: "Data da avaliação inválida."}),
-  weightKg: z.coerce.number({invalid_type_error: "Peso deve ser um número."}).positive({ message: "O peso atual deve ser positivo." }).optional().nullable(),
-  heightCm: z.coerce.number({invalid_type_error: "Altura deve ser um número."}).positive({ message: "A altura deve ser positiva." }).optional().nullable(),
-  usualWeightKg: z.coerce.number({invalid_type_error: "Peso deve ser um número."}).positive({ message: "O peso habitual deve ser positivo." }).optional().nullable(),
-  desiredWeightKg: z.coerce.number({invalid_type_error: "Peso desejado deve ser um número."}).positive({ message: "O peso desejado deve ser positivo." }).optional().nullable(),
+  weightKg: z.coerce.number().positive("Peso deve ser positivo.").optional().nullable(),
+  heightCm: z.coerce.number().positive("Altura deve ser positiva.").optional().nullable(),
+  usualWeightKg: z.coerce.number().positive("Peso usual deve ser positivo.").optional().nullable(),
+  desiredWeightKg: z.coerce.number().positive("Peso desejado deve ser positivo.").optional().nullable(),
+  
+  relaxedArmCircumference: z.coerce.number().optional().nullable(),
+  contractedArmCircumference: z.coerce.number().optional().nullable(),
+  waistCircumference: z.coerce.number().optional().nullable(),
+  abdomenCircumference: z.coerce.number().optional().nullable(),
+  hipCircumference: z.coerce.number().optional().nullable(),
+  proximalThighCircumference: z.coerce.number().optional().nullable(),
+  medialThighCircumference: z.coerce.number().optional().nullable(),
+  calfCircumference: z.coerce.number().optional().nullable(),
+  thoracicCircumference: z.coerce.number().optional().nullable(),
+  cephalicCircumference: z.coerce.number().optional().nullable(),
 
-  relaxedArmCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  contractedArmCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  waistCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  abdomenCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  hipCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  proximalThighCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  medialThighCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  calfCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  neckCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  wristCircumference: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-
-  bicepsSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  tricepsSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  subscapularSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  pectoralSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  midaxillarySkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  suprailiacSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  abdominalSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  thighSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  medialCalfSkinfold: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-
-  humerusBiepicondylarDiameter: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-  femurBiepicondylarDiameter: z.coerce.number({invalid_type_error: "Medida deve ser um número."}).optional().nullable(),
-
-  assessmentObjective: z.string().optional().nullable(),
+  bicepsSkinfold: z.coerce.number().optional().nullable(),
+  tricepsSkinfold: z.coerce.number().optional().nullable(),
+  subscapularSkinfold: z.coerce.number().optional().nullable(),
+  pectoralSkinfold: z.coerce.number().optional().nullable(),
+  midaxillarySkinfold: z.coerce.number().optional().nullable(),
+  suprailiacSkinfold: z.coerce.number().optional().nullable(),
+  abdominalSkinfold: z.coerce.number().optional().nullable(),
+  thighSkinfold: z.coerce.number().optional().nullable(),
+  medialCalfSkinfold: z.coerce.number().optional().nullable(),
+  observations: z.string().optional(),
 });
 export type AnthropometricFormData = z.infer<typeof AnthropometricSchema>;
 
 
-export const WorkActivityDetailSchema = z.object({
+const WorkActivityDetailSchema = z.object({
   id: z.string().optional(),
   description: z.string().min(1, "Descrição da atividade principal é obrigatória."),
   timeSpent: z.string().min(1, "Tempo gasto é obrigatório."),

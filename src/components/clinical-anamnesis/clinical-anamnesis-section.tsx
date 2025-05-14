@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ClinicalAssessmentFormData } from "@/lib/schemas";
@@ -7,6 +6,7 @@ import type { Patient, BirthTerm, BowelFunction, UrineColor, YesNoUnknown, Quant
 import { usePatientContext } from "@/contexts/patient-context";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,7 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
   const { updatePatientClinicalAssessment } = usePatientContext();
   const { toast } = useToast();
 
-  const latestAssessment = patient.clinicalAssessments?.[0] || {};
+  const latestAssessment: Partial<ClinicalAssessmentFormData> = patient.clinicalAssessments?.[0] || {};
 
   const form = useForm<ClinicalAssessmentFormData>({
     resolver: zodResolver(ClinicalAssessmentSchema),
@@ -53,6 +53,7 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
       habits: latestAssessment.habits || {},
       signsAndSymptoms: latestAssessment.signsAndSymptoms || {},
       specificQuestions: latestAssessment.specificQuestions || {},
+      assessmentObjective: latestAssessment.assessmentObjective || "",
     },
   });
 
@@ -72,6 +73,7 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
         habits: {},
         signsAndSymptoms: {},
         specificQuestions: {},
+        assessmentObjective: "",
       });
     } catch (error) {
        toast({
@@ -121,6 +123,7 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
     { name: "historiaDoencaAtual", label: "História da Doença Atual", component: Textarea },
     { name: "historiaMedicaPregressa", label: "História Médica Pregressa", component: Textarea },
     { name: "historiaFamiliar", label: "História Familiar", component: Textarea, placeholder: "e.g., HAS, DM, Câncer..." },
+    { name: "assessmentObjective", label: "Objetivo da Avaliação/Acompanhamento", component: Textarea, placeholder: "Ex: Perda de peso, Ganho de massa muscular, Manutenção da saúde" },
   ];
 
   const habitsFields = [
@@ -136,12 +139,23 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
     { name: "habits.quantidadeBebidaAlcoolica", label: "Quantidade (Bebida)", component: Input, type: "text", condition: (data: any) => data.habits?.consomeBebidaAlcoolica === "Sim" },
   ];
 
-  const signsAndSymptomsFields = Object.keys(ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape).map(key => ({
-    name: `signsAndSymptoms.${key as keyof ClinicalAssessmentFormData['signsAndSymptoms']}`,
-    label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()), // Auto-generate label from key
-    component: Select,
-    options: (ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape[key as keyof ClinicalAssessmentFormData['signsAndSymptoms']].unwrap()._def.innerType?.options || yesNoUnknownOptions).map((o: string) => ({label: o, value: o}))
-  }));
+  // Get the actual shape of signsAndSymptoms, which is ClinicalAssessmentSignsAndSymptomsSchema
+  const signsAndSymptomsSchemaShape = ClinicalAssessmentSchema.shape.signsAndSymptoms._def.innerType.shape;
+
+  const signsAndSymptomsFields = Object.keys(signsAndSymptomsSchemaShape).map(key => {
+    const fieldSchema = signsAndSymptomsSchemaShape[key as keyof typeof signsAndSymptomsSchemaShape];
+    // fieldSchema is z.ZodOptional<z.ZodEnum<...>>
+    // The enum itself is fieldSchema._def.innerType
+    // The options are fieldSchema._def.innerType.options
+    const enumOptions = (fieldSchema._def.innerType as z.ZodEnum<[string, ...string[]]>).options || yesNoUnknownOptions;
+  
+    return {
+      name: `signsAndSymptoms.${key as keyof NonNullable<ClinicalAssessmentFormData['signsAndSymptoms']>}`,
+      label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+      component: Select,
+      options: enumOptions.map((o: string) => ({label: o, value: o}))
+    };
+  });
   
   const specificQuestionsFields = [
     { name: "specificQuestions.nasceuDeParto", label: "Nasceu de Parto", component: Select, options: birthTermOptions.map(o => ({label: o, value: o})) },
