@@ -81,6 +81,68 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
       });
     }
   }
+  
+  // Helper for rendering form fields
+  const renderField = (item: any, index: number, field: any) => {
+    const formItemClass = `p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`;
+    const formLabelClass = `sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`;
+    
+    return (
+      <FormItem className={formItemClass}>
+        <FormLabel className={formLabelClass}>{item.label}</FormLabel>
+        <div className="sm:w-2/3">
+          <FormControl>
+            {item.component === Input && <Input type={item.type || "text"} placeholder={item.placeholder} {...field} value={field.value || ""} />}
+            {item.component === Textarea && <Textarea placeholder={item.placeholder} {...field} value={field.value || ""} />}
+            {item.component === Select && (
+              <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+                <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
+                <SelectContent>{item.options?.map((opt: string | {value: string, label: string}) => <SelectItem key={typeof opt === 'string' ? opt : opt.value} value={typeof opt === 'string' ? opt : opt.value}>{typeof opt === 'string' ? opt : opt.label}</SelectItem>)}</SelectContent>
+              </Select>
+            )}
+          </FormControl>
+          <FormMessage className="mt-1 text-xs" />
+        </div>
+      </FormItem>
+    );
+  };
+
+  const anamnesisFields = [
+    { name: "queixaPrincipal", label: "Queixa Principal", component: Textarea },
+    { name: "historiaDoencaAtual", label: "História da Doença Atual", component: Textarea },
+    { name: "historiaMedicaPregressa", label: "História Médica Pregressa", component: Textarea },
+    { name: "historiaFamiliar", label: "História Familiar", component: Textarea, placeholder: "e.g., HAS, DM, Câncer..." },
+  ];
+
+  const habitsFields = [
+    { name: "habits.horasSono", label: "Horas de Sono", component: Input, type: "number" },
+    { name: "habits.qualidadeSono", label: "Qualidade do Sono", component: Select, options: sleepQualityOptions },
+    { name: "habits.fuma", label: "Fuma?", component: Select, options: smokingStatusOptions },
+    { name: "habits.tipoCigarro", label: "Tipo (Cigarro)", component: Input, type: "text", condition: (data: any) => data.habits?.fuma === "Sim" },
+    { name: "habits.frequenciaCigarro", label: "Frequência (Cigarro)", component: Input, type: "text", condition: (data: any) => data.habits?.fuma === "Sim" },
+    { name: "habits.quantidadeCigarro", label: "Quantidade (Cigarro)", component: Input, type: "text", condition: (data: any) => data.habits?.fuma === "Sim" },
+    { name: "habits.consomeBebidaAlcoolica", label: "Consome Bebida Alcoólica?", component: Select, options: alcoholConsumptionStatusOptions },
+    { name: "habits.tipoBebidaAlcoolica", label: "Tipo (Bebida)", component: Input, type: "text", condition: (data: any) => data.habits?.consomeBebidaAlcoolica === "Sim" },
+    { name: "habits.frequenciaBebidaAlcoolica", label: "Frequência (Bebida)", component: Input, type: "text", condition: (data: any) => data.habits?.consomeBebidaAlcoolica === "Sim" },
+    { name: "habits.quantidadeBebidaAlcoolica", label: "Quantidade (Bebida)", component: Input, type: "text", condition: (data: any) => data.habits?.consomeBebidaAlcoolica === "Sim" },
+  ];
+
+  const signsAndSymptomsFields = Object.keys(ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape).map(key => ({
+    name: `signsAndSymptoms.${key as keyof ClinicalAssessmentFormData['signsAndSymptoms']}`,
+    label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+    component: Select,
+    options: (ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape[key as keyof ClinicalAssessmentFormData['signsAndSymptoms']].unwrap()._def.innerType?.options || yesNoUnknownOptions).map((o: string) => ({label: o, value: o}))
+  }));
+  
+  const specificQuestionsFields = [
+    { name: "specificQuestions.nasceuDeParto", label: "Nasceu de Parto", component: Select, options: birthTermOptions.map(o => ({label: o, value: o})) },
+    { name: "specificQuestions.funcionamentoIntestinal", label: "Funcionamento Intestinal", component: Select, options: bowelFunctionOptions.map(o => ({label: o, value: o})) },
+    { name: "specificQuestions.corDaUrina", label: "Cor da Urina", component: Select, options: urineColorOptions.map(o => ({label: o, value: o})) },
+    { name: "specificQuestions.usoMedicamentos", label: "Uso de Medicamentos", component: Textarea },
+    { name: "specificQuestions.usoSuplementos", label: "Uso de Suplementos", component: Textarea },
+    { name: "specificQuestions.outrasObservacoesRelevantes", label: "Outras Observações Relevantes", component: Textarea },
+  ];
+
 
   return (
     <div className="space-y-8">
@@ -91,99 +153,74 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-0">
               <FormField
                 control={form.control}
                 name="assessmentDate"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Data da Avaliação</FormLabel>
+                   <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/30`}>
+                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Data da Avaliação</FormLabel>
+                    <div className="sm:w-2/3">
                     <FormControl>
                       <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="mt-1 text-xs" />
+                    </div>
                   </FormItem>
                 )}
               />
 
-              <Card>
+              <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Anamnese Clínica</CardTitle></CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField control={form.control} name="queixaPrincipal" render={({ field }) => (<FormItem><FormLabel>Queixa Principal</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="historiaDoencaAtual" render={({ field }) => (<FormItem><FormLabel>História da Doença Atual</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="historiaMedicaPregressa" render={({ field }) => (<FormItem><FormLabel>História Médica Pregressa</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="historiaFamiliar" render={({ field }) => (<FormItem><FormLabel>História Familiar</FormLabel><FormControl><Textarea placeholder="e.g., HAS, DM, Câncer, Dislipidemia, Obesidade, Tireoideopatias, Outros" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <CardContent className="space-y-0">
+                  {anamnesisFields.map((item, index) => (
+                    <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
+                  ))}
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Hábitos</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
-                  <FormField control={form.control} name="habits.horasSono" render={({ field }) => (<FormItem><FormLabel>Horas de Sono</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="habits.qualidadeSono" render={({ field }) => (<FormItem><FormLabel>Qualidade do Sono</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{sleepQualityOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="habits.fuma" render={({ field }) => (<FormItem><FormLabel>Fuma?</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{smokingStatusOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  {/* Conditional fields for smoking */}
-                  <FormField control={form.control} name="habits.tipoCigarro" render={({ field }) => (<FormItem><FormLabel>Tipo (Cigarro)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="habits.frequenciaCigarro" render={({ field }) => (<FormItem><FormLabel>Frequência (Cigarro)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="habits.quantidadeCigarro" render={({ field }) => (<FormItem><FormLabel>Quantidade (Cigarro)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-
-                  <FormField control={form.control} name="habits.consomeBebidaAlcoolica" render={({ field }) => (<FormItem><FormLabel>Consome Bebida Alcoólica?</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{alcoholConsumptionStatusOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  {/* Conditional fields for alcohol */}
-                  <FormField control={form.control} name="habits.tipoBebidaAlcoolica" render={({ field }) => (<FormItem><FormLabel>Tipo (Bebida)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="habits.frequenciaBebidaAlcoolica" render={({ field }) => (<FormItem><FormLabel>Frequência (Bebida)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="habits.quantidadeBebidaAlcoolica" render={({ field }) => (<FormItem><FormLabel>Quantidade (Bebida)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <CardContent className="space-y-0 md:grid md:grid-cols-2 md:gap-x-6">
+                  {habitsFields.map((item, index) => {
+                    const fieldName = item.name as keyof ClinicalAssessmentFormData;
+                    const shouldRender = item.condition ? item.condition(form.getValues()) : true;
+                    if (!shouldRender) return null;
+                    return <FormField key={item.name} control={form.control} name={fieldName} render={({ field }) => renderField(item, index, field)} />
+                  })}
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Sinais e Sintomas</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-3 gap-4">
-                  {Object.keys(ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape).map((key) => (
-                     <FormField
-                        key={key}
-                        control={form.control}
-                        name={`signsAndSymptoms.${key as keyof ClinicalAssessmentFormData['signsAndSymptoms']}`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
-                              <FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl>
-                              <SelectContent>
-                                {(ClinicalAssessmentSchema.shape.signsAndSymptoms.unwrap().shape[key as keyof ClinicalAssessmentFormData['signsAndSymptoms']].unwrap()._def.innerType?.options || yesNoUnknownOptions).map((opt: string) => (
-                                  <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                <CardContent className="space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-x-6">
+                  {signsAndSymptomsFields.map((item, index) => (
+                    <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
                   ))}
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Questões Específicas</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
-                  <FormField control={form.control} name="specificQuestions.nasceuDeParto" render={({ field }) => (<FormItem><FormLabel>Nasceu de Parto</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{birthTermOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="specificQuestions.funcionamentoIntestinal" render={({ field }) => (<FormItem><FormLabel>Funcionamento Intestinal</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{bowelFunctionOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="specificQuestions.corDaUrina" render={({ field }) => (<FormItem><FormLabel>Cor da Urina</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{urineColorOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="specificQuestions.usoMedicamentos" render={({ field }) => (<FormItem><FormLabel>Uso de Medicamentos</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="specificQuestions.usoSuplementos" render={({ field }) => (<FormItem><FormLabel>Uso de Suplementos</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="specificQuestions.outrasObservacoesRelevantes" render={({ field }) => (<FormItem><FormLabel>Outras Observações Relevantes</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <CardContent className="space-y-0 md:grid md:grid-cols-2 md:gap-x-6">
+                   {specificQuestionsFields.map((item, index) => (
+                    <FormField key={item.name} control={form.control} name={item.name as any} render={({ field }) => renderField(item, index, field)} />
+                  ))}
                 </CardContent>
               </Card>
-
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Salvando..." : "Adicionar Avaliação Clínica"}
-              </Button>
+              
+              <div className="pt-8 flex justify-end">
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Salvando..." : "Adicionar Avaliação Clínica"}
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
       </Card>
 
        {patient.clinicalAssessments && patient.clinicalAssessments.length > 0 && (
-        <Card className="shadow-md">
+        <Card className="shadow-md mt-8">
           <CardHeader>
             <CardTitle className="text-xl">Histórico de Avaliações Clínicas</CardTitle>
           </CardHeader>
@@ -199,8 +236,8 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {patient.clinicalAssessments.map((record) => (
-                    <TableRow key={record.id}>
+                  {patient.clinicalAssessments.map((record, index) => (
+                    <TableRow key={record.id} className={index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}>
                       <TableCell>{new Date(record.assessmentDate).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell className="max-w-xs truncate">{record.queixaPrincipal || "N/A"}</TableCell>
                       <TableCell>{record.habits?.fuma || "N/A"}</TableCell>
@@ -210,11 +247,10 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
                 </TableBody>
               </Table>
             </div>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
           </CardContent>
         </Card>
       )}
     </div>
   );
 }
-
-    

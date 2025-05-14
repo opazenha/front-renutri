@@ -81,10 +81,12 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
         title: "Avaliação Alimentar Atualizada",
         description: "Novo registro alimentar adicionado com sucesso.",
       });
+      // Optionally reset form here, or parts of it
       form.reset({ 
+        ...form.getValues(), // Keep current general info
         assessmentDate: format(new Date(), "yyyy-MM-dd"),
-        previousNutritionalCounseling: undefined,
-        // Reset other fields as needed
+        dietaryRecall24h: [],
+        foodFrequency: [],
       });
     } catch (error) {
        toast({
@@ -94,6 +96,27 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
       });
     }
   }
+
+  const generalHabitsFields = [
+    { name: "previousNutritionalCounseling", label: "Já fez acompanhamento nutricional antes?", component: Select, options: yesNoUnknownOptions.map(o => ({label: o, value: o})), placeholder: "Selecione" },
+    { name: "objectiveOfPreviousCounseling", label: "Qual objetivo do acompanhamento anterior?", component: Input, type: "text" },
+    { name: "counselingProfessional", label: "Com qual profissional?", component: Select, options: counselingProfessionalOptions.map(o => ({label: o, value: o})), placeholder: "Selecione" },
+    { name: "foodAllergiesDescribed", label: "Alergias alimentares descritas", component: Textarea },
+    { name: "foodIntolerancesDescribed", label: "Intolerâncias alimentares descritas", component: Textarea },
+    { name: "appetite", label: "Apetite", component: Select, options: appetiteOptions.map(o => ({label: o, value: o})), placeholder: "Selecione" },
+    { name: "mealLocation", label: "Local onde realiza as refeições", component: Input, type: "text" },
+    { name: "mealPreparer", label: "Quem prepara as refeições", component: Input, type: "text" },
+    { name: "mealTimes", label: "Horários das refeições", component: Input, type: "text" },
+    { name: "waterConsumption", label: "Consumo de água (diário)", component: Input, type: "text", placeholder: "Ex: 2 litros, 8 copos" },
+    { name: "saltUsage", label: "Uso de sal", component: Select, options: saltUsageOptions.map(o => ({label: o, value: o})), placeholder: "Selecione" },
+    { name: "saltType", label: "Tipo de sal", component: Input, type: "text", placeholder: "Ex: Refinado, Marinho, Rosa" },
+    { name: "cookingOilFatUsage", label: "Uso de óleo/gordura para cozinhar", component: Input, type: "text", placeholder: "Ex: Azeite, Óleo de soja, Manteiga" },
+    { name: "cookingOilFatQuantity", label: "Quantidade de óleo/gordura", component: Select, options: cookingOilFatQuantityOptions.map(o => ({label: o, value: o})), placeholder: "Selecione" },
+    { name: "sugarSweetenerUsage", label: "Uso de açúcar/adoçante", component: Input, type: "text", placeholder: "Ex: Açúcar refinado, Adoçante Xylitol" },
+    { name: "foodPreferences", label: "Preferências alimentares", component: Textarea },
+    { name: "foodAversions", label: "Aversões alimentares", component: Textarea },
+  ] as const;
+
 
   return (
     <div className="space-y-8">
@@ -109,36 +132,48 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 control={form.control}
                 name="assessmentDate"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Data da Avaliação</FormLabel>
-                    <FormControl>
-                      <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
-                    </FormControl>
-                    <FormMessage />
+                  <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/30`}>
+                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Data da Avaliação</FormLabel>
+                    <div className="sm:w-2/3">
+                      <FormControl>
+                        <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
+                      </FormControl>
+                      <FormMessage className="mt-1 text-xs"/>
+                    </div>
                   </FormItem>
                 )}
               />
 
               <Card>
                 <CardHeader><CardTitle className="text-lg">Histórico Nutricional e Hábitos Gerais</CardTitle></CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
-                  <FormField control={form.control} name="previousNutritionalCounseling" render={({ field }) => (<FormItem><FormLabel>Já fez acompanhamento nutricional antes?</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{yesNoUnknownOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="objectiveOfPreviousCounseling" render={({ field }) => (<FormItem><FormLabel>Qual objetivo do acompanhamento anterior?</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="counselingProfessional" render={({ field }) => (<FormItem><FormLabel>Com qual profissional?</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{counselingProfessionalOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="foodAllergiesDescribed" render={({ field }) => (<FormItem><FormLabel>Alergias alimentares descritas</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="foodIntolerancesDescribed" render={({ field }) => (<FormItem><FormLabel>Intolerâncias alimentares descritas</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="appetite" render={({ field }) => (<FormItem><FormLabel>Apetite</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{appetiteOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="mealLocation" render={({ field }) => (<FormItem><FormLabel>Local onde realiza as refeições</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="mealPreparer" render={({ field }) => (<FormItem><FormLabel>Quem prepara as refeições</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="mealTimes" render={({ field }) => (<FormItem><FormLabel>Horários das refeições</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="waterConsumption" render={({ field }) => (<FormItem><FormLabel>Consumo de água (diário)</FormLabel><FormControl><Input placeholder="Ex: 2 litros, 8 copos" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="saltUsage" render={({ field }) => (<FormItem><FormLabel>Uso de sal</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{saltUsageOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="saltType" render={({ field }) => (<FormItem><FormLabel>Tipo de sal</FormLabel><FormControl><Input placeholder="Ex: Refinado, Marinho, Rosa" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="cookingOilFatUsage" render={({ field }) => (<FormItem><FormLabel>Uso de óleo/gordura para cozinhar</FormLabel><FormControl><Input placeholder="Ex: Azeite, Óleo de soja, Manteiga" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="cookingOilFatQuantity" render={({ field }) => (<FormItem><FormLabel>Quantidade de óleo/gordura</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{cookingOilFatQuantityOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="sugarSweetenerUsage" render={({ field }) => (<FormItem><FormLabel>Uso de açúcar/adoçante</FormLabel><FormControl><Input placeholder="Ex: Açúcar refinado, Adoçante Xylitol" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="foodPreferences" render={({ field }) => (<FormItem><FormLabel>Preferências alimentares</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="foodAversions" render={({ field }) => (<FormItem><FormLabel>Aversões alimentares</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <CardContent className="space-y-0">
+                  {generalHabitsFields.map((item, index) => (
+                    <FormField
+                      key={item.name}
+                      control={form.control}
+                      name={item.name as keyof FoodAssessmentFormData}
+                      render={({ field }) => (
+                        <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${item.component === Textarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                          <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${item.component === Textarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
+                          <div className="sm:w-2/3">
+                            <FormControl>
+                              {item.component === Input && <Input placeholder={item.placeholder} type={item.type} {...field} value={field.value || ''}/>}
+                              {item.component === Textarea && <Textarea placeholder={item.placeholder} {...field} value={field.value || ''} />}
+                              {item.component === Select && (
+                                <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+                                  <SelectTrigger><SelectValue placeholder={item.placeholder || "Selecione"} /></SelectTrigger>
+                                  <SelectContent>
+                                    {item.options?.map(opt => (<SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>))}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            </FormControl>
+                            <FormMessage className="mt-1 text-xs"/>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
                 </CardContent>
               </Card>
 
@@ -146,17 +181,17 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 <CardHeader><CardTitle className="text-lg">Recordatório Alimentar 24h / Diário Alimentar</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   {recallFields.map((field, index) => (
-                    <Card key={field.id} className="p-4 relative">
-                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive" onClick={() => removeRecall(index)}>
-                        <Trash2 className="h-4 w-4" />
+                    <Card key={field.id} className={`p-4 relative ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive h-6 w-6" onClick={() => removeRecall(index)}>
+                        <Trash2 className="h-4 w-4" /><span className="sr-only">Remover</span>
                       </Button>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.mealType`} render={({ field: itemField }) => (<FormItem><FormLabel>Refeição</FormLabel><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{mealTypeOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.time`} render={({ field: itemField }) => (<FormItem><FormLabel>Horário</FormLabel><FormControl><Input type="time" {...itemField} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.foodItem`} render={({ field: itemField }) => (<FormItem><FormLabel>Alimento</FormLabel><FormControl><Input {...itemField} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.quantity`} render={({ field: itemField }) => (<FormItem><FormLabel>Quantidade</FormLabel><FormControl><Input {...itemField} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.preparationMethod`} render={({ field: itemField }) => (<FormItem className="md:col-span-2 lg:col-span-1"><FormLabel>Modo de Preparo</FormLabel><FormControl><Input {...itemField} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dietaryRecall24h.${index}.observations`} render={({ field: itemField }) => (<FormItem className="md:col-span-full lg:col-span-2"><FormLabel>Observações</FormLabel><FormControl><Textarea {...itemField} /></FormControl><FormMessage /></FormItem>)} />
+                      <div className="space-y-3">
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.mealType`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Refeição</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{mealTypeOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.time`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Horário</FormLabel><div className="sm:w-2/3"><FormControl><Input type="time" {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.foodItem`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.quantity`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Quantidade</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.preparationMethod`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Modo de Preparo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`dietaryRecall24h.${index}.observations`} render={({ field: itemField }) => (<FormItem><FormLabel>Observações</FormLabel><FormControl><Textarea {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></FormItem>)} />
                       </div>
                     </Card>
                   ))}
@@ -170,14 +205,14 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 <CardHeader><CardTitle className="text-lg">Frequência Alimentar</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   {frequencyFields.map((field, index) => (
-                    <Card key={field.id} className="p-4 relative">
-                      <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive" onClick={() => removeFrequency(index)}>
-                        <Trash2 className="h-4 w-4" />
+                    <Card key={field.id} className={`p-4 relative ${index % 2 === 0 ? "bg-muted/20" : "bg-transparent"}`}>
+                      <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive h-6 w-6" onClick={() => removeFrequency(index)}>
+                        <Trash2 className="h-4 w-4" /><span className="sr-only">Remover</span>
                       </Button>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FormField control={form.control} name={`foodFrequency.${index}.foodOrGroup`} render={({ field: itemField }) => (<FormItem><FormLabel>Alimento/Grupo</FormLabel><FormControl><Input {...itemField} /></FormControl><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name={`foodFrequency.${index}.consumptionFrequency`} render={({ field: itemField }) => (<FormItem><FormLabel>Frequência de Consumo</FormLabel><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{consumptionFrequencyOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>)} />
-                      <FormField control={form.control} name={`foodFrequency.${index}.usualPortion`} render={({ field: itemField }) => (<FormItem><FormLabel>Porção Habitual</FormLabel><FormControl><Input {...itemField} /></FormControl><FormMessage /></FormItem>)} />
+                      <div className="space-y-3">
+                        <FormField control={form.control} name={`foodFrequency.${index}.foodOrGroup`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Alimento/Grupo</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`foodFrequency.${index}.consumptionFrequency`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Frequência de Consumo</FormLabel><div className="sm:w-2/3"><Select onValueChange={itemField.onChange} defaultValue={itemField.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger></FormControl><SelectContent>{consumptionFrequencyOptions.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}</SelectContent></Select><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
+                        <FormField control={form.control} name={`foodFrequency.${index}.usualPortion`} render={({ field: itemField }) => (<FormItem className="flex flex-col sm:flex-row sm:items-center sm:gap-4"><FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Porção Habitual</FormLabel><div className="sm:w-2/3"><FormControl><Input {...itemField} /></FormControl><FormMessage className="mt-1 text-xs"/></div></FormItem>)} />
                       </div>
                     </Card>
                   ))}
@@ -187,10 +222,11 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 </CardContent>
               </Card>
 
-
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Salvando..." : "Adicionar Avaliação Alimentar"}
-              </Button>
+              <div className="pt-6 flex justify-end">
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Salvando..." : "Adicionar Avaliação Alimentar"}
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
@@ -200,18 +236,21 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
         <Card className="shadow-md">
           <CardHeader><CardTitle className="text-xl">Histórico de Avaliações Alimentares</CardTitle></CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader><TableRow><TableHead>Data</TableHead><TableHead>Apetite</TableHead><TableHead>Nº Itens Recordatório</TableHead></TableRow></TableHeader>
-              <TableBody>
-                {patient.foodAssessments.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>{new Date(record.assessmentDate).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell>{record.appetite || "N/A"}</TableCell>
-                    <TableCell>{record.dietaryRecall24h?.length || 0}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader><TableRow><TableHead>Data</TableHead><TableHead>Apetite</TableHead><TableHead>Nº Itens Recordatório</TableHead></TableRow></TableHeader>
+                <TableBody>
+                  {patient.foodAssessments.map((record) => (
+                    <TableRow key={record.id} className={patient.foodAssessments.indexOf(record) % 2 === 0 ? "bg-muted/20" : "bg-transparent"}>
+                      <TableCell>{new Date(record.assessmentDate).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell>{record.appetite || "N/A"}</TableCell>
+                      <TableCell>{record.dietaryRecall24h?.length || 0}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+             <p className="text-xs sm:text-sm text-muted-foreground mt-2">Role horizontalmente para ver todos os dados da tabela.</p>
           </CardContent>
         </Card>
       )}

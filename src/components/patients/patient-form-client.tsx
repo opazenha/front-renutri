@@ -29,6 +29,12 @@ interface PatientFormClientProps {
 const CURRENT_YEAR = getYear(new Date());
 const maritalStatusOptions: MaritalStatus[] = ["Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viúvo(a)", "Outro"];
 
+const genderOptions: Array<{value: PatientFormData["gender"], label: string}> = [
+  { value: "male", label: "Masculino" },
+  { value: "female", label: "Feminino" },
+  { value: "other", label: "Outro" },
+];
+
 export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFormClientProps) {
   const form = useForm<PatientFormData>({
     resolver: zodResolver(PatientSchema),
@@ -49,127 +55,61 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
     },
   });
 
-  function handleSubmit(data: PatientFormData) {
+  function handleSubmitInternal(data: PatientFormData) {
     onSubmit(data);
   }
 
+  const formFields = [
+    { name: "name", label: "Nome Completo", placeholder: "Digite o nome completo do paciente", component: Input, type: "text" },
+    { name: "dob", label: "Data de Nascimento", component: DateDropdowns, props: { disableFuture: true, minYear: 1900, maxYear: CURRENT_YEAR } },
+    { name: "gender", label: "Gênero", component: Select, options: genderOptions, placeholder: "Selecione o gênero" },
+    { name: "schooling", label: "Escolaridade", placeholder: "Ex: Ensino Médio Completo", component: Input, type: "text" },
+    { name: "maritalStatus", label: "Estado Civil", component: Select, options: maritalStatusOptions.map(s => ({value: s, label: s})), placeholder: "Selecione o estado civil" },
+    { name: "profession", label: "Profissão", placeholder: "Ex: Engenheiro(a), Professor(a)", component: Input, type: "text" },
+  ] as const;
+
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome Completo</FormLabel>
-              <FormControl>
-                <Input placeholder="Digite o nome completo do paciente" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="dob"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Data de Nascimento</FormLabel>
-                <FormControl>
-                  <DateDropdowns
-                    value={field.value}
-                    onChange={field.onChange}
-                    disableFuture={true}
-                    minYear={1900}
-                    maxYear={CURRENT_YEAR}
-                  />
-                </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="gender"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Gênero</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o gênero do paciente" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="male">Masculino</SelectItem>
-                  <SelectItem value="female">Feminino</SelectItem>
-                  <SelectItem value="other">Outro</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="schooling"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Escolaridade</FormLabel>
-              <FormControl>
-                <Input placeholder="Ex: Ensino Médio Completo" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="maritalStatus"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Estado Civil</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o estado civil" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {maritalStatusOptions.map(status => (
-                    <SelectItem key={status} value={status}>{status}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(handleSubmitInternal)} className="space-y-0">
+        {formFields.map((item, index) => (
+          <FormField
+            key={item.name}
+            control={form.control}
+            name={item.name as keyof PatientFormData}
+            render={({ field }) => (
+              <FormItem className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${index % 2 === 0 ? "bg-muted/30" : "bg-transparent"}`}>
+                <FormLabel className="md:w-1/4 md:text-right mb-1 md:mb-0 text-sm font-medium">{item.label}</FormLabel>
+                <div className="md:w-3/4">
+                  <FormControl>
+                    {item.component === Input && <Input placeholder={item.placeholder} type={item.type} {...field} />}
+                    {item.component === DateDropdowns && <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />}
+                    {item.component === Select && (
+                      <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={item.placeholder} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {item.options?.map(opt => (
+                            <SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </FormControl>
+                  <FormMessage className="mt-1 text-xs" />
+                </div>
+              </FormItem>
+            )}
+          />
+        ))}
         
-        <FormField
-          control={form.control}
-          name="profession"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Profissão</FormLabel>
-              <FormControl>
-                <Input placeholder="Ex: Engenheiro(a), Professor(a)" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvando..." : (patient ? "Atualizar Paciente" : "Adicionar Paciente")}
-        </Button>
+        <div className="pt-6 flex justify-end">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Salvando..." : (patient ? "Atualizar Paciente" : "Adicionar Paciente")}
+          </Button>
+        </div>
       </form>
     </Form>
   );
 }
-
-    
