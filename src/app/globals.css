@@ -8,16 +8,16 @@ body {
 
 @layer base {
   :root {
-    --background: 45 70% 97%; /* Whitish-cream (e.g. #FAF9F7) - Changed from paper #F5F5DC */
+    --background: 60 56% 91%; /* Pale Cream (Paper Beige, e.g., #F5F5DC) */
     --foreground: 240 10% 15%; /* Darker gray for better contrast */
     
-    --card: 45 60% 95%; /* Slightly off-white cream for cards */
+    --card: 60 50% 95%; /* Light Cream for cards, consistent with new background */
     --card-foreground: 240 10% 15%;
     
-    --popover: 45 60% 95%;
+    --popover: 60 50% 95%; /* Light Cream for popovers */
     --popover-foreground: 240 10% 15%;
     
-    --primary: 344 95% 25%; /* Dark Red (#7B0323) - Updated from Magenta */
+    --primary: 344 95% 25%; /* Dark Red (#7B0323) */
     --primary-foreground: 0 0% 100%; /* White */
     
     --secondary: 45 50% 92%; /* Lighter cream/beige for secondary elements */
@@ -44,7 +44,7 @@ body {
     
     --radius: 0.5rem;
 
-    /* Light Sidebar specific variables */
+    /* Light Sidebar specific variables - Kept as they were */
     --sidebar-background: 45 70% 97%; /* Whitish-cream (e.g. #FAF9F7) */
     --sidebar-foreground: 240 10% 15%; /* Dark gray */
     --sidebar-primary: 344 95% 25%;    /* Dark Red (#7B0323) */
