@@ -1,7 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Overlock+SC&family=Overlock:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Overlock+SC&family=Overlock:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Increase base font size for readability with Overlock */
+html {
+  font-size: 120%;
+}
 
 /* Google Fonts: Overlock SC and Overlock */
 
@@ -51,28 +56,28 @@ body {
   :root {
     --background: 50 83% 88%; /* #fbf1c7 - Pale Beige */
     --foreground: 20 5% 23%; /* #3c3836 - Dark Gray/Brown */
-    
+
     --card: 46 50% 81%; /* #ebdbb2 - Slightly darker Beige */
     --card-foreground: 20 5% 23%; /* #3c3836 */
-    
+
     --popover: 46 50% 81%; /* #ebdbb2 */
     --popover-foreground: 20 5% 23%; /* #3c3836 */
-    
+
     --primary: 25 87% 45%; /* #d65d0e - Muted Orange */
     --primary-foreground: 0 0% 100%; /* White */
-    
+
     --secondary: 46 50% 81%; /* #ebdbb2 - Slightly darker Beige */
     --secondary-foreground: 20 5% 23%; /* #3c3836 */
-    
+
     --muted: 48 60% 85%; /* Lighter beige for muted states */
     --muted-foreground: 20 5% 45%; /* Mid-tone gray for muted text */
-    
+
     --accent: 60 69% 35%; /* #98971a - Light Olive Green */
     --accent-foreground: 0 0% 100%; /* White */
-    
+
     --destructive: 0 84.2% 60.2%; /* Keeping original destructive for now */
     --destructive-foreground: 0 0% 98%;
-    
+
     --border: 46 40% 75%; /* #d1c5a3 approx - Subtle border derived from secondary */
     --input: 46 40% 75%; /* Same as border */
     --ring: 25 87% 45%; /* #d65d0e - Muted Orange for focus rings */
@@ -81,46 +86,46 @@ body {
     --chart-2: 60 69% 35%; /* #98971a - Accent */
     --chart-3: 182 31% 40%; /* #458588 - Muted Blue/Teal */
     --chart-4: 337 33% 54%; /* #b16286 - Muted Purple/Magenta */
-    --chart-5: 2 70% 45%;  /* #cc241d - Muted Red */
-    
+    --chart-5: 2 70% 45%; /* #cc241d - Muted Red */
+
     --radius: 0.5rem;
 
     /* Light Sidebar specific variables */
     --sidebar-background: 46 50% 81%; /* #ebdbb2 - Secondary Background */
     --sidebar-foreground: 20 5% 23%; /* #3c3836 - Main Text Color */
-    --sidebar-primary: 25 87% 45%;    /* #d65d0e - Highlight Color */
+    --sidebar-primary: 25 87% 45%; /* #d65d0e - Highlight Color */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 48 60% 85%;      /* Lighter beige for hover */
+    --sidebar-accent: 48 60% 85%; /* Lighter beige for hover */
     --sidebar-accent-foreground: 25 87% 45%; /* #d65d0e - Highlight for text on hover */
-    --sidebar-border: 46 40% 70%;     /* Slightly darker than sidebar-background for subtle border */
-    --sidebar-ring: 25 87% 45%;      /* #d65d0e - Highlight Color for focus rings */
+    --sidebar-border: 46 40% 70%; /* Slightly darker than sidebar-background for subtle border */
+    --sidebar-ring: 25 87% 45%; /* #d65d0e - Highlight Color for focus rings */
   }
 
   .dark {
     --background: 30 10% 12%; /* Dark Brown/Olive */
     --foreground: 50 30% 85%; /* Light Beige/Cream */
-    
-    --card: 30 10% 15%; 
+
+    --card: 30 10% 15%;
     --card-foreground: 50 30% 85%;
-    
+
     --popover: 30 10% 15%;
     --popover-foreground: 50 30% 85%;
 
     --primary: 25 80% 60%; /* Brighter Orange */
     --primary-foreground: 25 70% 10%; /* Darker text for bright orange */
-    
+
     --secondary: 30 10% 18%;
     --secondary-foreground: 50 30% 80%;
-    
-    --muted: 30 10% 22%; 
+
+    --muted: 30 10% 22%;
     --muted-foreground: 50 20% 60%;
-    
+
     --accent: 60 50% 50%; /* Brighter Olive Green */
     --accent-foreground: 60 50% 10%; /* Darker text for bright olive */
-    
+
     --destructive: 0 70% 50%; /* Adjusted destructive */
     --destructive-foreground: 0 0% 95%;
-    
+
     --border: 30 8% 25%;
     --input: 30 8% 25%;
     --ring: 25 80% 60%; /* Brighter Orange for focus rings */
@@ -129,17 +134,17 @@ body {
     --chart-2: 60 50% 50%; /* Brighter Olive Green */
     --chart-3: 182 40% 55%; /* Lighter Muted Blue/Teal */
     --chart-4: 337 40% 65%; /* Lighter Muted Purple/Magenta */
-    --chart-5: 2 70% 60%;  /* Lighter Muted Red */
+    --chart-5: 2 70% 60%; /* Lighter Muted Red */
 
     /* Dark Sidebar */
-    --sidebar-background: 30 10% 10%; 
+    --sidebar-background: 30 10% 10%;
     --sidebar-foreground: 50 30% 85%;
-    --sidebar-primary: 25 80% 60%; 
-    --sidebar-primary-foreground: 25 70% 10%; 
+    --sidebar-primary: 25 80% 60%;
+    --sidebar-primary-foreground: 25 70% 10%;
     --sidebar-accent: 30 10% 14%;
     --sidebar-accent-foreground: 25 80% 60%;
     --sidebar-border: 30 8% 20%;
-    --sidebar-ring: 25 80% 60%; 
+    --sidebar-ring: 25 80% 60%;
   }
 }
 
