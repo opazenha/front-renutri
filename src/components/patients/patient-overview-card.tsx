@@ -119,7 +119,7 @@ export function PatientOverviewCard({ patient }: PatientOverviewCardProps) {
           <h4 className="font-semibold mb-2 text-primary text-sm sm:text-base">
             Resumo das Avaliações
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-1 text-xs sm:text-sm">
             <p>
               Avaliações Clínicas: {patient.clinicalAssessments?.length || 0}
             </p>

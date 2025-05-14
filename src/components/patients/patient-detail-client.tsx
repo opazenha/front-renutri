@@ -40,17 +40,17 @@ export function PatientDetailClient({ patient }: PatientDetailClientProps) {
 
       <Tabs defaultValue="clinical-anamnesis" className="w-full">
         <div className="mb-4 space-y-2">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 h-auto">
+          <TabsList className="inline-flex w-full gap-x-[5px] bg-muted p-1 rounded-md">
             {tabsRow1.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value} className="flex-1 py-2 text-xs sm:text-sm">
+              <TabsTrigger key={tab.value} value={tab.value} className="flex-1 bg-background rounded-sm px-3 py-1.5 text-xs sm:text-sm !font-bold overlock-sc-regular data-[state=active]:bg-accent data-[state=active]:text-white">
                 <tab.icon className="mr-1.5 h-4 w-4 sm:mr-2 sm:inline" />
                 {tab.label}
               </TabsTrigger>
             ))}
           </TabsList>
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 h-auto">
+          <TabsList className="inline-flex w-full gap-x-[5px] bg-muted p-1 rounded-md">
             {tabsRow2.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value} className="flex-1 py-2 text-xs sm:text-sm">
+              <TabsTrigger key={tab.value} value={tab.value} className="flex-1 bg-background rounded-sm px-3 py-1.5 text-xs sm:text-sm !font-bold overlock-sc-regular data-[state=active]:bg-accent data-[state=active]:text-white">
                 <tab.icon className="mr-1.5 h-4 w-4 sm:mr-2 sm:inline" />
                 {tab.label}
               </TabsTrigger>

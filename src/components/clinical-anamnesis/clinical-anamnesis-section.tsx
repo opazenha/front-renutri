@@ -177,22 +177,6 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-0">
-              <FormField
-                control={form.control}
-                name="assessmentDate"
-                render={({ field }) => (
-                   <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50`}>
-                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Data da Avaliação</FormLabel>
-                    <div className="sm:w-2/3">
-                    <FormControl>
-                      <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
-                    </FormControl>
-                    <FormMessage className="mt-1 text-xs" />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
               <Card className="mt-6">
                 <CardHeader><CardTitle className="text-lg">Anamnese Clínica</CardTitle></CardHeader>
                 <CardContent className="space-y-0">
@@ -240,8 +224,24 @@ export function ClinicalAnamnesisSection({ patient }: ClinicalAnamnesisSectionPr
                 </CardContent>
               </Card>
               
+              <FormField
+                control={form.control}
+                name="assessmentDate"
+                render={({ field }) => (
+                  <FormItem className="p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50">
+                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">Data da Avaliação</FormLabel>
+                    <div className="sm:w-2/3">
+                    <FormControl>
+                      <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
+                    </FormControl>
+                    <FormMessage className="mt-1 text-xs" />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
               <div className="pt-8 flex justify-end">
-                <Button type="submit" disabled={form.formState.isSubmitting}>
+                <Button type="submit" disabled={form.formState.isSubmitting} className="w-full sm:w-auto">
                   {form.formState.isSubmitting ? "Salvando..." : "Adicionar Avaliação Clínica"}
                 </Button>
               </div>

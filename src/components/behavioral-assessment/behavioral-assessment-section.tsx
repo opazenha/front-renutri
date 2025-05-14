@@ -97,20 +97,6 @@ export function BehavioralAssessmentSection({ patient }: BehavioralAssessmentSec
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="assessmentDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Data da Avaliação</FormLabel>
-                    <FormControl>
-                      <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <Card>
                 <CardHeader><CardTitle className="text-lg flex items-center"><Cigarette className="mr-2 h-5 w-5" /> Tabagismo</CardTitle></CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6">
@@ -182,6 +168,20 @@ export function BehavioralAssessmentSection({ patient }: BehavioralAssessmentSec
                   <FormField control={form.control} name="perceivedQualityOfLife" render={({ field }) => (<FormItem><FormLabel>Qualidade de Vida Percebida</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
+
+              <FormField
+                control={form.control}
+                name="assessmentDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Data da Avaliação</FormLabel>
+                    <FormControl>
+                      <DateDropdowns value={field.value} onChange={field.onChange} maxYear={CURRENT_YEAR} minYear={CURRENT_YEAR - 100} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Salvando..." : "Adicionar Avaliação Comportamental"}

@@ -345,31 +345,6 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
               onSubmit={form.handleSubmit(handleSubmit)}
               className="space-y-8"
             >
-              <FormField
-                control={form.control}
-                name="assessmentDate"
-                render={({ field }) => (
-                  <FormItem
-                    className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50`}
-                  >
-                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">
-                      Data da Avaliação
-                    </FormLabel>
-                    <div className="sm:w-2/3">
-                      <FormControl>
-                        <DateDropdowns
-                          value={field.value}
-                          onChange={field.onChange}
-                          maxYear={CURRENT_YEAR}
-                          minYear={CURRENT_YEAR - 100}
-                        />
-                      </FormControl>
-                      <FormMessage className="mt-1 text-xs" />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">
@@ -763,7 +738,30 @@ export function FoodAssessmentSection({ patient }: FoodAssessmentSectionProps) {
                 </CardContent>
               </Card>
 
-              <div className="pt-6 flex justify-end">
+              <FormField
+                control={form.control}
+                name="assessmentDate"
+                render={({ field }) => (
+                  <FormItem className="p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50">
+                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">
+                      Data da Avaliação
+                    </FormLabel>
+                    <div className="sm:w-2/3">
+                      <FormControl>
+                        <DateDropdowns
+                          value={field.value}
+                          onChange={field.onChange}
+                          maxYear={CURRENT_YEAR}
+                          minYear={CURRENT_YEAR - 100}
+                        />
+                      </FormControl>
+                      <FormMessage className="mt-1 text-xs" />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <div className="pt-8 flex justify-end">
                 <Button type="submit" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting
                     ? "Salvando..."

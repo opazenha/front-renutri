@@ -70,6 +70,8 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
   const [activityLevelForCalc, setActivityLevelForCalc] = useState<ActivityLevel>("sedentary");
   const [isPregnantForCalc, setIsPregnantForCalc] = useState(false);
   const [isLactatingForCalc, setIsLactatingForCalc] = useState(false);
+  const [pregnancyTrimesterForCalc, setPregnancyTrimesterForCalc] = useState<1|2|3>(2);
+  const [lactationPeriodForCalc, setLactationPeriodForCalc] = useState<'first6'|'after6'>('first6');
 
   const latestPlan: MacronutrientPlan | undefined = patient.macronutrientPlans?.[0];
   const latestAnthropometry = patient.anthropometricData?.[0] || {};
@@ -128,7 +130,9 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
         ...basicInfo, // Spreading basicInfo (age, gender, weightKg, heightCm)
         activityLevel: activityLevelForCalc,
         isPregnant: patient.gender === 'female' && isPregnantForCalc,
+        pregnancyTrimester: isPregnantForCalc ? pregnancyTrimesterForCalc : undefined,
         isLactating: patient.gender === 'female' && isLactatingForCalc,
+        lactationPeriod: isLactatingForCalc ? lactationPeriodForCalc : undefined,
       };
       const get = calculateGET_IOM2005(getParams);
       setCalculatedGET(get);
@@ -204,17 +208,50 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
             </FormItem>
 
             {patient.gender === 'female' && (
-              <>
-                <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                    <Checkbox checked={isPregnantForCalc} onCheckedChange={(checked) => setIsPregnantForCalc(Boolean(checked))} />
-                    <Label className="font-normal">Gestante</Label>
-                </FormItem>
-                <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                    <Checkbox checked={isLactatingForCalc} onCheckedChange={(checked) => setIsLactatingForCalc(Boolean(checked))} />
-                    <Label className="font-normal">Lactante</Label>
-                </FormItem>
-              </>
-            )}
+  <>
+    <div className="flex flex-col space-y-2">
+      <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+        <Checkbox checked={isPregnantForCalc} onCheckedChange={(checked) => setIsPregnantForCalc(Boolean(checked))} />
+        <Label className="font-normal">Gestante</Label>
+      </FormItem>
+      {isPregnantForCalc && (
+        <FormItem>
+          <Label>Trimestre</Label>
+          <Select
+            value={String(pregnancyTrimesterForCalc)}
+            onValueChange={(val) => setPregnancyTrimesterForCalc(Number(val) as 1|2|3)}
+          >
+            <SelectContent>
+              <SelectItem value="1">1º Trimestre</SelectItem>
+              <SelectItem value="2">2º Trimestre</SelectItem>
+              <SelectItem value="3">3º Trimestre</SelectItem>
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    </div>
+    <div className="flex flex-col space-y-2">
+      <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+        <Checkbox checked={isLactatingForCalc} onCheckedChange={(checked) => setIsLactatingForCalc(Boolean(checked))} />
+        <Label className="font-normal">Lactante</Label>
+      </FormItem>
+      {isLactatingForCalc && (
+        <FormItem>
+          <Label>Período de Lactação</Label>
+          <Select
+            value={lactationPeriodForCalc}
+            onValueChange={(val) => setLactationPeriodForCalc(val as 'first6'|'after6')}
+          >
+            <SelectContent>
+              <SelectItem value="first6">Primeiros 6 meses</SelectItem>
+              <SelectItem value="after6">Após 6 meses</SelectItem>
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    </div>
+  </>
+)}
           </div>
 
           <Button onClick={handleCalculateEstimates} type="button">
@@ -274,25 +311,6 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
               <Card>
                 <CardHeader><CardTitle className="text-lg">Dados Gerais do Plano</CardTitle></CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Data do Plano</FormLabel>
-                          <FormControl>
-                            <DateDropdowns
-                              value={field.value}
-                              onChange={field.onChange}
-                              disableFuture={true}
-                              maxYear={CURRENT_YEAR}
-                              minYear={CURRENT_YEAR - 10} // Example: last 10 years
-                            />
-                          </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <FormField control={form.control} name="totalEnergyExpenditure" render={({ field }) => (<FormItem><FormLabel>Gasto Energético Total (GET - Kcal/dia)</FormLabel><FormControl><Input type="number" placeholder="Ex: 2000" {...field} /></FormControl><FormDescription>Importado da avaliação de gasto ou estimado.</FormDescription><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="caloricObjective" render={({ field }) => (
                       <FormItem>
@@ -342,6 +360,29 @@ export function MacronutrientPlanSection({ patient }: MacronutrientPlanSectionPr
                    <FormField control={form.control} name="specificConsiderations" render={({ field }) => (<FormItem><FormLabel>Notas e Considerações para a Prescrição</FormLabel><FormControl><Textarea placeholder="Ex: Dieta cetogênica, Baixo FODMAP, Gestante, Atleta de endurance, Sarcopenia..." {...field} /></FormControl><FormMessage /></FormItem>)} />
                 </CardContent>
               </Card>
+
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 bg-muted/50">
+                    <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">
+                      Data do Plano
+                    </FormLabel>
+                    <div className="sm:w-2/3">
+                      <FormControl>
+                        <DateDropdowns
+                          value={field.value}
+                          onChange={field.onChange}
+                          maxYear={CURRENT_YEAR}
+                          minYear={CURRENT_YEAR - 100}
+                        />
+                      </FormControl>
+                      <FormMessage className="mt-1 text-xs" />
+                    </div>
+                  </FormItem>
+                )}
+              />
 
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Salvando..." : "Adicionar Plano"}

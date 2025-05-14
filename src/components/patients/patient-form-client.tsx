@@ -1,11 +1,7 @@
-
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import type { PatientFormData } from "@/lib/schemas";
-import { PatientSchema } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
+import { DateDropdowns } from "@/components/ui/date-dropdowns";
 import {
   Form,
   FormControl,
@@ -15,10 +11,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DateDropdowns } from "@/components/ui/date-dropdowns";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { Patient, MaritalStatus } from "@/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { PatientFormData } from "@/lib/schemas";
+import { PatientSchema } from "@/lib/schemas";
+import type { MaritalStatus, Patient } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { getYear } from "date-fns";
+import { useForm } from "react-hook-form";
 
 interface PatientFormClientProps {
   patient?: Patient;
@@ -27,32 +32,46 @@ interface PatientFormClientProps {
 }
 
 const CURRENT_YEAR = getYear(new Date());
-const maritalStatusOptions: MaritalStatus[] = ["Solteiro(a)", "Casado(a)", "Divorciado(a)", "Viúvo(a)", "Outro"];
-
-const genderOptions: Array<{value: PatientFormData["gender"], label: string}> = [
-  { value: "male", label: "Masculino" },
-  { value: "female", label: "Feminino" },
-  { value: "other", label: "Outro" },
+const maritalStatusOptions: MaritalStatus[] = [
+  "Solteiro(a)",
+  "Casado(a)",
+  "Divorciado(a)",
+  "Viúvo(a)",
+  "Outro",
 ];
 
-export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFormClientProps) {
+const genderOptions: Array<{
+  value: PatientFormData["gender"];
+  label: string;
+}> = [
+  { value: "male", label: "Masculino" },
+  { value: "female", label: "Feminino" },
+];
+
+export function PatientFormClient({
+  patient,
+  onSubmit,
+  isSubmitting,
+}: PatientFormClientProps) {
   const form = useForm<PatientFormData>({
     resolver: zodResolver(PatientSchema),
-    defaultValues: patient ? {
-      name: patient.name,
-      dob: patient.dob,
-      gender: patient.gender,
-      schooling: patient.schooling || "",
-      maritalStatus: patient.maritalStatus,
-      profession: patient.profession || "",
-    } : {
-      name: "",
-      dob: "", 
-      gender: undefined,
-      schooling: "",
-      maritalStatus: undefined,
-      profession: "",
-    },
+    defaultValues: patient
+      ? {
+          name: patient.name,
+          dob: patient.dob,
+          gender: patient.gender,
+          schooling: patient.schooling || "",
+          maritalStatus: patient.maritalStatus,
+          profession: patient.profession || "",
+        }
+      : {
+          name: "",
+          dob: "",
+          gender: undefined,
+          schooling: "",
+          maritalStatus: undefined,
+          profession: "",
+        },
   });
 
   function handleSubmitInternal(data: PatientFormData) {
@@ -60,18 +79,55 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
   }
 
   const formFields = [
-    { name: "name", label: "Nome Completo", placeholder: "Digite o nome completo do paciente", component: Input, type: "text" },
-    { name: "dob", label: "Data de Nascimento", component: DateDropdowns, props: { disableFuture: true, minYear: 1900, maxYear: CURRENT_YEAR } },
-    { name: "gender", label: "Gênero", component: Select, options: genderOptions, placeholder: "Selecione o gênero" },
-    { name: "schooling", label: "Escolaridade", placeholder: "Ex: Ensino Médio Completo", component: Input, type: "text" },
-    { name: "maritalStatus", label: "Estado Civil", component: Select, options: maritalStatusOptions.map(s => ({value: s, label: s})), placeholder: "Selecione o estado civil" },
-    { name: "profession", label: "Profissão", placeholder: "Ex: Engenheiro(a), Professor(a)", component: Input, type: "text" },
+    {
+      name: "name",
+      label: "Nome Completo",
+      placeholder: "Digite o nome completo do paciente",
+      component: Input,
+      type: "text",
+    },
+    {
+      name: "dob",
+      label: "Data de Nascimento",
+      component: DateDropdowns,
+      props: { disableFuture: true, minYear: 1900, maxYear: CURRENT_YEAR },
+    },
+    {
+      name: "gender",
+      label: "Gênero",
+      component: Select,
+      options: genderOptions,
+      placeholder: "Selecione o gênero",
+    },
+    {
+      name: "schooling",
+      label: "Escolaridade",
+      placeholder: "Ex: Ensino Médio Completo",
+      component: Input,
+      type: "text",
+    },
+    {
+      name: "maritalStatus",
+      label: "Estado Civil",
+      component: Select,
+      options: maritalStatusOptions.map((s) => ({ value: s, label: s })),
+      placeholder: "Selecione o estado civil",
+    },
+    {
+      name: "profession",
+      label: "Profissão",
+      placeholder: "Ex: Engenheiro(a), Professor(a)",
+      component: Input,
+      type: "text",
+    },
   ] as const;
-
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmitInternal)} className="space-y-0">
+      <form
+        onSubmit={form.handleSubmit(handleSubmitInternal)}
+        className="space-y-0"
+      >
         {formFields.map((item, index) => (
           <FormField
             key={item.name}
@@ -80,18 +136,39 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
             render={({ field }) => {
               let controlElement;
               if (item.component === Input) {
-                controlElement = <Input placeholder={item.placeholder} type={item.type} {...field} value={field.value ?? ""} />;
+                controlElement = (
+                  <Input
+                    placeholder={item.placeholder}
+                    type={item.type}
+                    {...field}
+                    value={field.value ?? ""}
+                  />
+                );
               } else if (item.component === DateDropdowns) {
-                controlElement = <DateDropdowns {...item.props} value={field.value as string} onChange={field.onChange} />;
+                controlElement = (
+                  <DateDropdowns
+                    {...item.props}
+                    value={field.value as string}
+                    onChange={field.onChange}
+                  />
+                );
               } else if (item.component === Select) {
                 controlElement = (
-                  <Select onValueChange={field.onChange} defaultValue={field.value as string | undefined}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value as string | undefined}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={item.placeholder} />
                     </SelectTrigger>
                     <SelectContent>
-                      {item.options?.map(opt => (
-                        <SelectItem key={String(opt.value)} value={String(opt.value)}>{opt.label}</SelectItem>
+                      {item.options?.map((opt) => (
+                        <SelectItem
+                          key={String(opt.value)}
+                          value={String(opt.value)}
+                        >
+                          {opt.label}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -101,12 +178,16 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
               }
 
               return (
-                <FormItem className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
-                  <FormLabel className="md:w-1/4 md:text-right mb-1 md:mb-0 text-sm font-medium">{item.label}</FormLabel>
+                <FormItem
+                  className={`p-3 rounded-md flex flex-col md:flex-row md:items-center md:gap-4 ${
+                    index % 2 === 0 ? "bg-muted/50" : "bg-transparent"
+                  }`}
+                >
+                  <FormLabel className="md:w-1/4 md:text-right mb-1 md:mb-0 text-sm font-medium">
+                    {item.label}
+                  </FormLabel>
                   <div className="md:w-3/4">
-                    <FormControl>
-                      {controlElement}
-                    </FormControl>
+                    <FormControl>{controlElement}</FormControl>
                     <FormMessage className="mt-1 text-xs" />
                   </div>
                 </FormItem>
@@ -114,10 +195,14 @@ export function PatientFormClient({ patient, onSubmit, isSubmitting }: PatientFo
             }}
           />
         ))}
-        
+
         <div className="pt-6 flex justify-end">
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Salvando..." : (patient ? "Atualizar Paciente" : "Adicionar Paciente")}
+            {isSubmitting
+              ? "Salvando..."
+              : patient
+              ? "Atualizar Paciente"
+              : "Adicionar Paciente"}
           </Button>
         </div>
       </form>

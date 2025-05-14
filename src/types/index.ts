@@ -1,13 +1,27 @@
-export type Gender = "male" | "female" | "other"; // Patient gender
+export type Gender = "male" | "female"; // Patient gender
 export type AiGender = "male" | "female"; // Gender for AI model
 
-export type ActivityLevel = "sedentary" | "lightlyActive" | "moderatelyActive" | "veryActive" | "extraActive";
+export type ActivityLevel =
+  | "sedentary"
+  | "lightlyActive"
+  | "moderatelyActive"
+  | "veryActive"
+  | "extraActive";
 export type Goal = "weightLoss" | "weightGain" | "maintainWeight";
 
 // Enums from XML
-export type MaritalStatus = "Solteiro(a)" | "Casado(a)" | "Divorciado(a)" | "Viúvo(a)" | "Outro";
+export type MaritalStatus =
+  | "Solteiro(a)"
+  | "Casado(a)"
+  | "Divorciado(a)"
+  | "Viúvo(a)"
+  | "Outro";
 export type BirthTerm = "Pré-termo" | "A termo" | "Pós-termo";
-export type BowelFunction = "Normal" | "Obstipado" | "Diarreico" | "Alterna diarreia e obstipação";
+export type BowelFunction =
+  | "Normal"
+  | "Obstipado"
+  | "Diarreico"
+  | "Alterna diarreia e obstipação";
 export type UrineColor = "Muito clara" | "Clara (normal)" | "Escura";
 export type YesNoUnknown = "Sim" | "Não" | "Não sabe";
 export type QuantityLevel = "Pouco" | "Moderado" | "Muito";
@@ -18,19 +32,49 @@ export type AlcoholConsumptionStatus = "Sim" | "Não" | "Ex-consumidor";
 export type PhysicalActivityPracticeStatus = "Sim" | "Não";
 export type IntensityLevel = "Leve" | "Moderada" | "Intensa";
 export type StressLevelType = "Baixo" | "Moderado" | "Alto";
-export type CounselingProfessional = "Endocrinologista" | "Nutricionista" | "Nutrólogo" | "Ortomolecular" | "Pediatra" | "Outro";
+export type CounselingProfessional =
+  | "Endocrinologista"
+  | "Nutricionista"
+  | "Nutrólogo"
+  | "Ortomolecular"
+  | "Pediatra"
+  | "Outro";
 export type SaltUsage = "Pouco" | "Moderado" | "Muito" | "Não usa";
 export type CookingOilFatQuantity = "Pouca" | "Moderada" | "Muita";
-export type MealType = "Desjejum" | "Colação" | "Almoço" | "Lanche" | "Jantar" | "Ceia" | "Antes de dormir";
-export type ConsumptionFrequency = "Diário" | "X vezes/semana" | "X vezes/mês" | "Raramente" | "Nunca";
-export type AlcoholicBeverageType = "Absinto" | "Cachaça" | "Chopp/cerveja" | "Ice" | "Rum/gim" | string; // string for custom
-export type AlcoholicBeverageUnit = "Cálices" | "Canecas" | "Copos americanos" | "Copos duplos" | "Doses" | string; // string for custom
+export type MealType =
+  | "Desjejum"
+  | "Colação"
+  | "Almoço"
+  | "Lanche"
+  | "Jantar"
+  | "Ceia"
+  | "Antes de dormir";
+export type ConsumptionFrequency =
+  | "Diário"
+  | "X vezes/semana"
+  | "X vezes/mês"
+  | "Raramente"
+  | "Nunca";
+export type AlcoholicBeverageType =
+  | "Absinto"
+  | "Cachaça"
+  | "Chopp/cerveja"
+  | "Ice"
+  | "Rum/gim"
+  | string; // string for custom
+export type AlcoholicBeverageUnit =
+  | "Cálices"
+  | "Canecas"
+  | "Copos americanos"
+  | "Copos duplos"
+  | "Doses"
+  | string; // string for custom
 
 export interface Message {
   id: string;
   patientId: string;
   patientName?: string; // Optional, can be derived
-  source: 'whatsapp' | 'gmail';
+  source: "whatsapp" | "gmail";
   sender: string; // email address or phone number
   timestamp: string; // ISO string
   content: string;
@@ -206,7 +250,7 @@ export interface LabExamRecord {
 
 export interface BiochemicalAssessment {
   id: string;
-  assessmentDate: string; 
+  assessmentDate: string;
   exams: LabExamRecord[];
 }
 
@@ -245,25 +289,28 @@ export interface AnthropometricRecord {
 }
 
 export function calculateAge(dob: string): number {
-  if (!dob) return 0; 
+  if (!dob) return 0;
   const birthDate = new Date(dob);
   const today = new Date();
-  if (isNaN(birthDate.getTime())) return 0; 
+  if (isNaN(birthDate.getTime())) return 0;
 
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
-  return age > 0 ? age : 0; 
+  return age > 0 ? age : 0;
 }
 
 export interface ActivityDetail {
   id: string;
-  type: string; 
+  type: string;
   frequency?: string; // e.g., "3x/semana"
   duration: string; // e.g., "30 min/dia", "60 minutos"
-  mets?: number; 
+  mets?: number;
   intensity?: IntensityLevel;
 }
 
@@ -272,13 +319,13 @@ export interface WorkActivityDetail {
   description: string;
   timeSpent: string; // e.g., "8 horas/dia"
   mets?: number;
-  occupationalActivityFactor?: string; 
+  occupationalActivityFactor?: string;
 }
 
 export interface EnergyExpenditureRecord {
   id: string;
   consultationDate: string; // YYYY-MM-DD
-  weightKg?: number; 
+  weightKg?: number;
   restingEnergyExpenditure?: number; // GER in Kcal/24h
   gerFormula?: string;
   sleepDuration?: number | null; // hours per 24h cycle, changed to number
@@ -287,14 +334,17 @@ export interface EnergyExpenditureRecord {
   otherActivities: ActivityDetail[];
 }
 
-export type CaloricObjective = "Manutenção" | "Perda de Peso" | "Ganho de Massa";
+export type CaloricObjective =
+  | "Manutenção"
+  | "Perda de Peso"
+  | "Ganho de Massa";
 
 export interface MacronutrientPlan {
   id: string;
   date: string; // YYYY-MM-DD
   totalEnergyExpenditure?: number; // GET in Kcal/dia
   caloricObjective: CaloricObjective;
-  caloricAdjustment?: number; 
+  caloricAdjustment?: number;
   proteinPercentage?: number;
   carbohydratePercentage?: number;
   lipidPercentage?: number;
@@ -327,7 +377,7 @@ export interface MicronutrientRecommendation {
   recommendations: MicronutrientDetail[];
 }
 
-export type AppointmentStatus = 'scheduled' | 'completed' | 'cancelled';
+export type AppointmentStatus = "scheduled" | "completed" | "cancelled";
 
 export interface Appointment {
   id: string;
