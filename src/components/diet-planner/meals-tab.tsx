@@ -6,32 +6,51 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Trash2, Save, Copy, PieChart as ChartPieIcon, Target as TargetIcon, TrendingUp, TrendingDown, CircleDot } from 'lucide-react';
+import { PlusCircle, Trash2, Save, Copy, PieChart as ChartPieIcon, Target as TargetIcon, TrendingUp, TrendingDown, CircleDot, Lightbulb, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { PatientSummarySidebar } from './patient-summary-sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import tacoJson from '@/misc/taco.json';
+import { allTacoData } from '@/lib/data/taco-data'; // Corrected import
 import type { TacoItem } from '@/types';
 import { Progress } from '@/components/ui/progress';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend as RechartsLegend } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import type { SuggestDietPlanOutput, SuggestDietPlanInput } from '@/ai/flows/suggest-diet-plan-flow';
+import { getAIDietSuggestion } from '@/ai/flows/suggest-diet-plan-flow';
+import { useToast } from '@/hooks/use-toast';
 
-const allTacoData: TacoItem[] = tacoJson as TacoItem[];
 
-// Mock patient for now - consider moving to a context or prop
 const mockSelectedPatient = {
   id: "1",
   name: "Ana Silva",
+  dob: "1990-05-15",
+  gender: "female" as "female" | "male",
+  anthropometricData: [
+    { id: "anth1", date: "2024-07-01", weightKg: 70, heightCm: 165, bmi: 25.7 },
+  ],
+  foodAssessments: [
+    { id: "food1", assessmentDate: "2024-07-01", foodPreferences: "Gosta de frango e saladas.", foodAversions: "Não gosta de fígado."}
+  ],
   macronutrientPlans: [
     {
       id: "plan1",
       date: "2024-07-01",
       totalEnergyExpenditure: 2000,
-      caloricObjective: "Manutenção",
+      caloricObjective: "Manutenção" as "Manutenção" | "Perda de Peso" | "Ganho de Massa",
       proteinPercentage: 20,
       carbohydratePercentage: 50,
       lipidPercentage: 30,
+      weightForCalculation: 70,
+    }
+  ],
+  energyExpenditureRecords: [
+    {
+        id: "ee1",
+        consultationDate: "2024-07-01",
+        physicalActivities: [{ id: "pa1", type: "Caminhada 5,6 Km/ h", duration: "30 min/dia", intensity: "Leve" }]
     }
   ]
 };
@@ -41,7 +60,7 @@ interface DietFoodItem {
   mealReference: string;
   mealTime: string;
   tacoItem: TacoItem;
-  quantity: number;
+  quantity: number; // in grams
   energy: number;
   protein: number;
   carbs: number;
@@ -119,7 +138,9 @@ const AddDietEntryForm = ({ onAddEntry }: { onAddEntry: (entry: DietFoodItem) =>
     }
 
     onAddEntry(newEntry);
+    // Reset form fields
     setMealReference('');
+    setMealTime('08:00');
     setSelectedCategoryId(undefined);
     setSelectedTacoItemId(undefined);
     setQuantity(100);
@@ -212,6 +233,15 @@ export function MealsTab() {
   const [dietEntries, setDietEntries] = useState<DietFoodItem[]>([]);
   const patientsList = [ mockSelectedPatient ]; // Simplified for now
   const [selectedPatient, setSelectedPatient] = useState<(typeof mockSelectedPatient) | null>(patientsList[0]);
+  const { toast } = useToast();
+
+  // AI Suggestion Dialog State
+  const [isSuggestionDialogOpen, setIsSuggestionDialogOpen] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState<SuggestDietPlanOutput | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiFeedback, setAiFeedback] = useState("");
+
 
   const addDietEntry = (entry: DietFoodItem) => {
     setDietEntries(prevEntries => [...prevEntries, entry]);
@@ -221,7 +251,7 @@ export function MealsTab() {
     setDietEntries(prevEntries => prevEntries.filter(entry => entry.id !== entryId));
   };
 
-  const currentPlan = selectedPatient?.macronutrientPlans[0]; // Assuming one plan for now
+  const currentPlan = selectedPatient?.macronutrientPlans[0];
 
   const totals = useMemo(() => {
     return dietEntries.reduce((acc, item) => {
@@ -262,27 +292,116 @@ export function MealsTab() {
     { name: "Gorduras (g)", planned: totals.fat, target: targetFat, unit: "g" },
   ];
 
+  const handleRequestAISuggestion = async (isRetry = false) => {
+    if (!selectedPatient || !currentPlan) {
+      toast({ title: "Erro", description: "Selecione um paciente com plano ativo.", variant: "destructive" });
+      return;
+    }
+    setAiLoading(true);
+    setAiError(null);
+    setIsSuggestionDialogOpen(true);
+
+    const patientAge = selectedPatient.dob ? new Date().getFullYear() - new Date(selectedPatient.dob).getFullYear() : 30; // Fallback age
+
+    const patientDataForAI: SuggestDietPlanInput = {
+      age: patientAge,
+      gender: selectedPatient.gender,
+      weightKg: selectedPatient.anthropometricData[0]?.weightKg || 70,
+      heightCm: selectedPatient.anthropometricData[0]?.heightCm || 165,
+      activityLevel: selectedPatient.energyExpenditureRecords?.[0]?.physicalActivities?.[0]?.intensity || "Leve",
+      caloricTarget: currentPlan.totalEnergyExpenditure,
+      proteinTargetGrams: (currentPlan.totalEnergyExpenditure * (currentPlan.proteinPercentage / 100)) / 4,
+      carbTargetGrams: (currentPlan.totalEnergyExpenditure * (currentPlan.carbohydratePercentage / 100)) / 4,
+      fatTargetGrams: (currentPlan.totalEnergyExpenditure * (currentPlan.lipidPercentage / 100)) / 9,
+      dietaryPreferences: selectedPatient.foodAssessments?.[0]?.foodPreferences || undefined,
+      foodAversions: selectedPatient.foodAssessments?.[0]?.foodAversions || undefined,
+      previousFeedback: isRetry ? aiFeedback : undefined,
+    };
+
+    try {
+      const suggestion = await getAIDietSuggestion(patientDataForAI);
+      setAiSuggestion(suggestion);
+      setAiFeedback(""); // Clear feedback after successful request
+    } catch (error) {
+      console.error("AI Suggestion Error:", error);
+      setAiError("Falha ao obter sugestão da IA. Tente novamente.");
+      // Don't close dialog on error, allow retry
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  
+  const handleAcceptAISuggestion = () => {
+    if (!aiSuggestion || !aiSuggestion.meals) {
+      toast({ title: "Erro", description: "Nenhuma sugestão para aceitar.", variant: "destructive" });
+      return;
+    }
+  
+    const newEntries: DietFoodItem[] = [];
+    let itemsNotFound = 0;
+  
+    aiSuggestion.meals.forEach(suggestedMeal => {
+      const tacoItem = allTacoData.find(tItem => tItem.id === suggestedMeal.tacoItemId);
+  
+      if (tacoItem) {
+        const factor = suggestedMeal.quantityGrams / 100;
+        newEntries.push({
+          id: crypto.randomUUID(),
+          mealReference: suggestedMeal.mealReference,
+          mealTime: suggestedMeal.mealTime,
+          tacoItem: tacoItem,
+          quantity: suggestedMeal.quantityGrams,
+          energy: (tacoItem.energia_kcal || 0) * factor,
+          protein: (tacoItem.proteina_g || 0) * factor,
+          carbs: (tacoItem.carboidrato_g || 0) * factor,
+          fat: (tacoItem.lipidios_g || 0) * factor,
+          fiber: (tacoItem.fibra_alimentar_g || 0) * factor,
+        });
+      } else {
+        itemsNotFound++;
+        console.warn(`TACO item with ID ${suggestedMeal.tacoItemId} (${suggestedMeal.foodDescription}) not found.`);
+      }
+    });
+  
+    if (itemsNotFound > 0) {
+      toast({
+        title: "Aviso",
+        description: `${itemsNotFound} item(ns) sugerido(s) pela IA não foram encontrados na base TACO e não puderam ser adicionados. Os demais foram adicionados.`,
+        variant: "default", 
+        duration: 7000,
+      });
+    }
+  
+    setDietEntries(prev => [...prev, ...newEntries]);
+    setIsSuggestionDialogOpen(false);
+    setAiSuggestion(null);
+    toast({ title: "Sucesso", description: "Plano sugerido pela IA adicionado à dieta." });
+  };
+
 
   if (!selectedPatient || !currentPlan) {
-    return <p>Selecione um paciente para começar.</p>; // Or a more sophisticated loading/selection state
+    return <p className="p-4 text-center text-muted-foreground">Selecione um paciente com um plano de macronutrientes ativo para começar.</p>; 
   }
 
   return (
     <div className="flex flex-col w-full h-full p-4 md:p-6">
-      <div className="flex flex-row justify-between items-center mb-4 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 w-full gap-2">
         <h2 className="text-2xl font-semibold">Planejamento de Refeições</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Select onValueChange={val => { const p = patientsList.find(p => p.id === val); if (p) setSelectedPatient(p); }} value={selectedPatient?.id}>
-            <SelectTrigger className="w-48"><SelectValue placeholder="Selecione paciente" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-48 h-9 text-xs sm:text-sm"><SelectValue placeholder="Selecione paciente" /></SelectTrigger>
             <SelectContent>{patientsList.map(p => (<SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>))}</SelectContent>
           </Select>
-          <Button variant="outline" size="sm"><Copy className="h-4 w-4 mr-2" />Duplicar Dia</Button>
-          <Button size="sm"><Save className="h-4 w-4 mr-2" />Salvar Plano</Button>
+          <Button variant="outline" size="sm" className="h-9 text-xs sm:text-sm"><Copy className="h-3.5 w-3.5 mr-1.5" />Duplicar Dia</Button>
+          <Button size="sm" className="h-9 text-xs sm:text-sm" onClick={() => handleRequestAISuggestion()}>
+            <Lightbulb className="h-3.5 w-3.5 mr-1.5" />Solicitar Sugestão IA
+          </Button>
+          <Button size="sm" className="h-9 text-xs sm:text-sm"><Save className="h-3.5 w-3.5 mr-1.5" />Salvar Plano</Button>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 w-full flex-1">
         <div className="w-full lg:w-[68%]">
-          <ScrollArea className="h-[calc(100vh-240px)] pr-3"> {/* Adjusted height and added padding-right */}
+          <ScrollArea className="h-[calc(100vh-280px)] pr-3"> {/* Adjusted height */}
             <AddDietEntryForm onAddEntry={addDietEntry} />
 
             {dietEntries.length > 0 && (
@@ -385,6 +504,56 @@ export function MealsTab() {
           </div>
         </CardContent>
       </Card>
+
+       {/* AI Suggestion Dialog */}
+      <Dialog open={isSuggestionDialogOpen} onOpenChange={setIsSuggestionDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Sugestão de Plano Alimentar (IA)</DialogTitle>
+            <DialogDescription>
+              {aiLoading && "Aguarde, a IA está gerando uma sugestão..."}
+              {aiError && <span className="text-destructive">{aiError}</span>}
+              {!aiLoading && !aiError && !aiSuggestion && "Nenhuma sugestão disponível."}
+            </DialogDescription>
+          </DialogHeader>
+          {aiLoading && (
+            <div className="flex justify-center items-center h-32">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          )}
+          {!aiLoading && aiSuggestion && (
+            <ScrollArea className="max-h-[50vh] p-1">
+              <div className="space-y-2">
+                {aiSuggestion.meals.map((meal, index) => (
+                  <div key={index} className="p-2 border rounded">
+                    <p className="font-semibold">{meal.mealReference} ({meal.mealTime})</p>
+                    <p className="text-sm">{meal.foodDescription} - {meal.quantityGrams}g</p>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+          {!aiLoading && (
+            <DialogFooter className="mt-4 gap-2">
+              <Button variant="outline" onClick={() => setIsSuggestionDialogOpen(false)}>Cancelar</Button>
+               {aiSuggestion && (
+                <Button onClick={handleAcceptAISuggestion}>Aceitar Sugestão</Button>
+              )}
+               <div className="w-full space-y-2">
+                <Textarea 
+                    value={aiFeedback} 
+                    onChange={(e) => setAiFeedback(e.target.value)}
+                    placeholder="Se a sugestão não foi ideal, descreva o que gostaria de ajustar..."
+                    className="min-h-[60px]"
+                />
+                <Button onClick={() => handleRequestAISuggestion(true)} className="w-full sm:w-auto">
+                    <Lightbulb className="mr-2 h-4 w-4" />Tentar Novamente com Feedback
+                </Button>
+               </div>
+            </DialogFooter>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
