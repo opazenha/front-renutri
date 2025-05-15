@@ -105,20 +105,19 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
 
               return (
                 <FormItem className={cn(
-                  "p-3 rounded-md", // Base padding and rounding
-                  index % 2 === 0 ? "bg-muted/50" : "bg-transparent", // Zebra striping
-                  isTextarea ? "flex flex-col space-y-1" : "flex flex-col sm:flex-row sm:items-start sm:gap-3" // Textarea: label on top. Others: row on sm+
+                  "p-3 rounded-md",
+                  isTextarea ? "flex flex-col space-y-1" : "flex flex-col sm:flex-row sm:items-start sm:gap-4", // Use gap-4 for spacing
+                  index % 2 === 0 ? "bg-muted/50" : "bg-transparent"
                 )}>
                   <FormLabel className={cn(
-                     // For non-textareas on sm+ screens, provide a basis for width and right-align.
-                    !isTextarea && "sm:basis-1/3 sm:text-right sm:pt-2", // Added sm:pt-2 for better vertical alignment with input
-                    "text-sm font-medium" // Ensure label text size is consistent
+                    !isTextarea && "sm:w-1/3 sm:text-right sm:pt-[0.3rem]", // Give label 1/3 width, right align, slight top padding
+                    "text-sm font-medium shrink-0" // Prevent label from shrinking too much
                   )}>
                     {item.label}
                   </FormLabel>
                   <div className={cn(
-                    !isTextarea && "sm:basis-2/3", // For non-textareas on sm+ screens, control takes 2/3.
-                    "w-full" // Ensure control div takes full width in its container
+                    !isTextarea && "sm:w-2/3", // Control takes 2/3 width
+                    "w-full" 
                   )}>
                     <FormControl>
                       {controlElement}
@@ -137,11 +136,11 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             name={statusField.name as keyof AppointmentFormData}
             render={({ field }) => (
                <FormItem className={cn(
-                  "p-3 rounded-md flex flex-col sm:flex-row sm:items-start sm:gap-3", // Consistent layout
-                  (formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent" // Zebra striping
+                  "p-3 rounded-md flex flex-col sm:flex-row sm:items-start sm:gap-4", 
+                  (formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent"
                )}>
-                <FormLabel className="sm:basis-1/3 sm:text-right sm:pt-2 text-sm font-medium">{statusField.label}</FormLabel>
-                <div className="sm:basis-2/3 w-full">
+                <FormLabel className="sm:w-1/3 sm:text-right sm:pt-[0.3rem] text-sm font-medium shrink-0">{statusField.label}</FormLabel>
+                <div className="sm:w-2/3 w-full">
                   <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={statusField.placeholder} /></SelectTrigger>
