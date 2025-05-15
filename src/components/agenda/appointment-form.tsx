@@ -106,17 +106,19 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
               return (
                 <FormItem className={cn(
                   "p-3 rounded-md",
-                  isTextarea ? "flex flex-col space-y-1" : "flex flex-col sm:flex-row sm:items-start sm:gap-4", // Use gap-4 for spacing
-                  index % 2 === 0 ? "bg-muted/50" : "bg-transparent"
+                  isTextarea 
+                    ? "flex flex-col space-y-1" 
+                    : "grid grid-cols-1 sm:grid-cols-3 sm:gap-x-4 sm:items-start",
+                  index % 2 === 0 ? "bg-card" : "bg-background" 
                 )}>
                   <FormLabel className={cn(
-                    !isTextarea && "sm:w-1/3 sm:text-right sm:pt-[0.3rem]", // Give label 1/3 width, right align, slight top padding
-                    "text-sm font-medium shrink-0" // Prevent label from shrinking too much
+                    !isTextarea && "sm:col-span-1 sm:text-right sm:mt-1.5", // Label takes 1 column, right-aligned for grid
+                    "text-sm font-medium"
                   )}>
                     {item.label}
                   </FormLabel>
                   <div className={cn(
-                    !isTextarea && "sm:w-2/3", // Control takes 2/3 width
+                    !isTextarea && "sm:col-span-2", // Control takes 2 columns for grid
                     "w-full" 
                   )}>
                     <FormControl>
@@ -136,11 +138,11 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             name={statusField.name as keyof AppointmentFormData}
             render={({ field }) => (
                <FormItem className={cn(
-                  "p-3 rounded-md flex flex-col sm:flex-row sm:items-start sm:gap-4", 
-                  (formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent"
+                  "p-3 rounded-md grid grid-cols-1 sm:grid-cols-3 sm:gap-x-4 sm:items-start", 
+                  (formFields.length) % 2 === 0 ? "bg-card" : "bg-background"
                )}>
-                <FormLabel className="sm:w-1/3 sm:text-right sm:pt-[0.3rem] text-sm font-medium shrink-0">{statusField.label}</FormLabel>
-                <div className="sm:w-2/3 w-full">
+                <FormLabel className="sm:col-span-1 sm:text-right sm:mt-1.5 text-sm font-medium">{statusField.label}</FormLabel>
+                <div className="sm:col-span-2 w-full">
                   <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={statusField.placeholder} /></SelectTrigger>
@@ -170,3 +172,4 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
     </Form>
   );
 }
+
