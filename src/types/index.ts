@@ -175,6 +175,7 @@ export interface MealRecord {
   quantity: string;
   preparationMethod?: string;
   observations?: string;
+  alternatives?: TacoItem[]; // Added alternatives
 }
 
 export interface FoodFrequencyRecord {
