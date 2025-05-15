@@ -108,17 +108,16 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
                   "p-3 rounded-md",
                   isTextarea 
                     ? "flex flex-col space-y-1" 
-                    : "grid grid-cols-1 sm:grid-cols-3 sm:gap-x-4 sm:items-start",
+                    : "grid grid-cols-1 sm:grid-cols-[1fr_2fr] sm:gap-x-4 sm:items-center", // Use 1fr 2fr for proportions and items-center
                   index % 2 === 0 ? "bg-card" : "bg-background" 
                 )}>
                   <FormLabel className={cn(
-                    !isTextarea && "sm:col-span-1 sm:text-right sm:mt-1.5", // Label takes 1 column, right-aligned for grid
+                    isTextarea ? "mb-1" : "sm:text-right", // No specific col-span needed for label in 1fr 2fr grid
                     "text-sm font-medium"
                   )}>
                     {item.label}
                   </FormLabel>
-                  <div className={cn(
-                    !isTextarea && "sm:col-span-2", // Control takes 2 columns for grid
+                  <div className={cn( // This div is now the second grid item for row layout
                     "w-full" 
                   )}>
                     <FormControl>
@@ -138,11 +137,11 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             name={statusField.name as keyof AppointmentFormData}
             render={({ field }) => (
                <FormItem className={cn(
-                  "p-3 rounded-md grid grid-cols-1 sm:grid-cols-3 sm:gap-x-4 sm:items-start", 
+                  "p-3 rounded-md grid grid-cols-1 sm:grid-cols-[1fr_2fr] sm:gap-x-4 sm:items-center", // Use 1fr 2fr and items-center
                   (formFields.length) % 2 === 0 ? "bg-card" : "bg-background"
                )}>
-                <FormLabel className="sm:col-span-1 sm:text-right sm:mt-1.5 text-sm font-medium">{statusField.label}</FormLabel>
-                <div className="sm:col-span-2 w-full">
+                <FormLabel className="sm:text-right text-sm font-medium">{statusField.label}</FormLabel>
+                <div className="w-full">
                   <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={statusField.placeholder} /></SelectTrigger>
