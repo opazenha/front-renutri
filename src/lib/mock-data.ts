@@ -1,3 +1,4 @@
+
 import type {
   ActivityDetail,
   AlcoholicBeverageRecord,
@@ -29,6 +30,7 @@ import {
   subYears,
 } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
+import { activityMetsValues } from "./mets-data"; // Import METs data
 
 const today = new Date();
 const formatDateISO = (date: Date): string => date.toISOString();
@@ -124,6 +126,11 @@ const createAnthropometricRecords = (
       desiredWeightKg: baseWeight - 5,
       waistCircumference: 80 + i * 1.5,
       hipCircumference: 95 + i * 1,
+      // Adding mock behavioral data within anthropometric for simplicity as requested previously
+      smokingHabit: i % 2 === 0 ? "Não" : "Ex-fumante",
+      alcoholConsumption: i % 2 === 0 ? "Sim" : "Não",
+      physicalActivityPractice: "Sim",
+      stressLevel: "Moderado",
     });
   }
   return records.sort(
@@ -136,31 +143,50 @@ const createEnergyExpenditureRecords = (
   numRecords: number = 1
 ): EnergyExpenditureRecord[] => {
   const records: EnergyExpenditureRecord[] = [];
+  const activityKeys = Object.keys(activityMetsValues);
+
   for (let i = 0; i < numRecords; i++) {
+    const randomActivityKey = activityKeys[Math.floor(Math.random() * activityKeys.length)];
     records.push({
       id: uuidv4(),
       consultationDate: formatDateYYYYMMDD(subMonths(today, i * 2)),
       weightKg: weight - i,
-      restingEnergyExpenditure: 1500 + i * 50,
+      restingEnergyExpenditure: 1400 + (i * 50) - (Math.random() * 100), // GEB example
       gerFormula: "Harris-Benedict",
-      sleepDuration: 7.5, // Changed to number
+      sleepDuration: 7 + (Math.random() * 1.5 - 0.75), 
       physicalActivities: [
         {
           id: uuidv4(),
-          type: "Caminhada leve (3km/h)",
-          frequency: "3x/semana",
-          duration: "30 min/dia",
-          mets: 3.0,
-          intensity: "Leve",
+          type: randomActivityKey,
+          frequency: `${Math.floor(Math.random() * 3) + 2}x/semana`,
+          duration: `${Math.floor(Math.random() * 30) + 30} min/dia`,
+          mets: activityMetsValues[randomActivityKey],
+          intensity: "Moderada",
+        },
+         {
+          id: uuidv4(),
+          type: "Musculação média",
+          frequency: "2x/semana",
+          duration: "60 min",
+          mets: 4.5,
+          intensity: "Moderada",
         },
       ],
       workActivity: {
         id: uuidv4(),
         description: "Trabalho de escritório",
         timeSpent: "8 horas/dia",
-        occupationalActivityFactor: "1.2",
+        mets: 1.5, // Typical for light office work
+        occupationalActivityFactor: "1.4", // Example
       },
-      otherActivities: [],
+      otherActivities: [
+        {
+            id: uuidv4(),
+            type: "Tarefas domésticas leves",
+            duration: "1 hora/dia",
+            mets: 2.0,
+        }
+      ],
     });
   }
   return records.sort(
@@ -171,23 +197,32 @@ const createEnergyExpenditureRecords = (
 };
 
 const createMacronutrientPlans = (
-  baseTEE: number,
+  baseTEE: number, // This is the GET
   weight: number,
   numRecords: number = 1
 ): MacronutrientPlan[] => {
   const plans: MacronutrientPlan[] = [];
+  const objectives: CaloricObjective[] = ["Manutenção", "Perda de Peso", "Ganho de Massa"];
   for (let i = 0; i < numRecords; i++) {
+    const objective = objectives[i % objectives.length];
+    let caloricAdjustment = 0;
+    if (objective === "Perda de Peso") caloricAdjustment = -300 - Math.floor(Math.random() * 200);
+    if (objective === "Ganho de Massa") caloricAdjustment = 300 + Math.floor(Math.random() * 200);
+
     plans.push({
       id: uuidv4(),
       date: formatDateYYYYMMDD(subMonths(today, i * 2)),
-      totalEnergyExpenditure: baseTEE - i * 100,
-      caloricObjective: "Perda de Peso",
-      caloricAdjustment: -500,
-      proteinPercentage: 20,
-      carbohydratePercentage: 50,
-      lipidPercentage: 30,
+      totalEnergyExpenditure: baseTEE - (i * 100) + Math.floor(Math.random() * 100 - 50), // GET example
+      caloricObjective: objective,
+      caloricAdjustment: caloricAdjustment,
+      proteinPercentage: 15 + Math.floor(Math.random() * 10), // 15-25%
+      carbohydratePercentage: 45 + Math.floor(Math.random() * 10), // 45-55%
+      lipidPercentage: 100 - ( (15 + Math.floor(Math.random() * 10)) + (45 + Math.floor(Math.random() * 10)) ), // Remainder for lipids
+      proteinGramsPerKg: parseFloat(( ( (baseTEE + caloricAdjustment) * ( (15 + Math.floor(Math.random() * 10)) / 100 ) ) / 4 / weight).toFixed(1)),
       weightForCalculation: weight - i * 2,
-      specificConsiderations: "Aumentar ingestão de fibras e água.",
+      activityFactor: 1.55 + (Math.random() * 0.4 - 0.2), // Example activity factor
+      injuryStressFactor: 1.0,
+      specificConsiderations: "Aumentar ingestão de fibras e água. Monitorar hidratação.",
     });
   }
   return plans.sort(
@@ -239,19 +274,23 @@ const createClinicalAssessments = (
       historiaFamiliar: "Mãe com DM2, pai com HAS.",
       assessmentObjective: "Avaliação clínica de rotina para acompanhamento nutricional.",
       habits: {
-        horasSono: 6,
-        qualidadeSono: "Regular",
-        fuma: "Não",
-        consomeBebidaAlcoolica: "Sim",
-        tipoBebidaAlcoolica: "Cerveja",
-        frequenciaBebidaAlcoolica: "Fins de semana",
-        quantidadeBebidaAlcoolica: "3-4 latas",
+        horasSono: 6 + Math.floor(Math.random()*3) -1,
+        qualidadeSono: ["Bom", "Regular", "Ruim"][Math.floor(Math.random()*3)] as SleepQuality,
+        fuma: i % 3 === 0 ? "Sim" : ( i % 3 === 1 ? "Não" : "Ex-fumante"),
+        tipoCigarro: i % 3 === 0 ? "Comercial" : undefined,
+        frequenciaCigarro: i % 3 === 0 ? "Diário" : undefined,
+        quantidadeCigarro: i % 3 === 0 ? "10-15" : undefined,
+        consomeBebidaAlcoolica: i % 2 === 0 ? "Sim" : "Não",
+        tipoBebidaAlcoolica: i % 2 === 0 ? "Cerveja" : undefined,
+        frequenciaBebidaAlcoolica: i % 2 === 0 ? "Fins de semana" : undefined,
+        quantidadeBebidaAlcoolica: i % 2 === 0 ? "3-4 latas" : undefined,
       },
       signsAndSymptoms: {
         obstipacao: "Sim",
         distensaoAbdominal: "Sim",
         cansacoFadiga: "Sim",
         alteracoesApetite: "Aumentado",
+        refluxo: i % 2 === 0 ? "Sim" : "Não",
       },
       specificQuestions: {
         nasceuDeParto: "A termo",
@@ -331,38 +370,47 @@ const createBehavioralAssessments = (
   numRecords: number = 1
 ): BehavioralAssessment[] => {
   const assessments: BehavioralAssessment[] = [];
+  const activityTypes = ["Caminhada", "Corrida", "Natação", "Musculação", "Dança"];
+  const intensities: IntensityLevel[] = ["Leve", "Moderada", "Intensa"];
+
   for (let i = 0; i < numRecords; i++) {
     assessments.push({
       id: uuidv4(),
       assessmentDate: formatDateYYYYMMDD(subMonths(today, i * 4)),
-      smoking: { status: "Não" },
+      smoking: { 
+        status: i % 3 === 0 ? "Sim" : ( i % 3 === 1 ? "Não" : "Ex-fumante"),
+        inicio: i % 3 === 0 ? "18 anos" : undefined,
+        tipoProduto: i % 3 === 0 ? "Cigarro" : undefined,
+        quantidadeDia: i % 3 === 0 ? "10" : undefined,
+        tempoParou: i % 3 === 2 ? "2 anos" : undefined,
+      },
       alcohol: {
-        status: "Sim",
-        inicioConsumo: "20 anos",
-        beverages: [
+        status: i % 2 === 0 ? "Sim" : "Não",
+        inicioConsumo: i % 2 === 0 ? "20 anos" : undefined,
+        beverages: i % 2 === 0 ? [
           {
             id: uuidv4(),
             type: "Chopp/cerveja",
             frequency: "2x/semana",
-            quantityPerOccasion: 3,
+            quantityPerOccasion: Math.floor(Math.random() * 3) + 2,
             unitOfMeasure: "Canecas",
             alcoholContent: 5,
           },
-        ],
+        ] : [],
       },
-      physicalActivityPractice: "Não",
-      physicalActivitiesDetails: [
+      physicalActivityPractice: i % 2 === 0 ? "Sim" : "Não",
+      physicalActivitiesDetails: i % 2 === 0 ? [
         {
           id: uuidv4(),
-          type: "Caminhada",
-          frequency: "2x/semana",
-          duration: "30 min",
-          intensity: "Leve",
-          mets: 3.0,
+          type: activityTypes[Math.floor(Math.random() * activityTypes.length)],
+          frequency: `${Math.floor(Math.random() * 3) + 2}x/semana`,
+          duration: `${Math.floor(Math.random() * 30) + 30} min`,
+          intensity: intensities[Math.floor(Math.random() * intensities.length)],
+          mets: parseFloat((Math.random() * 5 + 3).toFixed(1)), // Random METs between 3 and 8
         },
-      ],
-      stressLevel: "Moderado",
-      perceivedQualityOfLife: "Regular, poderia ser melhor.",
+      ] : [],
+      stressLevel: ["Baixo", "Moderado", "Alto"][Math.floor(Math.random()*3)] as StressLevelType,
+      perceivedQualityOfLife: ["Boa", "Regular", "Poderia ser melhor"][Math.floor(Math.random()*3)],
     });
   }
   return assessments.sort(
@@ -552,3 +600,4 @@ mockPatients = mockPatients.map((patient) => {
   ); // 1 to 5 messages
   return patient;
 });
+
