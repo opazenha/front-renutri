@@ -22,6 +22,7 @@ import type { Patient as PatientType } from "@/types";
 import { format, parseISO } from "date-fns";
 import { DateDropdowns } from "../ui/date-dropdowns";
 import React, { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface AppointmentFormProps {
   onSubmit: (data: AppointmentFormData) => void;
@@ -82,6 +83,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             render={({ field }) => {
               let controlElement;
               const isTextarea = item.component === Textarea;
+
               if (item.component === Input) {
                 controlElement = <Input type={item.type} {...field} disabled={isSubmitting} value={field.value ?? ""} />;
               } else if (item.component === Textarea) {
@@ -102,9 +104,22 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
               }
 
               return (
-                <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row ${isTextarea ? '' : 'sm:items-center'} sm:gap-4 ${index % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
-                  <FormLabel className={`sm:w-1/3 mb-1 sm:mb-0 ${isTextarea ? '' : 'sm:text-right'}`}>{item.label}</FormLabel>
-                  <div className="sm:w-2/3">
+                <FormItem className={cn(
+                  "p-3 rounded-md", // Base padding and rounding
+                  index % 2 === 0 ? "bg-muted/50" : "bg-transparent", // Zebra striping
+                  isTextarea ? "flex flex-col space-y-1" : "flex flex-col sm:flex-row sm:items-start sm:gap-3" // Textarea: label on top. Others: row on sm+
+                )}>
+                  <FormLabel className={cn(
+                     // For non-textareas on sm+ screens, provide a basis for width and right-align.
+                    !isTextarea && "sm:basis-1/3 sm:text-right sm:pt-2", // Added sm:pt-2 for better vertical alignment with input
+                    "text-sm font-medium" // Ensure label text size is consistent
+                  )}>
+                    {item.label}
+                  </FormLabel>
+                  <div className={cn(
+                    !isTextarea && "sm:basis-2/3", // For non-textareas on sm+ screens, control takes 2/3.
+                    "w-full" // Ensure control div takes full width in its container
+                  )}>
                     <FormControl>
                       {controlElement}
                     </FormControl>
@@ -121,9 +136,12 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
             control={form.control}
             name={statusField.name as keyof AppointmentFormData}
             render={({ field }) => (
-               <FormItem className={`p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:gap-4 ${(formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent"}`}>
-                <FormLabel className="sm:w-1/3 mb-1 sm:mb-0 sm:text-right">{statusField.label}</FormLabel>
-                <div className="sm:w-2/3">
+               <FormItem className={cn(
+                  "p-3 rounded-md flex flex-col sm:flex-row sm:items-start sm:gap-3", // Consistent layout
+                  (formFields.length) % 2 === 0 ? "bg-muted/50" : "bg-transparent" // Zebra striping
+               )}>
+                <FormLabel className="sm:basis-1/3 sm:text-right sm:pt-2 text-sm font-medium">{statusField.label}</FormLabel>
+                <div className="sm:basis-2/3 w-full">
                   <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={statusField.placeholder} /></SelectTrigger>
@@ -139,7 +157,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
           />
         )}
 
-        <div className="flex justify-end space-x-3 pt-6">
+        <div className="flex justify-end space-x-3 pt-6 pr-3 pb-3">
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             Cancelar
           </Button>
