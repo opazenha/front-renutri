@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -6,17 +5,34 @@ import { PieChart as ChartPie, Target, TrendingUp, TrendingDown, Circle } from '
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Progress } from '@/components/ui/progress';
 
-interface NutrientValues {
-  energy: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
-
 interface PatientSummarySidebarProps {
-  patientName: string;
-  planned: NutrientValues;
-  target: NutrientValues;
+  patient: {
+    id: string;
+    name: string;
+    macronutrientPlans: Array<{
+      id: string;
+      date: string;
+      totalEnergyExpenditure: number;
+      caloricObjective: string;
+      proteinPercentage: number;
+      carbohydratePercentage: number;
+      lipidPercentage: number;
+    }>;
+  };
+  currentPlan: {
+    id: string;
+    date: string;
+    totalEnergyExpenditure: number;
+    caloricObjective: string;
+    proteinPercentage: number;
+    carbohydratePercentage: number;
+    lipidPercentage: number;
+  };
+  totalPlannedEnergy: number;
+  totalPlannedProtein: number;
+  totalPlannedCarbs: number;
+  totalPlannedFat: number;
+  totalPlannedFiber: number;
 }
 
 const COLORS = {
@@ -25,21 +41,40 @@ const COLORS = {
   fat: 'hsl(var(--chart-3))',     // Example: Red
 };
 
-export function PatientSummarySidebar({ patientName, planned, target }: PatientSummarySidebarProps) {
-  const totalPlannedMacros = planned.protein * 4 + planned.carbs * 4 + planned.fat * 9; // Recalculate energy from macros to ensure consistency for pie chart
+export function PatientSummarySidebar({ patient, currentPlan, totalPlannedEnergy, totalPlannedProtein, totalPlannedCarbs, totalPlannedFat, totalPlannedFiber }: PatientSummarySidebarProps) {
+  const totalPlannedMacros = (totalPlannedProtein * 4) + (totalPlannedCarbs * 4) + (totalPlannedFat * 9);
+  const targetProtein = (currentPlan.totalEnergyExpenditure * (currentPlan.proteinPercentage / 100)) / 4;
+  const targetCarbs = (currentPlan.totalEnergyExpenditure * (currentPlan.carbohydratePercentage / 100)) / 4;
+  const targetFat = (currentPlan.totalEnergyExpenditure * (currentPlan.lipidPercentage / 100)) / 9;
+
   const macroData = [
-    { name: 'Proteínas', value: planned.protein * 4, percentage: totalPlannedMacros > 0 ? ((planned.protein * 4) / totalPlannedMacros) * 100 : 0, fill: COLORS.protein },
-    { name: 'Carboidratos', value: planned.carbs * 4, percentage: totalPlannedMacros > 0 ? ((planned.carbs * 4) / totalPlannedMacros) * 100 : 0, fill: COLORS.carbs },
-    { name: 'Gorduras', value: planned.fat * 9, percentage: totalPlannedMacros > 0 ? ((planned.fat * 9) / totalPlannedMacros) * 100 : 0, fill: COLORS.fat },
+    { 
+      name: 'Proteínas', 
+      value: totalPlannedProtein * 4, 
+      percentage: totalPlannedMacros > 0 ? ((totalPlannedProtein * 4) / totalPlannedMacros) * 100 : 0,
+      fill: COLORS.protein 
+    },
+    { 
+      name: 'Carboidratos', 
+      value: totalPlannedCarbs * 4,
+      percentage: totalPlannedMacros > 0 ? ((totalPlannedCarbs * 4) / totalPlannedMacros) * 100 : 0,
+      fill: COLORS.carbs 
+    },
+    { 
+      name: 'Gorduras', 
+      value: totalPlannedFat * 9,
+      percentage: totalPlannedMacros > 0 ? ((totalPlannedFat * 9) / totalPlannedMacros) * 100 : 0,
+      fill: COLORS.fat 
+    }
   ];
   
-  const energyDifference = planned.energy - target.energy;
-  const energyProgress = target.energy > 0 ? (planned.energy / target.energy) * 100 : 0;
+  const energyDifference = totalPlannedEnergy - currentPlan.totalEnergyExpenditure;
+  const energyProgress = currentPlan.totalEnergyExpenditure > 0 ? (totalPlannedEnergy / currentPlan.totalEnergyExpenditure) * 100 : 0;
 
   return (
     <Card className="h-full flex flex-col shadow-lg">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-primary">Resumo para {patientName}</CardTitle>
+        <CardTitle className="text-lg text-primary">Resumo para {patient.name}</CardTitle>
         <CardDescription className="text-xs">Comparativo do plano atual com as metas.</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow space-y-6 overflow-y-auto">
@@ -49,8 +84,8 @@ export function PatientSummarySidebar({ patientName, planned, target }: PatientS
             <CardTitle className="text-md flex items-center"><Target className="h-4 w-4 mr-2 text-primary" />Energia (Kcal)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between"><span>Planejado:</span> <span className="font-semibold">{planned.energy.toFixed(0)}</span></div>
-            <div className="flex justify-between"><span>Meta:</span> <span className="font-semibold">{target.energy.toFixed(0)}</span></div>
+            <div className="flex justify-between"><span>Planejado:</span> <span className="font-semibold">{totalPlannedEnergy.toFixed(0)}</span></div>
+            <div className="flex justify-between"><span>Meta:</span> <span className="font-semibold">{currentPlan.totalEnergyExpenditure.toFixed(0)}</span></div>
             <Progress value={energyProgress > 100 ? 100 : energyProgress} className="h-2" />
             <div className={`flex justify-between items-center text-xs ${energyDifference > 0 ? 'text-red-500' : 'text-green-500'}`}>
               <span>Diferença:</span> 
@@ -95,9 +130,9 @@ export function PatientSummarySidebar({ patientName, planned, target }: PatientS
             )}
           </CardContent>
            <CardFooter className="text-xs pt-2 grid grid-cols-3 gap-1">
-                <div className="flex items-center"><div className="w-2 h-2 rounded-full mr-1.5" style={{backgroundColor: COLORS.protein}}></div>Prot: {planned.protein.toFixed(1)}g</div>
-                <div className="flex items-center"><div className="w-2 h-2 rounded-full mr-1.5" style={{backgroundColor: COLORS.carbs}}></div>Carb: {planned.carbs.toFixed(1)}g</div>
-                <div className="flex items-center"><div className="w-2 h-2 rounded-full mr-1.5" style={{backgroundColor: COLORS.fat}}></div>Gord: {planned.fat.toFixed(1)}g</div>
+                <div className="flex items-center"><div className="w-2 h-2 rounded-full mr-1.5" style={{backgroundColor: COLORS.protein}}></div>Prot: {totalPlannedProtein.toFixed(1)}g</div>
+                <div className="flex items-center"><div className="w-2 h-2 rounded-full mr-1.5" style={{backgroundColor: COLORS.carbs}}></div>Carb: {totalPlannedCarbs.toFixed(1)}g</div>
+                <div className="flex items-center"><div className="w-2 h-2 rounded-full mr-1.5" style={{backgroundColor: COLORS.fat}}></div>Gord: {totalPlannedFat.toFixed(1)}g</div>
             </CardFooter>
         </Card>
         
@@ -107,9 +142,9 @@ export function PatientSummarySidebar({ patientName, planned, target }: PatientS
             <CardTitle className="text-md">Metas de Macronutrientes (g)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1 text-sm">
-            <div className="flex justify-between"><span>Proteínas:</span> <span className="font-semibold">{target.protein.toFixed(1)}g</span></div>
-            <div className="flex justify-between"><span>Carboidratos:</span> <span className="font-semibold">{target.carbs.toFixed(1)}g</span></div>
-            <div className="flex justify-between"><span>Gorduras:</span> <span className="font-semibold">{target.fat.toFixed(1)}g</span></div>
+            <div className="flex justify-between"><span>Proteínas:</span> <span className="font-semibold">{targetProtein.toFixed(1)}g</span></div>
+            <div className="flex justify-between"><span>Carboidratos:</span> <span className="font-semibold">{targetCarbs.toFixed(1)}g</span></div>
+            <div className="flex justify-between"><span>Gorduras:</span> <span className="font-semibold">{targetFat.toFixed(1)}g</span></div>
           </CardContent>
         </Card>
 
