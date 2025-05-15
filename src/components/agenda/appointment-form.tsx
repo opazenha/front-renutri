@@ -108,7 +108,7 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
                   "p-3 rounded-md",
                   isTextarea 
                     ? "flex flex-col space-y-1" 
-                    : "grid grid-cols-1 sm:grid-cols-[1fr_2fr] sm:gap-x-4 sm:items-center", // Use 1fr 2fr for proportions and items-center
+                    : "grid grid-cols-1 sm:grid-cols-[1fr_2fr] sm:gap-x-4 sm:items-center", // Use 1fr 2fr and items-center
                   index % 2 === 0 ? "bg-card" : "bg-background" 
                 )}>
                   <FormLabel className={cn(
@@ -171,4 +171,3 @@ export function AppointmentForm({ onSubmit, onCancel, initialData, isSubmitting,
     </Form>
   );
 }
-
