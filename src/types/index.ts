@@ -1,3 +1,4 @@
+
 export type Gender = "male" | "female"; // Patient gender
 export type AiGender = "male" | "female"; // Gender for AI model
 
@@ -285,7 +286,33 @@ export interface AnthropometricRecord {
   abdominalSkinfold?: number;
   thighSkinfold?: number;
   medialCalfSkinfold?: number;
-  observations?: string; // Added observations field
+  observations?: string;
+  // New behavioral fields - these should likely be in BehavioralAssessment
+  smokingHabit?: SmokingStatus;
+  smokingDetails?: {
+    startDate?: string;
+    productType?: string;
+    quantityPerDay?: string;
+    stoppedDate?: string;
+  };
+  alcoholConsumption?: AlcoholConsumptionStatus;
+  alcoholDetails?: Array<{
+    type: string;
+    frequency: string;
+    quantity: number;
+    unit: string;
+    alcoholContent?: number;
+  }>;
+  physicalActivityPractice?: PhysicalActivityPracticeStatus;
+  physicalActivitiesDetails?: Array<{
+    type: string;
+    frequency: string;
+    duration: string;
+    intensity?: IntensityLevel;
+    mets?: number;
+  }>;
+  stressLevel?: StressLevelType;
+  perceivedQualityOfLife?: string;
 }
 
 export function calculateAge(dob: string): number {
@@ -387,4 +414,57 @@ export interface Appointment {
   time: string; // HH:MM
   description: string;
   status: AppointmentStatus;
+}
+
+// TACO Table Item Structure (based on provided JSON)
+export interface TacoItem {
+  id: number;
+  alimento_descricao: string;
+  umidade_percent?: number | null;
+  energia_kcal?: number | null;
+  energia_kj?: number | null;
+  proteina_g?: number | null;
+  lipidios_g?: number | null;
+  colesterol_mg?: number | null;
+  carboidrato_g?: number | null;
+  fibra_alimentar_g?: number | null;
+  cinzas_g?: number | null;
+  calcio_mg?: number | null;
+  magnesio_mg?: number | null;
+  manganes_mg?: number | null;
+  fosforo_mg?: number | null;
+  ferro_mg?: number | null;
+  sodio_mg?: number | null;
+  potassio_mg?: number | null;
+  cobre_mg?: number | null;
+  zinco_mg?: number | null;
+  retinol_mcg?: number | null;
+  re_mcg?: number | null;
+  rae_mcg?: number | null;
+  tiamina_mg?: number | null;
+  riboflavina_mg?: number | null;
+  piridoxina_mg?: number | null;
+  niacina_mg?: number | null;
+  vitamina_c_mg?: number | null;
+  categoria?: string | null;
+  // Fatty acids - all optional and can be null
+  "12:0"?: number | null;
+  "14:0"?: number | null;
+  "16:0"?: number | null;
+  "18:0"?: number | null;
+  "20:0"?: number | null;
+  "22:0"?: number | null;
+  "24:0"?: number | null;
+  "14:1"?: number | null;
+  "16:1"?: number | null;
+  "18:1"?: number | null;
+  "20:1"?: number | null;
+  "18:2 n-6"?: number | null;
+  "18:3 n-3"?: number | null;
+  "20:4"?: number | null;
+  "20:5"?: number | null;
+  "22:5"?: number | null;
+  "22:6"?: number | null;
+  "18:1t"?: number | null;
+  "18:2t"?: number | null;
 }

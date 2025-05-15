@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, LogOut, Settings, UserCircle, CalendarDays, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, Settings, UserCircle, CalendarDays, MessageSquare, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ const navItems = [
   { href: "/patients", icon: Users, label: "Pacientes", tooltip: "Gerenciar Pacientes" },
   { href: "/agenda", icon: CalendarDays, label: "Agenda", tooltip: "Consultar Agenda" },
   { href: "/messages", icon: MessageSquare, label: "Mensagens", tooltip: "Ver Mensagens" },
+  { href: "/diet-planner", icon: ClipboardList, label: "Planejador de Dietas", tooltip: "Criar e Gerenciar Dietas" },
 ];
 
 export function AppSidebarClient() {
