@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { PatientSummarySidebar } from './patient-summary-sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { tacoData } from '@/lib/data/taco-data'; // Corrected import
+import { tacoData } from '@/lib/data/taco-data';
 import type { TacoItem } from '@/types';
 import { Progress } from '@/components/ui/progress';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend as RechartsLegend } from 'recharts';
@@ -299,7 +299,7 @@ export function MealsTab() {
     }
     setAiLoading(true);
     setAiError(null);
-    setIsSuggestionDialogOpen(true);
+    if (!isSuggestionDialogOpen) setIsSuggestionDialogOpen(true); // Open dialog if not already open
 
     const patientAge = selectedPatient.dob ? new Date().getFullYear() - new Date(selectedPatient.dob).getFullYear() : 30; // Fallback age
 
@@ -507,7 +507,7 @@ export function MealsTab() {
 
        {/* AI Suggestion Dialog */}
       <Dialog open={isSuggestionDialogOpen} onOpenChange={setIsSuggestionDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-xl"> {/* Increased width from lg to xl */}
           <DialogHeader>
             <DialogTitle>Sugestão de Plano Alimentar (IA)</DialogTitle>
             <DialogDescription>
@@ -525,31 +525,39 @@ export function MealsTab() {
             <ScrollArea className="max-h-[50vh] p-1">
               <div className="space-y-2">
                 {aiSuggestion.meals.map((meal, index) => (
-                  <div key={index} className="p-2 border rounded">
-                    <p className="font-semibold">{meal.mealReference} ({meal.mealTime})</p>
-                    <p className="text-sm">{meal.foodDescription} - {meal.quantityGrams}g</p>
+                  <div key={index} className="p-3 border rounded-md bg-muted/20">
+                    <p className="font-semibold text-sm">{meal.mealReference} <span className="text-xs text-muted-foreground">({meal.mealTime})</span></p>
+                    <p className="text-xs">{meal.foodDescription} - {meal.quantityGrams}g</p>
                   </div>
                 ))}
+                 {aiSuggestion.notes && (
+                    <div className="mt-3 p-3 border rounded-md bg-accent/10">
+                        <p className="text-xs font-semibold text-accent">Notas da IA:</p>
+                        <p className="text-xs text-muted-foreground">{aiSuggestion.notes}</p>
+                    </div>
+                )}
               </div>
             </ScrollArea>
           )}
           {!aiLoading && (
-            <DialogFooter className="mt-4 gap-2">
-              <Button variant="outline" onClick={() => setIsSuggestionDialogOpen(false)}>Cancelar</Button>
-               {aiSuggestion && (
-                <Button onClick={handleAcceptAISuggestion}>Aceitar Sugestão</Button>
-              )}
-               <div className="w-full space-y-2">
+            <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:justify-end gap-2">
+              <div className="flex-grow space-y-2 mb-2 sm:mb-0 sm:mr-2">
                 <Textarea 
                     value={aiFeedback} 
                     onChange={(e) => setAiFeedback(e.target.value)}
                     placeholder="Se a sugestão não foi ideal, descreva o que gostaria de ajustar..."
-                    className="min-h-[60px]"
+                    className="min-h-[60px] text-xs"
                 />
-                <Button onClick={() => handleRequestAISuggestion(true)} className="w-full sm:w-auto">
+                 <Button onClick={() => handleRequestAISuggestion(true)} className="w-full" variant="outline" size="sm">
                     <Lightbulb className="mr-2 h-4 w-4" />Tentar Novamente com Feedback
                 </Button>
-               </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
+                <Button variant="outline" onClick={() => setIsSuggestionDialogOpen(false)} size="sm">Cancelar</Button>
+                {aiSuggestion && (
+                  <Button onClick={handleAcceptAISuggestion} size="sm">Aceitar Sugestão</Button>
+                )}
+              </div>
             </DialogFooter>
           )}
         </DialogContent>
@@ -557,4 +565,5 @@ export function MealsTab() {
     </div>
   );
 }
+
 
