@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { PieChart as ChartPie, Target, TrendingUp, TrendingDown, CircleDot as CircleIcon } from 'lucide-react'; // Renamed Circle to CircleIcon
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator'; // Added this import
 
 interface PatientSummarySidebarProps {
   patient: {
