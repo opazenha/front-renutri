@@ -2,7 +2,7 @@
 
 import type { 
   Patient, AnthropometricRecord, LabExamRecord, EnergyExpenditureRecord, MacronutrientPlan, MicronutrientRecommendation, 
-  ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, Message, // Added Message
+  ActivityDetail, WorkActivityDetail, MicronutrientDetail, Appointment, Gender, Message,
   ClinicalAssessment, FoodAssessment, BehavioralAssessment, BiochemicalAssessment
 } from "@/types";
 import type { 
@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { mockPatients } from "@/lib/mock-data";
 import type { AppointmentStatus } from "@/lib/schemas";
 import { calculateAge } from "@/types";
+// import { fetchAppointmentsFromGoogle, createGoogleCalendarAppointment, updateGoogleCalendarAppointment } from "@/services/google-calendar-service"; // Import when ready to hook up
 
 interface PatientContextType {
   patients: Patient[];
@@ -33,12 +34,11 @@ interface PatientContextType {
   isLoading: boolean;
 
   appointments: Appointment[];
-  addAppointment: (appointmentData: AppointmentFormData) => Appointment;
+  addAppointment: (appointmentData: AppointmentFormData) => Promise<Appointment>; // Changed to Promise
   getAppointmentsByDate: (date: string) => Appointment[];
-  updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => void;
-  updateAppointment: (appointmentId: string, data: AppointmentFormData) => void;
+  updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => Promise<void>; // Changed to Promise
+  updateAppointment: (appointmentId: string, data: AppointmentFormData) => Promise<void>; // Changed to Promise
 
-  // Message related functions
   getMessagesByPatientId: (patientId: string) => Message[];
   getAllMessages: () => Message[];
   markMessageAsRead: (messageId: string, patientId: string) => void;
@@ -77,7 +77,7 @@ useEffect(() => {
           behavioralAssessments: p.behavioralAssessments || [],
           biochemicalAssessments: p.biochemicalAssessments || [],
           appointments: p.appointments || [],
-          messages: p.messages || [], // Ensure messages array exists
+          messages: p.messages || [], 
         }));
 
         if (patientsToSet.length === 0) { 
@@ -114,6 +114,10 @@ useEffect(() => {
     }
     setPatients(patientsToSet);
 
+    // TODO: When Google Calendar integration is live, fetch appointments from there too.
+    // const googleAppointments = await fetchAppointmentsFromGoogle(new Date(), addMonths(new Date(), 1));
+    // This would merge with localStorage or prioritize Google Calendar data.
+
     try {
         const storedAppointmentsJson = localStorage.getItem(LOCAL_STORAGE_KEY_APPOINTMENTS);
         if (storedAppointmentsJson) {
@@ -121,7 +125,7 @@ useEffect(() => {
             if (Array.isArray(parsedAppointments)) {
                 appointmentsToSet = parsedAppointments;
             } else {
-                appointmentsToSet = [];
+                appointmentsToSet = []; // Fallback to empty if stored data is not an array
             }
         } else {
              const initialAppointments: Appointment[] = [];
@@ -142,7 +146,7 @@ useEffect(() => {
          });
         appointmentsToSet = initialAppointmentsFromPatients.length > 0 ? initialAppointmentsFromPatients : [];
     }
-    setAppointments(appointmentsToSet);
+    setAppointments(appointmentsToSet.sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)));
 
     setIsLoading(false);
   }, []);
@@ -261,6 +265,7 @@ useEffect(() => {
             proximalThighCircumference: data.proximalThighCircumference,
             medialThighCircumference: data.medialThighCircumference,
             calfCircumference: data.calfCircumference,
+            // Ensure all fields from type are present or optional
             neckCircumference: data.neckCircumference,
             wristCircumference: data.wristCircumference,
             bicepsSkinfold: data.bicepsSkinfold,
@@ -272,9 +277,7 @@ useEffect(() => {
             abdominalSkinfold: data.abdominalSkinfold,
             thighSkinfold: data.thighSkinfold,
             medialCalfSkinfold: data.medialCalfSkinfold,
-            humerusBiepicondylarDiameter: data.humerusBiepicondylarDiameter,
-            femurBiepicondylarDiameter: data.femurBiepicondylarDiameter,
-            assessmentObjective: data.assessmentObjective,
+            observations: data.observations,
           };
           const updatedAnthropometricData = [...p.anthropometricData, newRecord].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           return { ...p, anthropometricData: updatedAnthropometricData };
@@ -353,14 +356,21 @@ useEffect(() => {
 
   const getPatientById = (id: string) => patients.find((p) => p.id === id);
 
-  const addAppointment = (appointmentData: AppointmentFormData): Appointment => {
+  const addAppointment = async (appointmentData: AppointmentFormData): Promise<Appointment> => {
     const patient = getPatientById(appointmentData.patientId);
     if (!patient) {
       throw new Error("Paciente não encontrado para o agendamento.");
     }
+    
+    // TODO: Call server action to createGoogleCalendarAppointment(appointmentData, patient.name);
+    // const googleAppointment = await createGoogleCalendarAppointment(appointmentData, patient.name);
+    // For now, use mock creation:
+    const googleAppointment = { id: `gcal-${Date.now()}`, ...appointmentData };
+
+
     const newAppointment: Appointment = {
       ...appointmentData,
-      id: uuidv4(),
+      id: googleAppointment.id, // Use ID from Google Calendar response if available
       patientName: patient.name, 
     };
     setAppointments((prevAppointments) => 
@@ -373,7 +383,11 @@ useEffect(() => {
     return appointments.filter(app => app.date === date);
   };
 
-  const updateAppointmentStatus = (appointmentId: string, status: AppointmentStatus) => {
+  const updateAppointmentStatus = async (appointmentId: string, status: AppointmentStatus) => {
+    // TODO: Call server action to update Google Calendar event status.
+    // This might involve fetching the event, modifying it, and then updating.
+    // await updateGoogleCalendarAppointment(appointmentId, { status: status }); 
+    // For now, just update local state:
     setAppointments(prevAppointments => 
       prevAppointments.map(app => 
         app.id === appointmentId ? { ...app, status } : app
@@ -381,12 +395,14 @@ useEffect(() => {
     );
   };
 
-  const updateAppointment = (appointmentId: string, data: AppointmentFormData) => {
-    setAppointments(prevAppointments => {
-      const patient = getPatientById(data.patientId);
+  const updateAppointment = async (appointmentId: string, data: AppointmentFormData) => {
+     const patient = getPatientById(data.patientId);
       if (!patient && data.patientId) {
         console.warn(`Patient with ID ${data.patientId} not found during appointment update for ${appointmentId}. Patient name may not be updated.`);
       }
+    // TODO: Call server action to updateGoogleCalendarAppointment(appointmentId, data, patient?.name || '');
+    // For now, just update local state:
+    setAppointments(prevAppointments => {
       return prevAppointments.map(app =>
         app.id === appointmentId
           ? { ...app, ...data, patientName: patient ? patient.name : app.patientName } 
@@ -395,7 +411,6 @@ useEffect(() => {
     });
   };
 
-  // Message specific functions
   const getMessagesByPatientId = (patientId: string): Message[] => {
     const patient = patients.find(p => p.id === patientId);
     return patient?.messages || [];

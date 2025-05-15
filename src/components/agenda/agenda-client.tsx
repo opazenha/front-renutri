@@ -1,6 +1,7 @@
+// src/components/agenda/agenda-client.tsx
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import type { Appointment, AppointmentFormData } from "@/lib/schemas";
 import { AppointmentForm } from "./appointment-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { format, parseISO, isValid, isSameDay } from "date-fns";
+import { format, parseISO, isValid, isSameDay, addMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { WeekView } from "./week-view";
@@ -19,7 +20,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 
 export function AgendaClient() {
-  const { patients, appointments, addAppointment, getAppointmentsByDate, updateAppointmentStatus, updateAppointment, isLoading } = usePatientContext();
+  const { patients, appointments, addAppointment, getAppointmentsByDate, updateAppointmentStatus, updateAppointment, isLoading: patientContextIsLoading } = usePatientContext();
   const { toast } = useToast();
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
@@ -27,6 +28,20 @@ export function AgendaClient() {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingAppointments, setIsFetchingAppointments] = useState(false); // For Google Calendar loading
+
+  // TODO: When GCal is live, trigger fetching here based on visible date range
+  // useEffect(() => {
+  //   const fetchAppointmentsForView = async () => {
+  //     setIsFetchingAppointments(true);
+  //     // const start = startOfMonth(currentDate);
+  //     // const end = endOfMonth(currentDate); // Or based on WeekView range
+  //     // await syncAppointmentsFromGoogle(start, end); // This would update PatientContext
+  //     setIsFetchingAppointments(false);
+  //   };
+  //   if(!patientContextIsLoading) fetchAppointmentsForView();
+  // }, [currentDate, patientContextIsLoading]);
+
 
   const handleDateSelectFromMonthCalendar = (date: Date | undefined) => {
     if (date) {
@@ -48,10 +63,10 @@ export function AgendaClient() {
     setIsEditFormOpen(true);
   };
 
-  const handleAddFormSubmit = (data: AppointmentFormData) => {
+  const handleAddFormSubmit = async (data: AppointmentFormData) => {
     setIsSubmitting(true);
     try {
-      addAppointment(data);
+      await addAppointment(data); // Now async
       toast({
         title: "Agendamento Criado",
         description: `Agendamento para ${patients.find(p=>p.id === data.patientId)?.name} em ${format(parseISO(data.date), "dd/MM/yyyy")} às ${data.time} foi criado.`,
@@ -69,11 +84,11 @@ export function AgendaClient() {
     }
   };
 
-  const handleEditFormSubmit = (data: AppointmentFormData) => {
+  const handleEditFormSubmit = async (data: AppointmentFormData) => {
     if (!editingAppointment) return;
     setIsSubmitting(true);
     try {
-      updateAppointment(editingAppointment.id, data);
+      await updateAppointment(editingAppointment.id, data); // Now async
       toast({
         title: "Agendamento Atualizado",
         description: "As alterações no agendamento foram salvas.",
@@ -92,9 +107,9 @@ export function AgendaClient() {
     }
   };
   
-  const handleStatusChange = (appointmentId: string, newStatus: Appointment['status']) => {
+  const handleStatusChange = async (appointmentId: string, newStatus: Appointment['status']) => {
     try {
-      updateAppointmentStatus(appointmentId, newStatus);
+      await updateAppointmentStatus(appointmentId, newStatus); // Now async
       toast({
         title: "Status Atualizado",
         description: "O status do agendamento foi alterado.",
@@ -113,6 +128,7 @@ export function AgendaClient() {
   }, [currentDate]);
 
   const appointmentsForSelectedDate = useMemo(() => {
+    // TODO: Consider if getAppointmentsByDate should become async if it fetches directly
     return getAppointmentsByDate(selectedDateString);
   }, [selectedDateString, getAppointmentsByDate, appointments]); 
 
@@ -120,7 +136,7 @@ export function AgendaClient() {
     return appointments.filter(app => app.date && isValid(parseISO(app.date))).map(app => parseISO(app.date));
   }, [appointments]);
 
-  if (isLoading) {
+  if (patientContextIsLoading || isFetchingAppointments) {
     return <p className="text-center py-10">Carregando agenda...</p>;
   }
 
@@ -287,4 +303,3 @@ export function AgendaClient() {
     </div>
   );
 }
-
