@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { PatientSummarySidebar } from './patient-summary-sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { allTacoData } from '@/lib/data/taco-data'; // Corrected import
+import { tacoData } from '@/lib/data/taco-data'; // Corrected import
 import type { TacoItem } from '@/types';
 import { Progress } from '@/components/ui/progress';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend as RechartsLegend } from 'recharts';
@@ -87,7 +87,7 @@ const AddDietEntryForm = ({ onAddEntry }: { onAddEntry: (entry: DietFoodItem) =>
 
   const categories = useMemo(() => {
     const uniqueCategories = new Set<string>();
-    allTacoData.forEach(item => {
+    tacoData.forEach(item => {
       if (item.categoria) uniqueCategories.add(item.categoria);
     });
     return Array.from(uniqueCategories).sort();
@@ -95,12 +95,12 @@ const AddDietEntryForm = ({ onAddEntry }: { onAddEntry: (entry: DietFoodItem) =>
 
   const filteredTacoItems = useMemo(() => {
     if (!selectedCategoryId) return [];
-    return allTacoData.filter(item => item.categoria === selectedCategoryId);
+    return tacoData.filter(item => item.categoria === selectedCategoryId);
   }, [selectedCategoryId]);
 
   const filteredAlternativeTacoItems = useMemo(() => {
     if (!selectedAlternativeCategoryId) return [];
-    return allTacoData.filter(item => item.categoria === selectedAlternativeCategoryId);
+    return tacoData.filter(item => item.categoria === selectedAlternativeCategoryId);
   }, [selectedAlternativeCategoryId]);
 
   const handleAddEntry = () => {
@@ -108,25 +108,25 @@ const AddDietEntryForm = ({ onAddEntry }: { onAddEntry: (entry: DietFoodItem) =>
       alert("Por favor, preencha a referência da refeição e selecione um alimento principal.");
       return;
     }
-    const tacoItem = allTacoData.find(item => item.id.toString() === selectedTacoItemId);
-    if (!tacoItem) return;
+    const currentTacoItem = tacoData.find(item => item.id.toString() === selectedTacoItemId);
+    if (!currentTacoItem) return;
 
     const factor = quantity / 100;
     const newEntry: DietFoodItem = {
       id: crypto.randomUUID(),
       mealReference,
       mealTime,
-      tacoItem,
+      tacoItem: currentTacoItem,
       quantity,
-      energy: (tacoItem.energia_kcal || 0) * factor,
-      protein: (tacoItem.proteina_g || 0) * factor,
-      carbs: (tacoItem.carboidrato_g || 0) * factor,
-      fat: (tacoItem.lipidios_g || 0) * factor,
-      fiber: (tacoItem.fibra_alimentar_g || 0) * factor,
+      energy: (currentTacoItem.energia_kcal || 0) * factor,
+      protein: (currentTacoItem.proteina_g || 0) * factor,
+      carbs: (currentTacoItem.carboidrato_g || 0) * factor,
+      fat: (currentTacoItem.lipidios_g || 0) * factor,
+      fiber: (currentTacoItem.fibra_alimentar_g || 0) * factor,
     };
 
     if (selectedAlternativeTacoItemId) {
-      const altTacoItem = allTacoData.find(item => item.id.toString() === selectedAlternativeTacoItemId);
+      const altTacoItem = tacoData.find(item => item.id.toString() === selectedAlternativeTacoItemId);
       if (altTacoItem) {
         newEntry.alternativeTacoItem = altTacoItem;
         newEntry.alternativeEnergy = (altTacoItem.energia_kcal || 0) * factor;
@@ -341,21 +341,21 @@ export function MealsTab() {
     let itemsNotFound = 0;
   
     aiSuggestion.meals.forEach(suggestedMeal => {
-      const tacoItem = allTacoData.find(tItem => tItem.id === suggestedMeal.tacoItemId);
+      const currentTacoItem = tacoData.find(tItem => tItem.id === suggestedMeal.tacoItemId);
   
-      if (tacoItem) {
+      if (currentTacoItem) {
         const factor = suggestedMeal.quantityGrams / 100;
         newEntries.push({
           id: crypto.randomUUID(),
           mealReference: suggestedMeal.mealReference,
           mealTime: suggestedMeal.mealTime,
-          tacoItem: tacoItem,
+          tacoItem: currentTacoItem,
           quantity: suggestedMeal.quantityGrams,
-          energy: (tacoItem.energia_kcal || 0) * factor,
-          protein: (tacoItem.proteina_g || 0) * factor,
-          carbs: (tacoItem.carboidrato_g || 0) * factor,
-          fat: (tacoItem.lipidios_g || 0) * factor,
-          fiber: (tacoItem.fibra_alimentar_g || 0) * factor,
+          energy: (currentTacoItem.energia_kcal || 0) * factor,
+          protein: (currentTacoItem.proteina_g || 0) * factor,
+          carbs: (currentTacoItem.carboidrato_g || 0) * factor,
+          fat: (currentTacoItem.lipidios_g || 0) * factor,
+          fiber: (currentTacoItem.fibra_alimentar_g || 0) * factor,
         });
       } else {
         itemsNotFound++;

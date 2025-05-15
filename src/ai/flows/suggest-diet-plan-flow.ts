@@ -11,7 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import type { TacoItem } from '@/types'; // Assuming TacoItem is defined
-import { allTacoData } from '@/lib/data/taco-data'; // Import actual TACO data
+import { tacoData } from '@/lib/data/taco-data'; // Corrected import: allTacoData to tacoData
 
 
 // --- Input Schema ---
@@ -84,7 +84,7 @@ const suggestDietPlanPrompt = ai.definePrompt({
     A sua resposta DEVE ser um JSON VÁLIDO que corresponda ao schema de output.
 
     Um subconjunto da Tabela TACO para referência de IDs e descrições (use apenas IDs desta lista se possível):
-    ${allTacoData.slice(0, 50).map(item => `- ID ${item.id}: ${item.alimento_descricao}`).join('\n')}
+    ${tacoData.slice(0, 50).map(item => `- ID ${item.id}: ${item.alimento_descricao}`).join('\n')}
     ... (mais itens seriam listados aqui ou o modelo teria acesso completo)
     
     Retorne APENAS o JSON.
