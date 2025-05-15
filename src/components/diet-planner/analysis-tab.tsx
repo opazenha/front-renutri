@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend as RechartsLegend } from 'recharts';
 import type { ChartConfig } from '@/components/ui/chart'; // Assuming ChartConfig is exported
-import { ChartContainer, ChartTooltipContent, ChartLegendContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import type { TacoItem } from '@/types'; // Assuming TacoItem is defined
 
 // Mock data for demonstration - replace with actual props/context later
@@ -316,3 +316,4 @@ export function AnalysisTab() {
     </div>
   );
 }
+
