@@ -1,0 +1,3779 @@
+[
+  {
+    "table": "Pão",
+    "kcal": 70,
+    "items": [
+      {
+        "item": "Arroz doce",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 40,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Barra de cereais diet",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 25,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Bar. cereais trad. ou light",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 25,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito amanteigado",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 12,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito champagne",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito cream cracker",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Bisc. cream cracker light",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 23,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito de polvilho",
+        "amount": 6,
+        "portion": "unidades",
+        "g": 18,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Bisc. maisena/maria",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito recheado",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 12,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito rosquinha",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito wafer",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Biscoito Club Social®",
+        "amount": 0.5,
+        "portion": "pacote",
+        "g": 16,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Bolo simples",
+        "amount": 0.5,
+        "portion": "fatia fina",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Canjica c/ leite",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 63,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Cookie diet ou light",
+        "amount": 4,
+        "portion": "unidades",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Cookie trad. ou integral",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Curau de milho verde",
+        "amount": 3,
+        "portion": "colh. sopa",
+        "g": 90,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Cuscuz de milho",
+        "amount": 0.5,
+        "portion": "pedaço pequeno",
+        "g": 58,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Cuscuz de tapioca",
+        "amount": 0.5,
+        "portion": "fatia fina",
+        "g": 30,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Geleia de mocotó",
+        "amount": 3,
+        "portion": "colh. sopa",
+        "g": 60,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Mingau de aveia",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 76,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão bisnaguinha",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de batata",
+        "amount": 0.5,
+        "portion": "unidade média",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de forma",
+        "amount": 1,
+        "portion": "fatia",
+        "g": 25,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de forma light",
+        "amount": 1.5,
+        "portion": "fatia",
+        "g": 38,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de forma integral",
+        "amount": 1,
+        "portion": "fatia",
+        "g": 25,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de forma int. light",
+        "amount": 1.5,
+        "portion": "fatia",
+        "g": 38,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de hambúrguer",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 33,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de hot dog",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 28,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão de queijo",
+        "amount": 0.5,
+        "portion": "unidade média",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão francês",
+        "amount": 0.5,
+        "portion": "unidade média",
+        "g": 25,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pão sírio",
+        "amount": 1,
+        "portion": "unidade pequena",
+        "g": 25,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pipoca c/ sal",
+        "amount": 1,
+        "portion": "saquinho médio",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Pipoca doce",
+        "amount": 1,
+        "portion": "saquinho pequeno",
+        "g": 15,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Queijadinha",
+        "amount": 0.5,
+        "portion": "unidade pequena",
+        "g": 10,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Sagu cozido",
+        "amount": 4,
+        "portion": "colh. sob. cheias",
+        "g": 80,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Torrada pão francês",
+        "amount": 4,
+        "portion": "fatias médias",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "Torr. industrializada",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 20,
+        "sub-category": "Pães, biscoitos e similares"
+      },
+      {
+        "item": "All-Bran®",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 23,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Amaranto em flocos",
+        "amount": 3.5,
+        "portion": "colh. sopa",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Aveia em flocos crua",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Cereal matinal de milho",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 18,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Cevadinha em grãos",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 23,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farelo de aveia",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 18,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farelo de trigo",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 23,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha de arroz",
+        "amount": 1,
+        "portion": "colh. sopa cheias",
+        "g": 17,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha de aveia",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 19,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha de centeio",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 19,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha de puba",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 17,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha de quinua",
+        "amount": 4.5,
+        "portion": "colh. sopa",
+        "g": 19,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha de soja",
+        "amount": 3,
+        "portion": "colh. sopa",
+        "g": 19,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Farinha láctea",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 18,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Fécula",
+        "amount": 1.5,
+        "portion": "colh. sopa",
+        "g": 23,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Fibra de trigo",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Fubá de milho",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Germe de trigo",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 22,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Granola",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 18,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Maisena",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 17,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Mucilon®",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 18,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Müslix®",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Nesfit®",
+        "amount": 0.5,
+        "portion": "xícara de chá",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Neston®",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 16,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Quinua em flocos",
+        "amount": 4,
+        "portion": "colh. sopa",
+        "g": 20,
+        "sub-category": "Cereais, farinhas e farelos"
+      },
+      {
+        "item": "Quinua em grãos",
+        "amount": 1.5,
+        "portion": "colh. sopa",
+        "g": 17,
+        "sub-category": "Cereais, farinhas e farelos"
+      }
+    ]
+  },
+  {
+    "table": "Recheio ou molho",
+    "kcal": 25,
+    "items": [
+      {
+        "item": "Azeite de dendê",
+        "amount": 1.5,
+        "portion": "colh. chá",
+        "g": 3
+      },
+      {
+        "item": "Azeite de oliva",
+        "amount": 1.5,
+        "portion": "colh. chá",
+        "g": 3
+      },
+      {
+        "item": "Catchup",
+        "amount": 2.5,
+        "portion": "colh. sobr. rasas",
+        "g": 23
+      },
+      {
+        "item": "Catchup light",
+        "amount": 9,
+        "portion": "colh. sobr. rasas",
+        "g": 81
+      },
+      {
+        "item": "Coalhada desnatada",
+        "amount": 0.5,
+        "portion": "potinho",
+        "g": 85
+      },
+      {
+        "item": "Coalhada integral",
+        "amount": 1.5,
+        "portion": "colh. sopa",
+        "g": 23
+      },
+      {
+        "item": "Cream cheese",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 9
+      },
+      {
+        "item": "Cream cheese light",
+        "amount": 1.5,
+        "portion": "colh. sobr. rasa",
+        "g": 14
+      },
+      {
+        "item": "Creme de amendoim",
+        "amount": 1,
+        "portion": "colh. chá rasa",
+        "g": 4
+      },
+      {
+        "item": "Creme de leite",
+        "amount": 1.5,
+        "portion": "colh. sobr. rasa",
+        "g": 11
+      },
+      {
+        "item": "Creme de leite light",
+        "amount": 2,
+        "portion": "colh. sobr. rasas",
+        "g": 14
+      },
+      {
+        "item": "Creme de ricota",
+        "amount": 1,
+        "portion": "colh. sopa",
+        "g": 20
+      },
+      {
+        "item": "Creme de ricota light",
+        "amount": 1.5,
+        "portion": "colh. sopa",
+        "g": 30
+      },
+      {
+        "item": "Extrato de tomate",
+        "amount": 3,
+        "portion": "colh. sopa",
+        "g": 45
+      },
+      {
+        "item": "Geleia de fruta",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 11
+      },
+      {
+        "item": "Geleia diet",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 26
+      },
+      {
+        "item": "Glicose de milho",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 9
+      },
+      {
+        "item": "Iogurte natural",
+        "amount": 3,
+        "portion": "colh. sopa",
+        "g": 45
+      },
+      {
+        "item": "Iogurte nat. desnatado",
+        "amount": 4,
+        "portion": "colh. sopa",
+        "g": 60
+      },
+      {
+        "item": "Leite de coco",
+        "amount": 1,
+        "portion": "colh. sopa",
+        "g": 13
+      },
+      {
+        "item": "Leite de coco light",
+        "amount": 1.5,
+        "portion": "colh. sopa",
+        "g": 19
+      },
+      {
+        "item": "Maionese light",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 15
+      },
+      {
+        "item": "Maionese tradicional",
+        "amount": 3,
+        "portion": "colh. chá rasas",
+        "g": 9
+      },
+      {
+        "item": "Manteiga c/ sal",
+        "amount": 1,
+        "portion": "colh. chá rasa",
+        "g": 4
+      },
+      {
+        "item": "Manteiga s/ sal",
+        "amount": 1,
+        "portion": "colh. chá rasa",
+        "g": 4
+      },
+      {
+        "item": "Margarina c/ sal",
+        "amount": 1,
+        "portion": "colh. chá rasa",
+        "g": 4
+      },
+      {
+        "item": "Margarina light",
+        "amount": 1,
+        "portion": "colh. chá cheia",
+        "g": 8
+      },
+      {
+        "item": "Margarina s/ sal",
+        "amount": 1,
+        "portion": "colh. chá rasa",
+        "g": 4
+      },
+      {
+        "item": "Mel ou melado",
+        "amount": 2,
+        "portion": "colh. chá cheias",
+        "g": 8
+      },
+      {
+        "item": "Molho 3 em 1",
+        "amount": 2,
+        "portion": "colh. sobr. rasa",
+        "g": 18
+      },
+      {
+        "item": "Molho tomate indust.",
+        "amount": 3,
+        "portion": "colh. sobr. rasas",
+        "g": 60
+      },
+      {
+        "item": "Molho inglês",
+        "amount": 7,
+        "portion": "colh. sobremesa",
+        "g": 28
+      },
+      {
+        "item": "Mostarda",
+        "amount": 3,
+        "portion": "colh. sobr. rasa",
+        "g": 27
+      },
+      {
+        "item": "Óleo de canola",
+        "amount": 1.5,
+        "portion": "colh. chá",
+        "g": 3
+      },
+      {
+        "item": "Óleo de girassol",
+        "amount": 1.5,
+        "portion": "colh. chá",
+        "g": 3
+      },
+      {
+        "item": "Óleo de milho",
+        "amount": 1.5,
+        "portion": "colh. chá",
+        "g": 3
+      },
+      {
+        "item": "Óleo de soja",
+        "amount": 1.5,
+        "portion": "colh. chá",
+        "g": 3
+      },
+      {
+        "item": "Patê",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 11
+      },
+      {
+        "item": "Purê de tomate",
+        "amount": 6,
+        "portion": "colh. sopa",
+        "g": 90
+      },
+      {
+        "item": "Requeijão cremoso",
+        "amount": 1.5,
+        "portion": "colh. sobr. rasa",
+        "g": 11
+      },
+      {
+        "item": "Requeijão crem. light",
+        "amount": 2,
+        "portion": "colh. sobr. rasas",
+        "g": 15
+      },
+      {
+        "item": "Shoyu",
+        "amount": 6,
+        "portion": "colh. sobremesa",
+        "g": 39
+      }
+    ]
+  },
+  {
+    "table": "Carne ou ovo",
+    "kcal": 200,
+    "items": [
+      {
+        "item": "Almôndega frita",
+        "amount": 1.5,
+        "portion": "unidade média",
+        "g": 75,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Assada",
+        "amount": 1,
+        "portion": "fatia pequena",
+        "g": 60,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Cozida",
+        "amount": 1.5,
+        "portion": "pedaço grande",
+        "g": 90,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Estrogonofe",
+        "amount": 3,
+        "portion": "colh. servir cheias",
+        "g": 120,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Grelhada magra",
+        "amount": 1,
+        "portion": "bife médio",
+        "g": 100,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Hambúrguer",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 84,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Moída refogada",
+        "amount": 3.5,
+        "portion": "colh. sopa cheias",
+        "g": 70,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Seca cozida",
+        "amount": 1,
+        "portion": "pedaço grande",
+        "g": 60,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Rabada",
+        "amount": 4,
+        "portion": "pedaços pequenos",
+        "g": 60,
+        "sub-category": "Boi"
+      },
+      {
+        "item": "Costela assada ou cozida",
+        "amount": 2,
+        "portion": "unidades médias",
+        "g": 50,
+        "sub-category": "Porco"
+      },
+      {
+        "item": "Linguiça assada",
+        "amount": 2,
+        "portion": "porções médias",
+        "g": 120,
+        "sub-category": "Porco"
+      },
+      {
+        "item": "Linguiça frita",
+        "amount": 1.5,
+        "portion": "porção pequena",
+        "g": 68,
+        "sub-category": "Porco"
+      },
+      {
+        "item": "Lombo assado",
+        "amount": 1,
+        "portion": "fatia média",
+        "g": 90,
+        "sub-category": "Porco"
+      },
+      {
+        "item": "Pernil assado",
+        "amount": 1,
+        "portion": "fatia pequena",
+        "g": 70,
+        "sub-category": "Porco"
+      },
+      {
+        "item": "Coxa de frango s/ pele",
+        "amount": 3,
+        "portion": "coxas médias",
+        "g": 120,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Estrogonofe",
+        "amount": 3,
+        "portion": "colh. servir cheias",
+        "g": 120,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Filé de frango s/ pele",
+        "amount": 2,
+        "portion": "filés pequenos",
+        "g": 130,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Frango à milanesa",
+        "amount": 1,
+        "portion": "filé pequeno",
+        "g": 100,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Frango ao molho pardo",
+        "amount": 2,
+        "portion": "sobrecoxas médias",
+        "g": 130,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Frango assado s/ pele",
+        "amount": 1,
+        "portion": "sobrecoxa grande",
+        "g": 95,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Frango ensopado",
+        "amount": 2,
+        "portion": "sobrecoxas grandes",
+        "g": 190,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Hambúrguer de frango",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 84,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Hambúrguer de peru",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 126,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Linguiça de frango frita",
+        "amount": 2,
+        "portion": "porções pequenas",
+        "g": 90,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Peito de frango s/ pele",
+        "amount": 1,
+        "portion": "peito pequeno",
+        "g": 140,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Peru assado",
+        "amount": 1.5,
+        "portion": "coxa média",
+        "g": 120,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Salpicão",
+        "amount": 5,
+        "portion": "colh. sopa cheias",
+        "g": 125,
+        "sub-category": "Aves"
+      },
+      {
+        "item": "Atum em água e sal",
+        "amount": 5,
+        "portion": "colh. sopa cheias",
+        "g": 160,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Atum em óleo",
+        "amount": 3.5,
+        "portion": "colh. sopa cheias",
+        "g": 112,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Bacalhau refogado",
+        "amount": 3.5,
+        "portion": "colh. servir cheias",
+        "g": 140,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Bobó de camarão",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 112,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Camarão c/ casca frito",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 80,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Camarão cozido",
+        "amount": 6,
+        "portion": "colh. servir cheias",
+        "g": 210,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Camarão na moranga",
+        "amount": 3.5,
+        "portion": "colh. servir cheias",
+        "g": 385,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Caranguejo cozido",
+        "amount": 5.5,
+        "portion": "casquinhas",
+        "g": 248,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Kani kama",
+        "amount": 14,
+        "portion": "unidades",
+        "g": 252,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Lagosta cozida",
+        "amount": 2.5,
+        "portion": "unidades",
+        "g": 200,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Lula cozida",
+        "amount": 2.5,
+        "portion": "unidades médias",
+        "g": 200,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Peixe à escabeche",
+        "amount": 1,
+        "portion": "posta pequena",
+        "g": 150,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Peixe assado ou cozido",
+        "amount": 1,
+        "portion": "filé grande",
+        "g": 155,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Peixe frito ou grelh. c/ pele",
+        "amount": 1,
+        "portion": "filé pequeno",
+        "g": 100,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Sardinha assada",
+        "amount": 3,
+        "portion": "unidades médias",
+        "g": 120,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Sard. em óleo ou frita",
+        "amount": 1.5,
+        "portion": "unidade média",
+        "g": 60,
+        "sub-category": "Peixe e frutos do mar"
+      },
+      {
+        "item": "Coração bovino",
+        "amount": 2,
+        "portion": "bifes pequenos",
+        "g": 130,
+        "sub-category": "Vísceras"
+      },
+      {
+        "item": "Cor. frango grelh. ou cozido",
+        "amount": 16,
+        "portion": "unidades",
+        "g": 96,
+        "sub-category": "Vísceras"
+      },
+      {
+        "item": "Dobradinha",
+        "amount": 5,
+        "portion": "colh. sopa cheias",
+        "g": 175,
+        "sub-category": "Vísceras"
+      },
+      {
+        "item": "Fígado bovino grelhado",
+        "amount": 1,
+        "portion": "bife pequeno",
+        "g": 80,
+        "sub-category": "Vísceras"
+      },
+      {
+        "item": "Fíg. galinha cozido",
+        "amount": 4,
+        "portion": "unidades médias",
+        "g": 120,
+        "sub-category": "Vísceras"
+      },
+      {
+        "item": "Língua bovina cozida",
+        "amount": 2,
+        "portion": "fatias médias",
+        "g": 60,
+        "sub-category": "Vísceras"
+      },
+      {
+        "item": "Clara de ovo cozida",
+        "amount": 11,
+        "portion": "unidades",
+        "g": 330,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Hambúrguer de soja",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 80,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Omelete c/ queijo",
+        "amount": 1,
+        "portion": "unidade de ovo",
+        "g": 65,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Ovo de galinha cozido",
+        "amount": 2.5,
+        "portion": "unidades",
+        "g": 125,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Ovo de galinha frito",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 76,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Ovo de galinha mexido",
+        "amount": 2.5,
+        "portion": "colh. servir cheias",
+        "g": 113,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Ovo poché",
+        "amount": 2.5,
+        "portion": "unidades",
+        "g": 138,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "PTS reidratada",
+        "amount": 12,
+        "portion": "colh. sopa cheias",
+        "g": 252,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Quibe assado",
+        "amount": 2,
+        "portion": "pedaços grandes",
+        "g": 160,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Quibe cru",
+        "amount": 2,
+        "portion": "porções grandes",
+        "g": 200,
+        "sub-category": "Ovo e outras carnes"
+      },
+      {
+        "item": "Quibe frito",
+        "amount": 1,
+        "portion": "unidade grande",
+        "g": 85,
+        "sub-category": "Ovo e outras carnes"
+      }
+    ]
+  },
+  {
+    "table": "Arroz",
+    "kcal": 80,
+    "items": [
+      {
+        "item": "Arroz branco cozido",
+        "amount": 1,
+        "portion": "colh. servir cheia",
+        "g": 60
+      },
+      {
+        "item": "Arroz integral cozido",
+        "amount": 1,
+        "portion": "colh. servir cheia",
+        "g": 60
+      },
+      {
+        "item": "Banana da terra assada",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 45
+      },
+      {
+        "item": "Batata baroa cozida",
+        "amount": 2,
+        "portion": "colh. servir cheias",
+        "g": 110
+      },
+      {
+        "item": "Batata doce cozida",
+        "amount": 2.5,
+        "portion": "fatias finas",
+        "g": 100
+      },
+      {
+        "item": "Batata inglesa cozida",
+        "amount": 2.5,
+        "portion": "colh. servir cheias",
+        "g": 150
+      },
+      {
+        "item": "Batata inglesa sauté",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 114
+      },
+      {
+        "item": "Cará cozido",
+        "amount": 2,
+        "portion": "colh. servir cheias",
+        "g": 110
+      },
+      {
+        "item": "Creme de milho",
+        "amount": 1,
+        "portion": "colh. servir cheia",
+        "g": 67
+      },
+      {
+        "item": "Crouton",
+        "amount": 0.5,
+        "portion": "xícara de chá",
+        "g": 15
+      },
+      {
+        "item": "Farinha de mandioca",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 23
+      },
+      {
+        "item": "Farinha de milho",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 23
+      },
+      {
+        "item": "Farofa",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 23
+      },
+      {
+        "item": "Inhame cozido",
+        "amount": 2,
+        "portion": "colh. servir cheias",
+        "g": 124
+      },
+      {
+        "item": "Macarrão à bolonhesa",
+        "amount": 1.5,
+        "portion": "colh. servir cheia",
+        "g": 75
+      },
+      {
+        "item": "Macarrão alho e óleo",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 38
+      },
+      {
+        "item": "Macarrão ao sugo",
+        "amount": 1.5,
+        "portion": "colh. servir cheia",
+        "g": 75
+      },
+      {
+        "item": "Macarrão cozido",
+        "amount": 2,
+        "portion": "colh. servir cheias",
+        "g": 100
+      },
+      {
+        "item": "Macar. integral cozido",
+        "amount": 1.5,
+        "portion": "colh. servir cheia",
+        "g": 75
+      },
+      {
+        "item": "Mandioca cozida",
+        "amount": 1.5,
+        "portion": "pedaço pequeno",
+        "g": 75
+      },
+      {
+        "item": "Milho verde cozido",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 76
+      },
+      {
+        "item": "Milho verde enlatado",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 72
+      },
+      {
+        "item": "Nhoque de batata",
+        "amount": 0.5,
+        "portion": "colh. servir",
+        "g": 35
+      },
+      {
+        "item": "Pirão",
+        "amount": 2,
+        "portion": "colh. servir cheias",
+        "g": 80
+      },
+      {
+        "item": "Polenta cozida",
+        "amount": 4,
+        "portion": "pedaços médios",
+        "g": 80
+      },
+      {
+        "item": "Purê",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 68
+      },
+      {
+        "item": "Quibebe",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 105
+      }
+    ]
+  },
+  {
+    "table": "Feijão",
+    "kcal": 45,
+    "items": [
+      {
+        "item": "Erv. seca ou vagem cozida",
+        "amount": 1,
+        "portion": "colh. servir",
+        "g": 32
+      },
+      {
+        "item": "Ervilha vagem refogada",
+        "amount": 0.5,
+        "portion": "colh. servir cheia",
+        "g": 30
+      },
+      {
+        "item": "Ervilha enlatada",
+        "amount": 1,
+        "portion": "colh. servir cheia",
+        "g": 60
+      },
+      {
+        "item": "Feijão branco cozido",
+        "amount": 0.5,
+        "portion": "colh. servir cheia",
+        "g": 30
+      },
+      {
+        "item": "Feijão cozido",
+        "amount": 1,
+        "portion": "colh. servir cheia",
+        "g": 60
+      },
+      {
+        "item": "Feijão tropeiro",
+        "amount": 1.5,
+        "portion": "colh. sopa",
+        "g": 26
+      },
+      {
+        "item": "Grão-de-bico cozido",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 30
+      },
+      {
+        "item": "Lentilha cozida",
+        "amount": 1.5,
+        "portion": "colh. servir",
+        "g": 48
+      },
+      {
+        "item": "Salada feijão fradinho",
+        "amount": 1,
+        "portion": "colh. servir rasa",
+        "g": 30
+      },
+      {
+        "item": "Soja cozida",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 43
+      },
+      {
+        "item": "Tremoço em conserva",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 40
+      },
+      {
+        "item": "Tutu",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 40
+      }
+    ]
+  },
+  {
+    "table": "Leite",
+    "kcal": 55,
+    "items": [
+      {
+        "item": "Com café e açúcar",
+        "amount": 0.5,
+        "portion": "copo duplo",
+        "g": 98,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Com café s/ açúcar",
+        "amount": 1,
+        "portion": "copo peq. nivelado",
+        "g": 140,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Com chocolate",
+        "amount": 0.5,
+        "portion": "copo pequeno",
+        "g": 70,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "De cabra",
+        "amount": 0.5,
+        "portion": "copo duplo",
+        "g": 98,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "De soja",
+        "amount": 1,
+        "portion": "copo peq. nivelado",
+        "g": 140,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Desnatado",
+        "amount": 1,
+        "portion": "copo peq. nivelado",
+        "g": 140,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "De soja \"zero\"",
+        "amount": 1,
+        "portion": "copo dup. nivelado",
+        "g": 195,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Fermentado",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 80,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Integral",
+        "amount": 0.5,
+        "portion": "copo duplo",
+        "g": 98,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Integral baixa lactose",
+        "amount": 1,
+        "portion": "copo peq. nivelado",
+        "g": 140,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "Semidesnatado",
+        "amount": 1,
+        "portion": "copo peq. nivelado",
+        "g": 140,
+        "sub-category": "Leites"
+      },
+      {
+        "item": "De cabra",
+        "amount": 2,
+        "portion": "colh. sobr. rasas",
+        "g": 10,
+        "sub-category": "Leites em pó"
+      },
+      {
+        "item": "De soja",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 9,
+        "sub-category": "Leites em pó"
+      },
+      {
+        "item": "Desnatado",
+        "amount": 3,
+        "portion": "colh. sobr. cheias",
+        "g": 15,
+        "sub-category": "Leites em pó"
+      },
+      {
+        "item": "Integral",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 12,
+        "sub-category": "Leites em pó"
+      },
+      {
+        "item": "Semidesnatado",
+        "amount": 3,
+        "portion": "colh. sobr. rasas",
+        "g": 12,
+        "sub-category": "Leites em pó"
+      },
+      {
+        "item": "Brie",
+        "amount": 0.5,
+        "portion": "fatia média",
+        "g": 15,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Camembert",
+        "amount": 0.5,
+        "portion": "fatia média",
+        "g": 15,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Catupiry",
+        "amount": 0.5,
+        "portion": "colh. sopa",
+        "g": 15,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Cheddar",
+        "amount": 0.5,
+        "portion": "fatia média",
+        "g": 10,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Cheddar cremoso",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 30,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Cottage",
+        "amount": 3,
+        "portion": "colh. sopa rasas",
+        "g": 66,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Gorgonzola",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 15,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Minas frescal",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 20,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Minas frescal light",
+        "amount": 1,
+        "portion": "fatia média",
+        "g": 30,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Minas frescal zero",
+        "amount": 2,
+        "portion": "fatias médias",
+        "g": 60,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Minas meia cura",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 20,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Mussarela",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 15,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Mussarela light",
+        "amount": 1,
+        "portion": "fatia média",
+        "g": 20,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Parmesão",
+        "amount": 1.5,
+        "portion": "colh. sopa rasa",
+        "g": 11,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Petit suisse",
+        "amount": 1,
+        "portion": "potinho",
+        "g": 45,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Polenguinho light",
+        "amount": 1.5,
+        "portion": "unidade",
+        "g": 30,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Polenguinho, Polenghi®",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 20,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Prato",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 15,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Prato light",
+        "amount": 1,
+        "portion": "fatia média",
+        "g": 20,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Provolone",
+        "amount": 0.5,
+        "portion": "fatia média",
+        "g": 13,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Ricota",
+        "amount": 3,
+        "portion": "fatias finas",
+        "g": 30,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Tofu",
+        "amount": 2,
+        "portion": "pedaços grandes",
+        "g": 70,
+        "sub-category": "Queijos"
+      },
+      {
+        "item": "Bebida láctea",
+        "amount": 0.5,
+        "portion": "copo duplo",
+        "g": 100,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Coalhada desnatada",
+        "amount": 1,
+        "portion": "potinho",
+        "g": 170,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Coalhada integral",
+        "amount": 4,
+        "portion": "colh. sopa",
+        "g": 60,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Cream cheese",
+        "amount": 1.5,
+        "portion": "colh. sopa rasa",
+        "g": 24,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Cream cheese light",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 32,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Creme de ricota",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 40,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Creme de ricota light",
+        "amount": 3,
+        "portion": "colh. sopa",
+        "g": 60,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Iogurte natural",
+        "amount": 7,
+        "portion": "colh. sopa",
+        "g": 105,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Iogurte nat. desnatado",
+        "amount": 8,
+        "portion": "colh. sopa",
+        "g": 120,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Iogurte batido",
+        "amount": 0.5,
+        "portion": "copo pequeno",
+        "g": 73,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Requeijão cremoso",
+        "amount": 1.5,
+        "portion": "colh. sopa rasa",
+        "g": 23,
+        "sub-category": "Outros derivados"
+      },
+      {
+        "item": "Requeijão cremoso light",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 30,
+        "sub-category": "Outros derivados"
+      }
+    ]
+  },
+  {
+    "table": "Fruta",
+    "kcal": 70,
+    "items": [
+      {
+        "item": "Abacate",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 68,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Abacaxi",
+        "amount": 2,
+        "portion": "fatias médias",
+        "g": 160,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Acerola",
+        "amount": 2,
+        "portion": "xícaras de chá",
+        "g": 196,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Açaí (polpa c/ glucose)",
+        "amount": 1,
+        "portion": "porç. bem pequena",
+        "g": 60,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Água de coco",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 340,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Ameixa fresca",
+        "amount": 2,
+        "portion": "unidades médias",
+        "g": 140,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Atemoia",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 60,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Banana",
+        "amount": 1,
+        "portion": "unidade grande",
+        "g": 72,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Cajá-manga",
+        "amount": 2,
+        "portion": "unidades grandes",
+        "g": 150,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Caju",
+        "amount": 2,
+        "portion": "unidades grandes",
+        "g": 180,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Caqui",
+        "amount": 1,
+        "portion": "unidade pequena",
+        "g": 100,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Carambola",
+        "amount": 2,
+        "portion": "unidades médias",
+        "g": 150,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Cereja",
+        "amount": 10,
+        "portion": "unidades",
+        "g": 70,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Ciriguela",
+        "amount": 6,
+        "portion": "unidades",
+        "g": 90,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Coco cru",
+        "amount": 1,
+        "portion": "pedaço pequeno",
+        "g": 15,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Damasco",
+        "amount": 4,
+        "portion": "unidades",
+        "g": 140,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Figo",
+        "amount": 4,
+        "portion": "unidades médias",
+        "g": 160,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Framboesa",
+        "amount": 1,
+        "portion": "xícara de chá",
+        "g": 123,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Fruta do conde",
+        "amount": 1.5,
+        "portion": "unidade média",
+        "g": 90,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Goiaba",
+        "amount": 0.5,
+        "portion": "unidade grande",
+        "g": 115,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Graviola",
+        "amount": 0.5,
+        "portion": "xícara de chá",
+        "g": 122,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Guabiroba",
+        "amount": 1,
+        "portion": "xícara de chá",
+        "g": 123,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Jabuticaba",
+        "amount": 1,
+        "portion": "copo peq. cheio",
+        "g": 120,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Jaca",
+        "amount": 0.5,
+        "portion": "xícara de chá",
+        "g": 83,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Jambo",
+        "amount": 6,
+        "portion": "unidades médias",
+        "g": 240,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Kiwi",
+        "amount": 1,
+        "portion": "unidade grande",
+        "g": 130,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Laranja",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 180,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Maçã",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 135,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Mamão formosa",
+        "amount": 1.5,
+        "portion": "fatia fina",
+        "g": 150,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Mamão papaia",
+        "amount": 0.5,
+        "portion": "unidade média",
+        "g": 155,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Manga",
+        "amount": 1,
+        "portion": "unidade pequena",
+        "g": 120,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Maracujá",
+        "amount": 2,
+        "portion": "unidades médias",
+        "g": 90,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Marmelo",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 92,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Melancia",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 185,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Melão",
+        "amount": 1.5,
+        "portion": "fatia média",
+        "g": 240,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Morango",
+        "amount": 1.5,
+        "portion": "xícara de chá",
+        "g": 225,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Nectarina",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 136,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Nêspera",
+        "amount": 4,
+        "portion": "unidades grandes",
+        "g": 160,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Pera",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 155,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Pêssego",
+        "amount": 4,
+        "portion": "unidades médias",
+        "g": 200,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Pitanga",
+        "amount": 1,
+        "portion": "xícara de chá",
+        "g": 173,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Romã",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 154,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Salada de frutas",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 76,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Tangerina/ mexerica",
+        "amount": 1,
+        "portion": "unidade grande",
+        "g": 210,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Toranja",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 180,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Uva itália",
+        "amount": 12,
+        "portion": "unidades",
+        "g": 144,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Uva rubi",
+        "amount": 15,
+        "portion": "unidades",
+        "g": 150,
+        "sub-category": "In natura"
+      },
+      {
+        "item": "Abacaxi",
+        "amount": 1,
+        "portion": "porção pequena",
+        "g": 20,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Ameixa",
+        "amount": 6,
+        "portion": "unidades",
+        "g": 36,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Banana",
+        "amount": 3,
+        "portion": "unidades",
+        "g": 42,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Barra de frutas light",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 20,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Damasco",
+        "amount": 4,
+        "portion": "unidades",
+        "g": 60,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Figo",
+        "amount": 1.5,
+        "portion": "unidade",
+        "g": 29,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Maçã",
+        "amount": 1,
+        "portion": "porção pequena",
+        "g": 20,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Uva",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 22,
+        "sub-category": "Desidratadas"
+      },
+      {
+        "item": "Abacaxi ou cajá",
+        "amount": 2.5,
+        "portion": "polpas",
+        "g": 250,
+        "sub-category": "Polpas de frutas"
+      },
+      {
+        "item": "Acerola",
+        "amount": 3,
+        "portion": "polpas",
+        "g": 300,
+        "sub-category": "Polpas de frutas"
+      },
+      {
+        "item": "Caju, grav., marac. ou umbu",
+        "amount": 2,
+        "portion": "polpas",
+        "g": 200,
+        "sub-category": "Polpas de frutas"
+      },
+      {
+        "item": "Cupuaçu ou manga",
+        "amount": 1.5,
+        "portion": "polpas",
+        "g": 150,
+        "sub-category": "Polpas de frutas"
+      },
+      {
+        "item": "Pitanga",
+        "amount": 4,
+        "portion": "polpas",
+        "g": 400,
+        "sub-category": "Polpas de frutas"
+      },
+      {
+        "item": "Abacaxi c/ hortelã",
+        "amount": 2.5,
+        "portion": "cop. peq. nivelados",
+        "g": 350,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Caldo de cana",
+        "amount": 0.5,
+        "portion": "copo duplo",
+        "g": 100,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Laranja",
+        "amount": 1,
+        "portion": "cop. dup. nivelado",
+        "g": 200,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Lar. c/ acer. ou berinjela",
+        "amount": 1,
+        "portion": "cop. dup. nivelado",
+        "g": 200,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Laranja c/ cen. ou beterraba",
+        "amount": 1,
+        "portion": "cop. peq. nivelado",
+        "g": 140,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Maracujá",
+        "amount": 3.5,
+        "portion": "cop. dup. nivelados",
+        "g": 700,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Melancia",
+        "amount": 1.5,
+        "portion": "cop. peq. nivelado",
+        "g": 210,
+        "sub-category": "Sucos caseiros sem açúcar"
+      },
+      {
+        "item": "Abacaxi ou goiaba",
+        "amount": 1,
+        "portion": "cop. peq. nivelado",
+        "g": 140,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Acerola",
+        "amount": 1.5,
+        "portion": "cop. peq. nivelado",
+        "g": 210,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Beter., cupuaçu ou tangerina",
+        "amount": 1,
+        "portion": "cop. dup. nivelado",
+        "g": 200,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Lar. c/ acerola ou limonada",
+        "amount": 1,
+        "portion": "cop. peq. nivelado",
+        "g": 140,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Mamão, manga ou morango",
+        "amount": 1,
+        "portion": "cop. peq. nivelado",
+        "g": 140,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Marac., melancia ou melão",
+        "amount": 1,
+        "portion": "cop. dup. nivelado",
+        "g": 200,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Laranja pura ou misto",
+        "amount": 0.5,
+        "portion": "copo duplo",
+        "g": 100,
+        "sub-category": "Sucos caseiros com açúcar"
+      },
+      {
+        "item": "Cranberry ou romã zero",
+        "amount": 3.5,
+        "portion": "cop. dup. nivelados",
+        "g": 700,
+        "sub-category": "Sucos industrializados"
+      },
+      {
+        "item": "Frutas, c/ açúcar",
+        "amount": 1,
+        "portion": "cop. peq. nivelado",
+        "g": 140,
+        "sub-category": "Sucos industrializados"
+      },
+      {
+        "item": "Goiaba ou caju light",
+        "amount": 2.5,
+        "portion": "cop. dup. nivelados",
+        "g": 500,
+        "sub-category": "Sucos industrializados"
+      },
+      {
+        "item": "Laranja light",
+        "amount": 2.5,
+        "portion": "cop. peq. nivelados",
+        "g": 350,
+        "sub-category": "Sucos industrializados"
+      },
+      {
+        "item": "Pêssego, manga ou uva light",
+        "amount": 2,
+        "portion": "cop. dup. nivelados",
+        "g": 400,
+        "sub-category": "Sucos industrializados"
+      },
+      {
+        "item": "Tomate",
+        "amount": 2,
+        "portion": "cop. peq. nivelados",
+        "g": 280,
+        "sub-category": "Sucos industrializados"
+      }
+    ]
+  },
+  {
+    "table": "Vegetal refogado",
+    "kcal": 50,
+    "items": [
+      {
+        "item": "Abóbora",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 40
+      },
+      {
+        "item": "Abobrinha",
+        "amount": 2.5,
+        "portion": "colh. sopa rasas",
+        "g": 50
+      },
+      {
+        "item": "Agrião",
+        "amount": 4,
+        "portion": "colh. sopa rasas",
+        "g": 68
+      },
+      {
+        "item": "Almeirão",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 80
+      },
+      {
+        "item": "Bertalha",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 50
+      },
+      {
+        "item": "Brócolis",
+        "amount": 6,
+        "portion": "colh. sopa cheias",
+        "g": 60
+      },
+      {
+        "item": "Cenoura",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 50
+      },
+      {
+        "item": "Chicória",
+        "amount": 3,
+        "portion": "colh. sopa rasas",
+        "g": 60
+      },
+      {
+        "item": "Chuchu",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 50
+      },
+      {
+        "item": "Couve",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 60
+      },
+      {
+        "item": "Espinafre",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 75
+      },
+      {
+        "item": "Jiló",
+        "amount": 1.5,
+        "portion": "colh. sopa rasa",
+        "g": 45
+      },
+      {
+        "item": "Maxixe",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 100
+      },
+      {
+        "item": "Mostarda",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 113
+      },
+      {
+        "item": "Quiabo",
+        "amount": 3,
+        "portion": "colh. sopa rasas",
+        "g": 60
+      },
+      {
+        "item": "Repolho",
+        "amount": 4.5,
+        "portion": "colh. sopa cheias",
+        "g": 81
+      },
+      {
+        "item": "Vagem",
+        "amount": 3,
+        "portion": "colh. sopa rasas",
+        "g": 45
+      }
+    ]
+  },
+  {
+    "table": "Veg. cru ou cozido*",
+    "kcal": 13,
+    "items": [
+      {
+        "item": "Abóbora kabotiá cozida",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 28
+      },
+      {
+        "item": "Abobrinha cozida",
+        "amount": 5,
+        "portion": "colh. sopa rasas",
+        "g": 75
+      },
+      {
+        "item": "Acelga crua",
+        "amount": 1,
+        "portion": "pires de chá",
+        "g": 68
+      },
+      {
+        "item": "Agrião cru",
+        "amount": 4,
+        "portion": "pires de chá",
+        "g": 70
+      },
+      {
+        "item": "Aipo cru",
+        "amount": 9,
+        "portion": "colh. sopa",
+        "g": 68
+      },
+      {
+        "item": "Alcachofra cozida",
+        "amount": 2.5,
+        "portion": "colh. sopa",
+        "g": 26
+      },
+      {
+        "item": "Alface",
+        "amount": 5,
+        "portion": "pires de chá",
+        "g": 100
+      },
+      {
+        "item": "Almeirão cru",
+        "amount": 2,
+        "portion": "pires de chá",
+        "g": 64
+      },
+      {
+        "item": "Aspargo em conserva",
+        "amount": 13,
+        "portion": "unidades",
+        "g": 98
+      },
+      {
+        "item": "Berinjela cozida",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 60
+      },
+      {
+        "item": "Beterraba cozida",
+        "amount": 3,
+        "portion": "colh. sopa rasas",
+        "g": 42
+      },
+      {
+        "item": "Beterraba crua",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 22
+      },
+      {
+        "item": "Brócolis cozido",
+        "amount": 5,
+        "portion": "colh. sopa cheias",
+        "g": 50
+      },
+      {
+        "item": "Broto de feijão cozido",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 60
+      },
+      {
+        "item": "Cebola cozida",
+        "amount": 5,
+        "portion": "fatias médias",
+        "g": 60
+      },
+      {
+        "item": "Cebola crua",
+        "amount": 3,
+        "portion": "fatias médias",
+        "g": 36
+      },
+      {
+        "item": "Cebola fermentada",
+        "amount": 7,
+        "portion": "fatias médias",
+        "g": 84
+      },
+      {
+        "item": "Cenoura cozida",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 44
+      },
+      {
+        "item": "Cenoura crua",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 33
+      },
+      {
+        "item": "Cenoura fermentada",
+        "amount": 10,
+        "portion": "colh. sopa cheias",
+        "g": 220
+      },
+      {
+        "item": "Chicória crua",
+        "amount": 3,
+        "portion": "pir. chá cheios",
+        "g": 81
+      },
+      {
+        "item": "Chuchu cozido",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 60
+      },
+      {
+        "item": "Chuchu fermentado",
+        "amount": 6,
+        "portion": "colh. sopa cheias",
+        "g": 120
+      },
+      {
+        "item": "Cogumelo em conserva",
+        "amount": 2.5,
+        "portion": "colh. sopa cheias",
+        "g": 68
+      },
+      {
+        "item": "Couve crua",
+        "amount": 2,
+        "portion": "pires de chá",
+        "g": 50
+      },
+      {
+        "item": "Couve-de-bruxelas cozida",
+        "amount": 5,
+        "portion": "unidades",
+        "g": 105
+      },
+      {
+        "item": "Couve-flor cozida",
+        "amount": 1.5,
+        "portion": "pires de café",
+        "g": 75
+      },
+      {
+        "item": "Couve-flor fermentada",
+        "amount": 1.5,
+        "portion": "pires de chá",
+        "g": 150
+      },
+      {
+        "item": "Endívia",
+        "amount": 2,
+        "portion": "xícaras de chá",
+        "g": 100
+      },
+      {
+        "item": "Escarola",
+        "amount": 7,
+        "portion": "colh. sopa cheias",
+        "g": 91
+      },
+      {
+        "item": "Espinafre",
+        "amount": 1.5,
+        "portion": "pir. chá cheio",
+        "g": 83
+      },
+      {
+        "item": "Jiló cozido",
+        "amount": 3,
+        "portion": "colh. sopa cheias",
+        "g": 51
+      },
+      {
+        "item": "Maxixe cozido",
+        "amount": 8,
+        "portion": "colh. sopa cheias",
+        "g": 200
+      },
+      {
+        "item": "Mostarda crua",
+        "amount": 7,
+        "portion": "folhas",
+        "g": 70
+      },
+      {
+        "item": "Nabo cozido",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 72
+      },
+      {
+        "item": "Nabo cru",
+        "amount": 7,
+        "portion": "colh. sopa cheias",
+        "g": 70
+      },
+      {
+        "item": "Palm. pupunha em conserva",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 40
+      },
+      {
+        "item": "Pepino",
+        "amount": 12,
+        "portion": "colh. sopa cheias",
+        "g": 120
+      },
+      {
+        "item": "Pepino fermentado",
+        "amount": 14,
+        "portion": "colh. sopa cheias",
+        "g": 140
+      },
+      {
+        "item": "Picles",
+        "amount": 8,
+        "portion": "colh. sopa cheias",
+        "g": 80
+      },
+      {
+        "item": "Pimentão cozido",
+        "amount": 8,
+        "portion": "colh. sopa cheias",
+        "g": 100
+      },
+      {
+        "item": "Pimentão cru",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 56
+      },
+      {
+        "item": "Quiabo cozido",
+        "amount": 4,
+        "portion": "colh. sopa rasas",
+        "g": 64
+      },
+      {
+        "item": "Rabanete",
+        "amount": 10,
+        "portion": "colh. sopa cheias",
+        "g": 85
+      },
+      {
+        "item": "Repolho branco cru",
+        "amount": 1,
+        "portion": "pir. chá raso",
+        "g": 60
+      },
+      {
+        "item": "Repolho cozido",
+        "amount": 1,
+        "portion": "pir. chá cheio",
+        "g": 120
+      },
+      {
+        "item": "Repolho fermentado",
+        "amount": 1,
+        "portion": "pir. chá cheio",
+        "g": 120
+      },
+      {
+        "item": "Repolho roxo cru",
+        "amount": 5,
+        "portion": "colh. sopa cheias",
+        "g": 50
+      },
+      {
+        "item": "Rúcula",
+        "amount": 5,
+        "portion": "pir. chá cheios",
+        "g": 110
+      },
+      {
+        "item": "Salada de legumes cozidos",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 30
+      },
+      {
+        "item": "Taioba cozida",
+        "amount": 9,
+        "portion": "colh. sopa cheias",
+        "g": 58
+      },
+      {
+        "item": "Tomate",
+        "amount": 5,
+        "portion": "fatias médias",
+        "g": 75
+      },
+      {
+        "item": "Vagem cozida",
+        "amount": 4,
+        "portion": "colh. sopa cheias",
+        "g": 80
+      }
+    ]
+  },
+  {
+    "table": "Castanha",
+    "kcal": 30,
+    "items": [
+      {
+        "item": "Amêndoa c/ sal",
+        "amount": 5,
+        "portion": "unidades",
+        "g": 5
+      },
+      {
+        "item": "Amendoim c/ sal",
+        "amount": 6,
+        "portion": "unidades",
+        "g": 5
+      },
+      {
+        "item": "Avelã",
+        "amount": 4,
+        "portion": "unidades",
+        "g": 4
+      },
+      {
+        "item": "Azeitona",
+        "amount": 5,
+        "portion": "unidades médias",
+        "g": 20
+      },
+      {
+        "item": "Cast. europeia cozida",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 10
+      },
+      {
+        "item": "Castanha-de-caju c/ sal",
+        "amount": 2,
+        "portion": "unidades médias",
+        "g": 5
+      },
+      {
+        "item": "Castanha-do-pará",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 4
+      },
+      {
+        "item": "Chia",
+        "amount": 0.5,
+        "portion": "colh. sopa",
+        "g": 8
+      },
+      {
+        "item": "Farinha linh. dourada",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 6
+      },
+      {
+        "item": "Farinha linh. marrom",
+        "amount": 2.5,
+        "portion": "colh. sobr. rasa",
+        "g": 15
+      },
+      {
+        "item": "Gergelim",
+        "amount": 0.5,
+        "portion": "colh. sopa",
+        "g": 5
+      },
+      {
+        "item": "Linhaça",
+        "amount": 0.5,
+        "portion": "colh. sopa",
+        "g": 8
+      },
+      {
+        "item": "Macadâmia",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 5
+      },
+      {
+        "item": "Noz",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 5
+      },
+      {
+        "item": "Pinhão cozido",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 20
+      },
+      {
+        "item": "Pistache",
+        "amount": 8,
+        "portion": "unidades",
+        "g": 5
+      },
+      {
+        "item": "Semente abób. c/ sal",
+        "amount": 0.5,
+        "portion": "colh. sopa",
+        "g": 5
+      },
+      {
+        "item": "Sem. de girassol",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 6
+      }
+    ]
+  },
+  {
+    "table": "Gordura",
+    "kcal": 45,
+    "items": [
+      {
+        "item": "Azeite de dendê",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 5
+      },
+      {
+        "item": "Azeite de oliva",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 5
+      },
+      {
+        "item": "Banha de porco",
+        "amount": 0.5,
+        "portion": "colh. sobr. rasa",
+        "g": 4
+      },
+      {
+        "item": "Chantilly",
+        "amount": 1.5,
+        "portion": "colh. sobr. rasa",
+        "g": 15
+      },
+      {
+        "item": "Creme de leite",
+        "amount": 1.5,
+        "portion": "colh. sobr. rasa",
+        "g": 21
+      },
+      {
+        "item": "Creme de leite light",
+        "amount": 2,
+        "portion": "colh. sobr. cheias",
+        "g": 28
+      },
+      {
+        "item": "Leite de coco",
+        "amount": 2,
+        "portion": "colh. sopa",
+        "g": 25
+      },
+      {
+        "item": "Leite de coco light",
+        "amount": 2.5,
+        "portion": "colh. sopa",
+        "g": 38
+      },
+      {
+        "item": "Maionese light",
+        "amount": 1.5,
+        "portion": "colh. sobr. cheia",
+        "g": 26
+      },
+      {
+        "item": "Maionese tradicional",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 17
+      },
+      {
+        "item": "Manteiga c/ sal",
+        "amount": 0.5,
+        "portion": "colh. sobr. rasa",
+        "g": 7
+      },
+      {
+        "item": "Manteiga s/ sal",
+        "amount": 0.5,
+        "portion": "colh. sobr. rasa",
+        "g": 7
+      },
+      {
+        "item": "Margarina c/ sal",
+        "amount": 0.5,
+        "portion": "colh. sobr. rasa",
+        "g": 7
+      },
+      {
+        "item": "Margarina light",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 13
+      },
+      {
+        "item": "Margarina s/ sal",
+        "amount": 0.5,
+        "portion": "colh. sobr. rasa",
+        "g": 7
+      },
+      {
+        "item": "Marshmallow",
+        "amount": 1,
+        "portion": "porção pequena",
+        "g": 15
+      },
+      {
+        "item": "Óleo de canola",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 5
+      },
+      {
+        "item": "Óleo de girassol",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 5
+      },
+      {
+        "item": "Óleo de milho",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 5
+      },
+      {
+        "item": "Óleo de soja",
+        "amount": 1,
+        "portion": "colh. sobremesa",
+        "g": 5
+      }
+    ]
+  },
+  {
+    "table": "Açúcar",
+    "kcal": 50,
+    "items": [
+      {
+        "item": "Abacaxi em calda",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 50
+      },
+      {
+        "item": "Achocolatado em pó",
+        "amount": 2,
+        "portion": "colh. sobr. cheias",
+        "g": 15
+      },
+      {
+        "item": "Achocolatado em pó light",
+        "amount": 2,
+        "portion": "colh. sobr. cheias",
+        "g": 15
+      },
+      {
+        "item": "Açúcar cristal",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 13
+      },
+      {
+        "item": "Açúcar light",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 11
+      },
+      {
+        "item": "Açúcar mascavo",
+        "amount": 3,
+        "portion": "colh. sobr. rasas",
+        "g": 15
+      },
+      {
+        "item": "Açúcar refinado",
+        "amount": 2,
+        "portion": "colh. sobr. rasas",
+        "g": 14
+      },
+      {
+        "item": "Ameixa em calda drenada",
+        "amount": 4,
+        "portion": "unidades médias",
+        "g": 32
+      },
+      {
+        "item": "Bala Dadinho®",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 12
+      },
+      {
+        "item": "Bala Toffee®",
+        "amount": 2,
+        "portion": "unidades",
+        "g": 13
+      },
+      {
+        "item": "Bala TicTac®",
+        "amount": 26,
+        "portion": "unidades",
+        "g": 13
+      },
+      {
+        "item": "Banana caramelada",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 17
+      },
+      {
+        "item": "Bananada",
+        "amount": 1,
+        "portion": "unidade pequena",
+        "g": 15
+      },
+      {
+        "item": "Beijinho",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 14
+      },
+      {
+        "item": "Bomba de chocolate",
+        "amount": 1,
+        "portion": "unidade pequena",
+        "g": 30
+      },
+      {
+        "item": "Bombom Chokito®",
+        "amount": 0.5,
+        "portion": "unidade pequena",
+        "g": 10
+      },
+      {
+        "item": "Bombom Prestígio®",
+        "amount": 0.5,
+        "portion": "unidade pequena",
+        "g": 9
+      },
+      {
+        "item": "Bombom Sonho de Valsa®",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 11
+      },
+      {
+        "item": "Brigadeirão",
+        "amount": 0.5,
+        "portion": "fatia média",
+        "g": 18
+      },
+      {
+        "item": "Brigadeiro",
+        "amount": 1,
+        "portion": "unidade média",
+        "g": 15
+      },
+      {
+        "item": "Cajuzinho",
+        "amount": 1,
+        "portion": "unidade pequena",
+        "g": 12
+      },
+      {
+        "item": "Cereja em conserva",
+        "amount": 7,
+        "portion": "unidades",
+        "g": 35
+      },
+      {
+        "item": "Choc. ao leite trad. ou diet",
+        "amount": 2,
+        "portion": "quadradinhos",
+        "g": 10
+      },
+      {
+        "item": "Chocolate ao leite light",
+        "amount": 3,
+        "portion": "quadradinhos",
+        "g": 15
+      },
+      {
+        "item": "Chocolate Bis®",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 8
+      },
+      {
+        "item": "Chocolate branco",
+        "amount": 2,
+        "portion": "quadradinhos",
+        "g": 10
+      },
+      {
+        "item": "Chocolate M&M®",
+        "amount": 1,
+        "portion": "colher sopa",
+        "g": 13
+      },
+      {
+        "item": "Chocolate meio amargo",
+        "amount": 2,
+        "portion": "quadradinhos",
+        "g": 10
+      },
+      {
+        "item": "Chocolate Amandita®",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 8
+      },
+      {
+        "item": "Doce de abóbora cremoso",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 20
+      },
+      {
+        "item": "Doce de banana em calda",
+        "amount": 2,
+        "portion": "colh. sopa rasas",
+        "g": 70
+      },
+      {
+        "item": "Doce de coco",
+        "amount": 0.5,
+        "portion": "colh. sopa cheia",
+        "g": 10
+      },
+      {
+        "item": "Doce de jaca em calda",
+        "amount": 0.5,
+        "portion": "colh. sopa rasa",
+        "g": 20
+      },
+      {
+        "item": "Doce de leite cremoso",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 15
+      },
+      {
+        "item": "Doce de mamão verde",
+        "amount": 2,
+        "portion": "colh. chá cheias",
+        "g": 24
+      },
+      {
+        "item": "Doce de nozes",
+        "amount": 1,
+        "portion": "colh. chá rasa",
+        "g": 10
+      },
+      {
+        "item": "Figo em calda",
+        "amount": 1,
+        "portion": "porção pequena",
+        "g": 30
+      },
+      {
+        "item": "Flan diet c/ leite desnatado",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 110
+      },
+      {
+        "item": "Flan c/ calda",
+        "amount": 1.5,
+        "portion": "colh. sopa cheia",
+        "g": 45
+      },
+      {
+        "item": "Frozen iogurte",
+        "amount": 0.5,
+        "portion": "bola",
+        "g": 30
+      },
+      {
+        "item": "Frozen iogurte light",
+        "amount": 1.5,
+        "portion": "bola",
+        "g": 90
+      },
+      {
+        "item": "Frutas cristalizadas",
+        "amount": 0.5,
+        "portion": "colh. sopa",
+        "g": 15
+      },
+      {
+        "item": "Gelatina preparada",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 70
+      },
+      {
+        "item": "Geleia de fruta",
+        "amount": 2,
+        "portion": "colh. chá cheias",
+        "g": 20
+      },
+      {
+        "item": "Geleia diet",
+        "amount": 2,
+        "portion": "colh. sobr. cheias",
+        "g": 48
+      },
+      {
+        "item": "Glicose de milho",
+        "amount": 1,
+        "portion": "colh. sopa",
+        "g": 19
+      },
+      {
+        "item": "Goiabada",
+        "amount": 0.5,
+        "portion": "fatia fina",
+        "g": 15
+      },
+      {
+        "item": "Leite condensado",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 17
+      },
+      {
+        "item": "Leite condensado light",
+        "amount": 1,
+        "portion": "colh. sopa rasa",
+        "g": 18
+      },
+      {
+        "item": "Manjar c/ ameixa em calda",
+        "amount": 1,
+        "portion": "fatia média",
+        "g": 36
+      },
+      {
+        "item": "Maria mole",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 20
+      },
+      {
+        "item": "Marmelada",
+        "amount": 1,
+        "portion": "fatia bem fina",
+        "g": 20
+      },
+      {
+        "item": "Marrom glacê",
+        "amount": 1,
+        "portion": "fatia bem fina",
+        "g": 20
+      },
+      {
+        "item": "Mel ou melado",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 15
+      },
+      {
+        "item": "Mousse",
+        "amount": 1,
+        "portion": "colh. sobr. cheia",
+        "g": 18
+      },
+      {
+        "item": "Ovomaltine®",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 14
+      },
+      {
+        "item": "Paçoca de amendoim",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 15
+      },
+      {
+        "item": "Pavê",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 10
+      },
+      {
+        "item": "Pé-de-moleque",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 10
+      },
+      {
+        "item": "Pêssego em calda",
+        "amount": 1.5,
+        "portion": "unidade",
+        "g": 90
+      },
+      {
+        "item": "Pêssego em calda light",
+        "amount": 4,
+        "portion": "unidades",
+        "g": 240
+      },
+      {
+        "item": "Picolé ao leite (cremoso)",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 33
+      },
+      {
+        "item": "Picolé de fruta",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 33
+      },
+      {
+        "item": "Picolé de fruta zero",
+        "amount": 1,
+        "portion": "unidade",
+        "g": 65
+      },
+      {
+        "item": "Pudim",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 24
+      },
+      {
+        "item": "Pud. diet c/ leite desnatado",
+        "amount": 1,
+        "portion": "porção",
+        "g": 120
+      },
+      {
+        "item": "Pud. diet c/ leite integral",
+        "amount": 0.5,
+        "portion": "porção",
+        "g": 60
+      },
+      {
+        "item": "Quindim",
+        "amount": 0.5,
+        "portion": "unidade pequena",
+        "g": 10
+      },
+      {
+        "item": "Rapadura",
+        "amount": 1,
+        "portion": "colh. sobr. rasa",
+        "g": 15
+      },
+      {
+        "item": "Sobremesa tipo Danette®",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 55
+      },
+      {
+        "item": "Sorvete",
+        "amount": 1,
+        "portion": "colh. sopa cheia",
+        "g": 26
+      },
+      {
+        "item": "Sorvete light",
+        "amount": 2,
+        "portion": "colh. sopa cheias",
+        "g": 52
+      },
+      {
+        "item": "Suspiro",
+        "amount": 2,
+        "portion": "unidades pequenas",
+        "g": 12
+      }
+    ]
+  },
+  {
+    "table": "Sopa",
+    "kcal": 250,
+    "items": [
+      {
+        "item": "Caldo verde",
+        "amount": 3,
+        "portion": "conch. méd. cheias",
+        "g": 390,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Canja de galinha",
+        "amount": 2.5,
+        "portion": "conch. méd. cheias",
+        "g": 325,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Creme de tomate",
+        "amount": 5,
+        "portion": "conch. méd. cheias",
+        "g": 650,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Carne e legumes",
+        "amount": 2.5,
+        "portion": "conch. méd. cheias",
+        "g": 325,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Ervilha",
+        "amount": 2,
+        "portion": "conch. méd. cheias",
+        "g": 260,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Ervilha e bacon",
+        "amount": 1.5,
+        "portion": "conch. méd. cheia",
+        "g": 195,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Feijão branco",
+        "amount": 2.5,
+        "portion": "conch. méd. cheias",
+        "g": 325,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Feijão e macarrão",
+        "amount": 1.5,
+        "portion": "conch. méd. cheia",
+        "g": 195,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Legumes c/ batata",
+        "amount": 3.5,
+        "portion": "conch. méd. cheias",
+        "g": 455,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Legumes c/ macarrão",
+        "amount": 6,
+        "portion": "conch. méd. cheias",
+        "g": 780,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Leg, carne e macarrão",
+        "amount": 3,
+        "portion": "conch. méd. cheias",
+        "g": 390,
+        "sub-category": "Caseiras"
+      },
+      {
+        "item": "Canja de galinha",
+        "amount": 6,
+        "portion": "conch. méd. cheias",
+        "g": 780,
+        "sub-category": "Industrializadas"
+      },
+      {
+        "item": "Creme de ervilha c/ bacon",
+        "amount": 6,
+        "portion": "conch. méd. cheias",
+        "g": 780,
+        "sub-category": "Industrializadas"
+      },
+      {
+        "item": "Creme de queijo",
+        "amount": 3,
+        "portion": "conch. méd. cheias",
+        "g": 390,
+        "sub-category": "Industrializadas"
+      },
+      {
+        "item": "Creme de vegetais",
+        "amount": 8,
+        "portion": "conch. méd. cheias",
+        "g": 1040,
+        "sub-category": "Industrializadas"
+      },
+      {
+        "item": "Leg, carne e macarrão",
+        "amount": 5.5,
+        "portion": "conch. méd. cheias",
+        "g": 715,
+        "sub-category": "Industrializadas"
+      },
+      {
+        "item": "Ervilha, macar. e carne",
+        "amount": 6,
+        "portion": "conch. méd. cheias",
+        "g": 780,
+        "sub-category": "Industrializadas"
+      },
+      {
+        "item": "Galinha, mac. e legumes",
+        "amount": 5,
+        "portion": "conch. méd. cheias",
+        "g": 650,
+        "sub-category": "Industrializadas"
+      }
+    ]
+  },
+  {
+    "table": "Embutido",
+    "kcal": 60,
+    "items": [
+      {
+        "item": "Apres. ou pres. c/ capa",
+        "amount": 1.5,
+        "portion": "fatia média",
+        "g": 45
+      },
+      {
+        "item": "Blanquet de peru",
+        "amount": 6,
+        "portion": "fatias",
+        "g": 45
+      },
+      {
+        "item": "Blanq. peru light",
+        "amount": 8,
+        "portion": "fatias",
+        "g": 60
+      },
+      {
+        "item": "Copa",
+        "amount": 2,
+        "portion": "fatias médias",
+        "g": 18
+      },
+      {
+        "item": "Mortadela",
+        "amount": 1.5,
+        "portion": "fatias finas",
+        "g": 23
+      },
+      {
+        "item": "Mortadela de ave",
+        "amount": 2,
+        "portion": "fatias finas",
+        "g": 20
+      },
+      {
+        "item": "Presunto de ave",
+        "amount": 4,
+        "portion": "fatias médias",
+        "g": 48
+      },
+      {
+        "item": "Peito de ave light",
+        "amount": 5,
+        "portion": "fatias médias",
+        "g": 60
+      },
+      {
+        "item": "Presunto s/ capa",
+        "amount": 2,
+        "portion": "fatias médias",
+        "g": 60
+      },
+      {
+        "item": "Salame",
+        "amount": 1,
+        "portion": "fatia fina",
+        "g": 15
+      },
+      {
+        "item": "Salame hamburguês",
+        "amount": 3,
+        "portion": "fatias médias",
+        "g": 15
+      },
+      {
+        "item": "Salaminho",
+        "amount": 4,
+        "portion": "fatias médias",
+        "g": 20
+      },
+      {
+        "item": "Salsicha de peru",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 25
+      },
+      {
+        "item": "Salsicha em lata",
+        "amount": 0.5,
+        "portion": "unidade",
+        "g": 18
+      },
+      {
+        "item": "Salsicha hot dog",
+        "amount": 0.5,
+        "portion": "unidade grande",
+        "g": 25
+      }
+    ]
+  },
+  {
+    "table": "Bebida",
+    "kcal": 120,
+    "items": [
+      {
+        "item": "Água tônica",
+        "amount": 2,
+        "portion": "copo dup. nivelados",
+        "g": 400
+      },
+      {
+        "item": "Cachaça",
+        "amount": 1,
+        "portion": "dose",
+        "g": 50
+      },
+      {
+        "item": "Café c/ açúcar",
+        "amount": 2,
+        "portion": "xíc. café cheias",
+        "g": 152
+      },
+      {
+        "item": "Caipirinha",
+        "amount": 1,
+        "portion": "dose",
+        "g": 50
+      },
+      {
+        "item": "Cappuccino em pó",
+        "amount": 3,
+        "portion": "colh. sobr. cheias",
+        "g": 30
+      },
+      {
+        "item": "Cappuccino preparado",
+        "amount": 1,
+        "portion": "xíc. chá rasa",
+        "g": 140
+      },
+      {
+        "item": "Cerveja light",
+        "amount": 1.5,
+        "portion": "tulipa",
+        "g": 435
+      },
+      {
+        "item": "Cerveja pilsen ou chope",
+        "amount": 1,
+        "portion": "tulipa",
+        "g": 290
+      },
+      {
+        "item": "Cerveja preta",
+        "amount": 1,
+        "portion": "copo dup. nivelado",
+        "g": 200
+      },
+      {
+        "item": "Cerveja s/ álcool",
+        "amount": 1.5,
+        "portion": "tulipa",
+        "g": 435
+      },
+      {
+        "item": "Chá industrializado",
+        "amount": 1.5,
+        "portion": "copo dup. nivelado",
+        "g": 300
+      },
+      {
+        "item": "Conhaque",
+        "amount": 1,
+        "portion": "dose",
+        "g": 50
+      },
+      {
+        "item": "Licor",
+        "amount": 1,
+        "portion": "cálice",
+        "g": 40
+      },
+      {
+        "item": "Refresco em pó",
+        "amount": 2,
+        "portion": "copo dup. nivelados",
+        "g": 400
+      },
+      {
+        "item": "Refr. cola, guaraná ou limão",
+        "amount": 1.5,
+        "portion": "copo dup. nivelado",
+        "g": 300
+      },
+      {
+        "item": "Refr. laranja ou tubaína",
+        "amount": 2,
+        "portion": "copo peq. nivelados",
+        "g": 272
+      },
+      {
+        "item": "Uísque",
+        "amount": 1,
+        "portion": "dose",
+        "g": 50
+      },
+      {
+        "item": "Vermouth doce",
+        "amount": 1,
+        "portion": "xíc. café cheia",
+        "g": 76
+      },
+      {
+        "item": "Vinho",
+        "amount": 1,
+        "portion": "taça",
+        "g": 150
+      }
+    ]
+  }
+]
