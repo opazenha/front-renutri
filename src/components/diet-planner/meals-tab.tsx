@@ -149,13 +149,13 @@ const AddDietEntryForm = ({ onAddEntry }: { onAddEntry: (entry: DietFoodItem) =>
   };
 
   return (
-    <Card className="mb-6 shadow-md">
-      <CardHeader>
-        <CardTitle>Adicionar Item à Dieta</CardTitle>
-        <CardDescription>Preencha os detalhes abaixo para adicionar um alimento ao plano.</CardDescription>
+    <Card className="mb-4 shadow-md">
+      <CardHeader className="py-3 px-4 sm:py-4 sm:px-6">
+        <CardTitle className="text-lg sm:text-xl">Adicionar Item à Dieta</CardTitle>
+        <CardDescription className="text-xs">Preencha os detalhes abaixo para adicionar um alimento ao plano.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="space-y-3 py-3 px-4 sm:py-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <Label htmlFor="mealReference">Referência da Refeição</Label>
             <Input id="mealReference" value={mealReference} onChange={e => setMealReference(e.target.value)} placeholder="Ex: Café da Manhã" />
@@ -206,7 +206,7 @@ const AddDietEntryForm = ({ onAddEntry }: { onAddEntry: (entry: DietFoodItem) =>
           <Input id="quantity" type="number" value={quantity} onChange={e => setQuantity(parseInt(e.target.value) || 0)} className="w-full md:w-32" />
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="py-3 px-4 sm:py-4 sm:px-6">
         <Button onClick={handleAddEntry} disabled={!selectedTacoItemId || !mealReference} className="w-full md:w-auto">
           <PlusCircle className="h-4 w-4 mr-2" />Adicionar Item
         </Button>
@@ -234,8 +234,8 @@ const macroChartConfig = {
 
 const micronutrientChartConfig = {
   value: { label: "Valor" }, // Generic label for Y-axis
-  planned: { label: "Planejado", color: COLORS.calcium }, // Example color, can be different per nutrient
-  target: { label: "Meta", color: COLORS.iron }, // Example color
+  Planejado: { label: "Planejado", color: COLORS.calcium }, // Example color, can be different per nutrient
+  Meta: { label: "Meta", color: COLORS.iron }, // Example color
 } satisfies ChartConfig;
 
 
@@ -407,9 +407,9 @@ export function MealsTab() {
   }
 
   return (
-    <div className="flex flex-col w-full h-full p-4 md:p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 w-full gap-2">
-        <h2 className="text-2xl font-semibold">Planejamento de Refeições</h2>
+    <div className="flex flex-col w-full h-full p-2 sm:p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 w-full gap-2">
+        <h2 className="text-xl sm:text-2xl font-semibold">Planejamento de Refeições</h2>
         <div className="flex items-center gap-2 flex-wrap">
           <Select onValueChange={val => { const p = patientsList.find(p => p.id === val); if (p) setSelectedPatient(p); }} value={selectedPatient?.id}>
             <SelectTrigger className="w-full sm:w-48 h-9 text-xs sm:text-sm"><SelectValue placeholder="Selecione paciente" /></SelectTrigger>
@@ -422,31 +422,33 @@ export function MealsTab() {
           <Button size="sm" className="h-9 text-xs sm:text-sm"><Save className="h-3.5 w-3.5 mr-1.5" />Salvar Plano</Button>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-6 w-full flex-1">
+      <div className="flex flex-col lg:flex-row gap-4 w-full flex-1">
         <div className="w-full lg:w-[68%]">
-          <ScrollArea className="h-[calc(100vh-280px)] pr-3"> 
+          <ScrollArea className="h-[calc(100vh-320px)] pr-2 sm:pr-3"> 
             <AddDietEntryForm onAddEntry={addDietEntry} />
 
             {dietEntries.length > 0 && (
-              <Card className="mt-6">
-                <CardHeader><CardTitle>Itens Adicionados à Dieta</CardTitle></CardHeader>
-                <CardContent className="space-y-3">
+              <Card className="mt-4">
+                <CardHeader className="py-3 px-4 sm:py-4 sm:px-6">
+                    <CardTitle className="text-lg sm:text-xl">Itens Adicionados à Dieta</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 p-2 sm:p-3">
                   {dietEntries.map(entry => (
-                    <div key={entry.id} className="p-3 border rounded-md shadow-sm flex justify-between items-start">
+                    <div key={entry.id} className="p-2 sm:p-3 border rounded-md shadow-sm flex justify-between items-start">
                       <div>
-                        <p className="font-semibold">{entry.mealReference} <span className="text-sm text-muted-foreground">({entry.mealTime})</span></p>
-                        <p className="text-sm">
+                        <p className="font-semibold text-sm sm:text-base">{entry.mealReference} <span className="text-xs sm:text-sm text-muted-foreground">({entry.mealTime})</span></p>
+                        <p className="text-xs sm:text-sm">
                           {entry.tacoItem.alimento_descricao} - {entry.quantity}g
                           {entry.alternativeTacoItem && (
-                            <span className="text-xs text-muted-foreground"> (OU {entry.alternativeTacoItem.alimento_descricao} - {entry.quantity}g)</span>
+                            <span className="text-[10px] sm:text-xs text-muted-foreground"> (OU {entry.alternativeTacoItem.alimento_descricao} - {entry.quantity}g)</span>
                           )}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           Kcal: {entry.energy.toFixed(0)}, Prot: {entry.protein.toFixed(1)}g, Carb: {entry.carbs.toFixed(1)}g, Gord: {entry.fat.toFixed(1)}g, Fibra: {entry.fiber.toFixed(1)}g
                         </p>
                       </div>
-                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => removeDietEntry(entry.id)}>
-                        <Trash2 className="h-4 w-4" />
+                      <Button variant="ghost" size="icon" className="text-destructive h-7 w-7 sm:h-8 sm:w-8" onClick={() => removeDietEntry(entry.id)}>
+                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   ))}
@@ -468,24 +470,24 @@ export function MealsTab() {
         </div>
       </div>
       
-      <Separator className="my-8" />
+      <Separator className="my-4 sm:my-6" />
 
       <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl">Resumo do Plano Alimentar Diário</CardTitle>
+        <CardHeader className="py-3 px-4 sm:py-4 sm:px-6">
+          <CardTitle className="text-lg sm:text-xl">Resumo do Plano Alimentar Diário</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 p-3 sm:p-4">
             {/* Macronutrientes Section */}
             <div>
-                <h3 className="text-lg font-semibold mb-3 text-center">Macronutrientes</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_2fr] gap-6 items-center">
-                    <div className="h-[250px] w-full">
+                <h3 className="text-md sm:text-lg font-semibold mb-2 text-center">Macronutrientes</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_2fr] gap-4 items-center">
+                    <div className="h-[200px] sm:h-[250px] w-full">
                         {macroCaloricDistribution.length > 0 ? (
                         <ChartContainer config={macroChartConfig} className="mx-auto aspect-square h-full">
                             <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <ChartTooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
-                                <Pie data={macroCaloricDistribution} dataKey="kcal" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, kcal }) => `${name.substring(0,4)}: ${(totals.energy > 0 ? (kcal / totals.energy * 100) : 0).toFixed(0)}%`} fontSize={10} >
+                                <Pie data={macroCaloricDistribution} dataKey="kcal" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={({ name, kcal }) => `${name.substring(0,4)}: ${(totals.energy > 0 ? (kcal / totals.energy * 100) : 0).toFixed(0)}%`} fontSize={9} >
                                 {macroCaloricDistribution.map((entry) => (
                                     <Cell key={entry.name} fill={entry.fill} />
                                 ))}
@@ -496,19 +498,19 @@ export function MealsTab() {
                         </ChartContainer>
                         ) : <p className="text-center text-muted-foreground py-10">Adicione alimentos para ver a distribuição de macronutrientes.</p>}
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {nutrientProgress.map(item => (
                         <Card key={item.name} className="bg-card/70">
-                            <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm flex items-center justify-between">
+                            <CardHeader className="pb-1 pt-2 px-3">
+                            <CardTitle className="text-xs sm:text-sm flex items-center justify-between">
                                 <span>{item.name}</span>
-                                <span className="text-xs text-muted-foreground">Meta: {item.target.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
+                                <span className="text-[10px] sm:text-xs text-muted-foreground">Meta: {item.target.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
                             </CardTitle>
                             </CardHeader>
-                            <CardContent className="px-4 pb-3">
+                            <CardContent className="px-3 pb-2">
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-lg font-bold text-primary">{item.planned.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
-                                <span className={`text-xs font-medium ${item.planned > item.target ? 'text-red-500' : 'text-green-600'}`}>
+                                <span className="text-md sm:text-lg font-bold text-primary">{item.planned.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
+                                <span className={`text-[10px] sm:text-xs font-medium ${item.planned > item.target ? 'text-red-500' : 'text-green-600'}`}>
                                     {((item.target > 0 ? item.planned / item.target : 0) * 100).toFixed(0)}% da meta
                                 </span>
                             </div>
@@ -517,28 +519,28 @@ export function MealsTab() {
                         </Card>
                         ))}
                         <Card className="bg-card/70">
-                            <CardHeader className="pb-1 pt-3 px-4"><CardTitle className="text-sm">Fibras (g)</CardTitle></CardHeader>
-                            <CardContent className="px-4 pb-3">
-                                <p className="text-lg font-bold text-primary">{totals.fiber.toFixed(1)}g</p>
-                                <p className="text-xs text-muted-foreground">(Meta de fibras não definida no plano)</p>
+                            <CardHeader className="pb-1 pt-2 px-3"><CardTitle className="text-xs sm:text-sm">Fibras (g)</CardTitle></CardHeader>
+                            <CardContent className="px-3 pb-2">
+                                <p className="text-md sm:text-lg font-bold text-primary">{totals.fiber.toFixed(1)}g</p>
+                                <p className="text-[10px] sm:text-xs text-muted-foreground">(Meta de fibras não definida no plano)</p>
                             </CardContent>
                         </Card>
                     </div>
                 </div>
-                 <p className="text-center text-sm mt-2">Total Energia Planejada: <strong>{totals.energy.toFixed(0)} kcal</strong></p>
+                 <p className="text-center text-xs sm:text-sm mt-2">Total Energia Planejada: <strong>{totals.energy.toFixed(0)} kcal</strong></p>
             </div>
 
-            <Separator className="my-6" />
+            <Separator className="my-4" />
 
             {/* Micronutrientes Section */}
             <div>
-                <h3 className="text-lg font-semibold mb-3 text-center">Micronutrientes (Exemplos)</h3>
+                <h3 className="text-md sm:text-lg font-semibold mb-2 text-center">Micronutrientes (Exemplos)</h3>
                 {chartableMicronutrientData.length > 0 ? (
-                <ChartContainer config={micronutrientChartConfig} className="h-[300px] w-full">
-                    <BarChart data={chartableMicronutrientData} layout="horizontal" margin={{ left: 10, right:10 }}>
+                <ChartContainer config={micronutrientChartConfig} className="h-[250px] sm:h-[300px] w-full">
+                    <BarChart data={chartableMicronutrientData} layout="horizontal" margin={{ left: 5, right:5 }}>
                         <CartesianGrid vertical={false} />
-                        <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} angle={-25} textAnchor="end" height={60} interval={0} />
-                        <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} angle={-20} textAnchor="end" height={50} interval={0} className="text-[10px] sm:text-xs"/>
+                        <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-[10px] sm:text-xs" />
                         <ChartTooltip content={<ChartTooltipContent />} />
                         <ChartLegend content={<ChartLegendContent />} />
                         <Bar dataKey="Planejado" radius={4}>
@@ -617,3 +619,4 @@ export function MealsTab() {
     </div>
   );
 }
+
