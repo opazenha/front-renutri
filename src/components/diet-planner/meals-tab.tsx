@@ -6,15 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Trash2, Save, Copy, PieChart as ChartPieIcon, Target as TargetIcon, TrendingUp, TrendingDown, CircleDot, Lightbulb, Loader2 } from 'lucide-react';
+import { PlusCircle, Trash2, Save, Copy, PieChart as ChartPieIcon, Lightbulb, Loader2, BarChartHorizontal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { PatientSummarySidebar } from './patient-summary-sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { tacoData } from '@/lib/data/taco-data';
+import { tacoData } from '@/lib/data/taco-data'; 
 import type { TacoItem } from '@/types';
 import { Progress } from '@/components/ui/progress';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend as RechartsLegend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend as RechartsLegend } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
@@ -219,6 +219,10 @@ const COLORS = {
   protein: 'hsl(var(--chart-1))',
   carbs: 'hsl(var(--chart-2))',
   fat: 'hsl(var(--chart-3))',
+  fiber: 'hsl(var(--chart-4))', 
+  calcium: 'hsl(var(--chart-1))',
+  iron: 'hsl(var(--chart-2))',
+  vitC: 'hsl(var(--chart-3))',
 };
 
 const macroChartConfig = {
@@ -228,14 +232,19 @@ const macroChartConfig = {
   gorduras: { label: "Gorduras", color: COLORS.fat },
 } satisfies ChartConfig;
 
+const micronutrientChartConfig = {
+  value: { label: "Valor" }, // Generic label for Y-axis
+  planned: { label: "Planejado", color: COLORS.calcium }, // Example color, can be different per nutrient
+  target: { label: "Meta", color: COLORS.iron }, // Example color
+} satisfies ChartConfig;
+
 
 export function MealsTab() {
   const [dietEntries, setDietEntries] = useState<DietFoodItem[]>([]);
-  const patientsList = [ mockSelectedPatient ]; // Simplified for now
+  const patientsList = [ mockSelectedPatient ]; 
   const [selectedPatient, setSelectedPatient] = useState<(typeof mockSelectedPatient) | null>(patientsList[0]);
   const { toast } = useToast();
 
-  // AI Suggestion Dialog State
   const [isSuggestionDialogOpen, setIsSuggestionDialogOpen] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<SuggestDietPlanOutput | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -286,11 +295,26 @@ export function MealsTab() {
 
 
   const nutrientProgress = [
-    { name: "Energia (Kcal)", planned: totals.energy, target: targetEnergy, unit: "kcal" },
-    { name: "Proteínas (g)", planned: totals.protein, target: targetProtein, unit: "g" },
-    { name: "Carboidratos (g)", planned: totals.carbs, target: targetCarbs, unit: "g" },
-    { name: "Gorduras (g)", planned: totals.fat, target: targetFat, unit: "g" },
+    { name: "Energia (Kcal)", planned: totals.energy, target: targetEnergy, unit: "kcal", color: "bg-sky-500" },
+    { name: "Proteínas (g)", planned: totals.protein, target: targetProtein, unit: "g", color: COLORS.protein.replace('hsl(var(--chart-1))', 'bg-[hsl(var(--chart-1))]') }, // Using tailwind bg
+    { name: "Carboidratos (g)", planned: totals.carbs, target: targetCarbs, unit: "g", color: COLORS.carbs.replace('hsl(var(--chart-2))', 'bg-[hsl(var(--chart-2))]') },
+    { name: "Gorduras (g)", planned: totals.fat, target: targetFat, unit: "g", color: COLORS.fat.replace('hsl(var(--chart-3))', 'bg-[hsl(var(--chart-3))]') },
   ];
+
+  const mockMicronutrientData = [
+    { name: 'Cálcio', planned: dietEntries.reduce((sum, item) => sum + (item.tacoItem.calcio_mg || 0) * (item.quantity/100) ,0), target: 1000, unit: 'mg', color: COLORS.calcium },
+    { name: 'Ferro', planned: dietEntries.reduce((sum, item) => sum + (item.tacoItem.ferro_mg || 0) * (item.quantity/100) ,0), target: 18, unit: 'mg', color: COLORS.iron },
+    { name: 'Vitamina C', planned: dietEntries.reduce((sum, item) => sum + (item.tacoItem.vitamina_c_mg || 0) * (item.quantity/100) ,0), target: 90, unit: 'mg', color: COLORS.vitC },
+  ];
+
+  const chartableMicronutrientData = mockMicronutrientData.map(micro => ({
+    name: `${micro.name} (${micro.unit})`,
+    Planejado: parseFloat(micro.planned.toFixed(1)),
+    Meta: micro.target,
+    fillPlanned: micro.color, // Color for 'Planejado' bar
+    fillTarget: 'hsl(var(--muted))' // A neutral color for 'Meta' bar
+  }));
+
 
   const handleRequestAISuggestion = async (isRetry = false) => {
     if (!selectedPatient || !currentPlan) {
@@ -299,9 +323,9 @@ export function MealsTab() {
     }
     setAiLoading(true);
     setAiError(null);
-    if (!isSuggestionDialogOpen) setIsSuggestionDialogOpen(true); // Open dialog if not already open
+    if (!isSuggestionDialogOpen) setIsSuggestionDialogOpen(true); 
 
-    const patientAge = selectedPatient.dob ? new Date().getFullYear() - new Date(selectedPatient.dob).getFullYear() : 30; // Fallback age
+    const patientAge = selectedPatient.dob ? new Date().getFullYear() - new Date(selectedPatient.dob).getFullYear() : 30; 
 
     const patientDataForAI: SuggestDietPlanInput = {
       age: patientAge,
@@ -321,11 +345,10 @@ export function MealsTab() {
     try {
       const suggestion = await getAIDietSuggestion(patientDataForAI);
       setAiSuggestion(suggestion);
-      setAiFeedback(""); // Clear feedback after successful request
+      setAiFeedback(""); 
     } catch (error) {
       console.error("AI Suggestion Error:", error);
       setAiError("Falha ao obter sugestão da IA. Tente novamente.");
-      // Don't close dialog on error, allow retry
     } finally {
       setAiLoading(false);
     }
@@ -401,7 +424,7 @@ export function MealsTab() {
       </div>
       <div className="flex flex-col lg:flex-row gap-6 w-full flex-1">
         <div className="w-full lg:w-[68%]">
-          <ScrollArea className="h-[calc(100vh-280px)] pr-3"> {/* Adjusted height */}
+          <ScrollArea className="h-[calc(100vh-280px)] pr-3"> 
             <AddDietEntryForm onAddEntry={addDietEntry} />
 
             {dietEntries.length > 0 && (
@@ -451,63 +474,92 @@ export function MealsTab() {
         <CardHeader>
           <CardTitle className="text-xl">Resumo do Plano Alimentar Diário</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          <div>
-            <h3 className="text-lg font-semibold mb-2 text-center">Distribuição Calórica de Macronutrientes (Planejado)</h3>
-            {macroCaloricDistribution.length > 0 ? (
-              <ChartContainer config={macroChartConfig} className="mx-auto aspect-square h-[250px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <ChartTooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
-                    <Pie data={macroCaloricDistribution} dataKey="kcal" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, kcal }) => `${name.substring(0,4)}: ${(kcal / totals.energy * 100).toFixed(0)}%`} fontSize={10} >
-                      {macroCaloricDistribution.map((entry) => (
-                        <Cell key={entry.name} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <RechartsLegend content={({ payload }) => <ChartLegendContent payload={payload} nameKey="name" />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            ) : <p className="text-center text-muted-foreground py-10">Adicione alimentos para ver a distribuição.</p>}
-             <div className="mt-4 text-center text-sm">
-                <p>Total Energia Planejada: <strong>{totals.energy.toFixed(0)} kcal</strong></p>
+        <CardContent className="space-y-6">
+            {/* Macronutrientes Section */}
+            <div>
+                <h3 className="text-lg font-semibold mb-3 text-center">Macronutrientes</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_2fr] gap-6 items-center">
+                    <div className="h-[250px] w-full">
+                        {macroCaloricDistribution.length > 0 ? (
+                        <ChartContainer config={macroChartConfig} className="mx-auto aspect-square h-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <ChartTooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
+                                <Pie data={macroCaloricDistribution} dataKey="kcal" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, kcal }) => `${name.substring(0,4)}: ${(totals.energy > 0 ? (kcal / totals.energy * 100) : 0).toFixed(0)}%`} fontSize={10} >
+                                {macroCaloricDistribution.map((entry) => (
+                                    <Cell key={entry.name} fill={entry.fill} />
+                                ))}
+                                </Pie>
+                                <RechartsLegend content={({ payload }) => <ChartLegendContent payload={payload} nameKey="name" />} />
+                            </PieChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
+                        ) : <p className="text-center text-muted-foreground py-10">Adicione alimentos para ver a distribuição de macronutrientes.</p>}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {nutrientProgress.map(item => (
+                        <Card key={item.name} className="bg-card/70">
+                            <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm flex items-center justify-between">
+                                <span>{item.name}</span>
+                                <span className="text-xs text-muted-foreground">Meta: {item.target.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
+                            </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4 pb-3">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="text-lg font-bold text-primary">{item.planned.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
+                                <span className={`text-xs font-medium ${item.planned > item.target ? 'text-red-500' : 'text-green-600'}`}>
+                                    {((item.target > 0 ? item.planned / item.target : 0) * 100).toFixed(0)}% da meta
+                                </span>
+                            </div>
+                            <Progress value={item.target > 0 ? (item.planned / item.target) * 100 : 0} className="h-2" indicatorClassName={item.color} />
+                            </CardContent>
+                        </Card>
+                        ))}
+                        <Card className="bg-card/70">
+                            <CardHeader className="pb-1 pt-3 px-4"><CardTitle className="text-sm">Fibras (g)</CardTitle></CardHeader>
+                            <CardContent className="px-4 pb-3">
+                                <p className="text-lg font-bold text-primary">{totals.fiber.toFixed(1)}g</p>
+                                <p className="text-xs text-muted-foreground">(Meta de fibras não definida no plano)</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+                 <p className="text-center text-sm mt-2">Total Energia Planejada: <strong>{totals.energy.toFixed(0)} kcal</strong></p>
             </div>
-          </div>
-          <div className="space-y-4">
-             <h3 className="text-lg font-semibold mb-2 text-center">Comparativo: Planejado vs. Meta Diária</h3>
-            {nutrientProgress.map(item => (
-              <Card key={item.name} className="bg-muted/30">
-                <CardHeader className="pb-1 pt-3 px-4">
-                  <CardTitle className="text-sm flex items-center justify-between">
-                    <span>{item.name}</span>
-                    <span className="text-xs text-muted-foreground">Meta: {item.target.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-4 pb-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-lg font-bold text-primary">{item.planned.toFixed(item.unit === "kcal" ? 0 : 1)}{item.unit}</span>
-                     <span className={`text-xs font-medium ${item.planned > item.target ? 'text-red-500' : 'text-green-600'}`}>
-                        {((item.planned / (item.target || 1)) * 100).toFixed(0)}% da meta
-                    </span>
-                  </div>
-                  <Progress value={item.target > 0 ? (item.planned / item.target) * 100 : 0} className="h-2" />
-                </CardContent>
-              </Card>
-            ))}
-            <Card className="bg-muted/30">
-                 <CardHeader className="pb-1 pt-3 px-4"><CardTitle className="text-sm">Fibras (g)</CardTitle></CardHeader>
-                 <CardContent className="px-4 pb-3">
-                    <p className="text-lg font-bold text-primary">{totals.fiber.toFixed(1)}g</p>
-                    <p className="text-xs text-muted-foreground">(Meta de fibras não definida no plano atual)</p>
-                 </CardContent>
-            </Card>
-          </div>
+
+            <Separator className="my-6" />
+
+            {/* Micronutrientes Section */}
+            <div>
+                <h3 className="text-lg font-semibold mb-3 text-center">Micronutrientes (Exemplos)</h3>
+                {chartableMicronutrientData.length > 0 ? (
+                <ChartContainer config={micronutrientChartConfig} className="h-[300px] w-full">
+                    <BarChart data={chartableMicronutrientData} layout="horizontal" margin={{ left: 10, right:10 }}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} angle={-25} textAnchor="end" height={60} interval={0} />
+                        <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <ChartLegend content={<ChartLegendContent />} />
+                        <Bar dataKey="Planejado" radius={4}>
+                            {chartableMicronutrientData.map((entry, index) => (
+                                <Cell key={`cell-planned-${index}`} fill={entry.fillPlanned} />
+                            ))}
+                        </Bar>
+                        <Bar dataKey="Meta" radius={4}>
+                             {chartableMicronutrientData.map((entry, index) => (
+                                <Cell key={`cell-target-${index}`} fill={entry.fillTarget} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ChartContainer>
+                ) : <p className="text-center text-muted-foreground py-10">Dados de micronutrientes não disponíveis ou não planejados.</p>}
+            </div>
         </CardContent>
       </Card>
 
-       {/* AI Suggestion Dialog */}
       <Dialog open={isSuggestionDialogOpen} onOpenChange={setIsSuggestionDialogOpen}>
-        <DialogContent className="sm:max-w-xl"> {/* Increased width from lg to xl */}
+        <DialogContent className="sm:max-w-xl">
           <DialogHeader>
             <DialogTitle>Sugestão de Plano Alimentar (IA)</DialogTitle>
             <DialogDescription>
@@ -540,7 +592,7 @@ export function MealsTab() {
             </ScrollArea>
           )}
           {!aiLoading && (
-            <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:justify-end gap-2">
+             <DialogFooter className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:justify-end gap-2">
               <div className="flex-grow space-y-2 mb-2 sm:mb-0 sm:mr-2">
                 <Textarea 
                     value={aiFeedback} 
@@ -565,5 +617,3 @@ export function MealsTab() {
     </div>
   );
 }
-
-
