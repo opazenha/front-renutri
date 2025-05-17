@@ -62,16 +62,19 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  XAxis,
-  YAxis,
-  Tooltip as RechartsTooltip,
   Legend,
+  Pie,
+  PieChart,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   TooltipProps,
-  PieChart,
-  Pie,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import {
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 import { PatientSummarySidebar } from "./patient-summary-sidebar";
 
 const mockSelectedPatient = {
@@ -626,7 +629,8 @@ export function MealsTab() {
     {
       name: "Cálcio",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.calcio_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.calcio_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 1000, // mg/day for adults
@@ -636,7 +640,8 @@ export function MealsTab() {
     {
       name: "Ferro",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.ferro_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.ferro_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 18, // mg/day for adult women, 8mg for men
@@ -646,7 +651,8 @@ export function MealsTab() {
     {
       name: "Magnésio",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.magnesio_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.magnesio_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 400, // mg/day for adults
@@ -656,7 +662,8 @@ export function MealsTab() {
     {
       name: "Fósforo",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.fosforo_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.fosforo_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 700, // mg/day for adults
@@ -666,7 +673,8 @@ export function MealsTab() {
     {
       name: "Potássio",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.potassio_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.potassio_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 4700, // mg/day for adults
@@ -676,7 +684,8 @@ export function MealsTab() {
     {
       name: "Zinco",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.zinco_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.zinco_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 11, // mg/day for adult men, 8mg for women
@@ -687,7 +696,8 @@ export function MealsTab() {
     {
       name: "Vitamina A",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.retinol_mcg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.retinol_mcg || 0) * (item.quantity / 100),
         0
       ),
       target: 900, // mcg RAE/day for men, 700mcg for women
@@ -697,7 +707,8 @@ export function MealsTab() {
     {
       name: "Vitamina C",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.vitamina_c_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.vitamina_c_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 90, // mg/day for men, 75mg for women
@@ -723,7 +734,8 @@ export function MealsTab() {
     {
       name: "Tiamina (B1)",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.tiamina_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.tiamina_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 1.2, // mg/day for men, 1.1mg for women
@@ -733,7 +745,8 @@ export function MealsTab() {
     {
       name: "Riboflavina (B2)",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.riboflavina_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.riboflavina_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 1.3, // mg/day for men, 1.1mg for women
@@ -743,7 +756,8 @@ export function MealsTab() {
     {
       name: "Niacina (B3)",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.niacina_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.niacina_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 16, // mg NE/day for men, 14mg for women
@@ -753,7 +767,8 @@ export function MealsTab() {
     {
       name: "Vitamina B6",
       planned: dietEntries.reduce(
-        (sum, item) => sum + (item.tacoItem.piridoxina_mg || 0) * (item.quantity / 100),
+        (sum, item) =>
+          sum + (item.tacoItem.piridoxina_mg || 0) * (item.quantity / 100),
         0
       ),
       target: 1.3, // mg/day for adults under 50
@@ -782,19 +797,19 @@ export function MealsTab() {
   const filteredMicronutrientData = micronutrientData.filter(
     (item) => item.planned > 0
   );
-  
+
   // Sort by planned amount (descending)
   const sortedMicronutrientData = [...filteredMicronutrientData].sort(
     (a, b) => b.planned - a.planned
   );
-  
+
   // Take top 10 most significant nutrients for the chart
   const topMicronutrients = sortedMicronutrientData.slice(0, 10);
 
   // Transform data for horizontal bar chart: bars represent % of target
   const chartableMicronutrientData = topMicronutrients.map((micro) => {
     let pValue: number;
-    if (typeof micro.planned === 'number' && isFinite(micro.planned)) {
+    if (typeof micro.planned === "number" && isFinite(micro.planned)) {
       // micro.planned is a valid, finite number, so toFixed is safe.
       pValue = parseFloat(micro.planned.toFixed(1));
     } else {
@@ -804,7 +819,7 @@ export function MealsTab() {
     const actualPlannedValue = pValue;
 
     let tValue: number;
-    if (typeof micro.target === 'number' && isFinite(micro.target)) {
+    if (typeof micro.target === "number" && isFinite(micro.target)) {
       tValue = micro.target;
     } else {
       tValue = 0;
@@ -1125,20 +1140,29 @@ export function MealsTab() {
                             payload,
                           }: TooltipProps<ValueType, NameType>) => {
                             if (active && payload && payload.length) {
-                              const data = payload[0].payload as { name: string; kcal: number };
+                              const data = payload[0].payload as {
+                                name: string;
+                                kcal: number;
+                              };
                               return (
                                 <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-xs">
-                                  <p className="font-semibold text-sm mb-1">{data.name}</p>
+                                  <p className="font-semibold text-sm mb-1">
+                                    {data.name}
+                                  </p>
                                   <div className="grid grid-cols-2 gap-1">
-                                    <span className="text-muted-foreground">Kcal:</span>
-                                    <span className="font-medium text-right">{data.kcal}</span>
+                                    <span className="text-muted-foreground">
+                                      Kcal:
+                                    </span>
+                                    <span className="font-medium text-right">
+                                      {data.kcal}
+                                    </span>
                                   </div>
                                 </div>
                               );
                             }
                             return null;
                           }}
-                          cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
+                          cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
                         />
                         <Pie
                           data={macroCaloricDistribution}
@@ -1268,17 +1292,22 @@ export function MealsTab() {
                     barSize={20}
                   >
                     <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                    <XAxis 
+                    <XAxis
                       type="number"
                       tickLine={false}
                       axisLine={false}
                       tickMargin={8}
                       className="text-xs"
                       domain={[0, 220]} // X-axis represents percentage, capped for visual clarity
-                      label={{ value: '% da Meta', position: 'insideBottom', dy: 10, fontSize: 10 }}
+                      label={{
+                        value: "% da Meta",
+                        position: "insideBottom",
+                        dy: 10,
+                        fontSize: 10,
+                      }}
                       tickFormatter={(value) => `${value}%`}
                     />
-                    <YAxis 
+                    <YAxis
                       dataKey="name"
                       type="category"
                       tickLine={false}
@@ -1287,7 +1316,7 @@ export function MealsTab() {
                       width={90}
                       className="text-xs"
                     />
-                    <RechartsTooltip 
+                    <RechartsTooltip
                       content={({
                         active,
                         payload,
@@ -1295,22 +1324,31 @@ export function MealsTab() {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload as any; // Accessing custom properties
                           if (!data) return null;
-                          
+
                           return (
                             <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-xs">
-                              <p className="font-semibold text-sm mb-1">{data.name}</p>
+                              <p className="font-semibold text-sm mb-1">
+                                {data.name}
+                              </p>
                               <div className="grid grid-cols-2 gap-1">
-                                <span className="text-muted-foreground">Planejado:</span>
-                                <span className="font-medium text-right">
-                                  {data.actualPlanned?.toFixed?.(1) || '0'} {data.unit}
+                                <span className="text-muted-foreground">
+                                  Planejado:
                                 </span>
-                                
-                                <span className="text-muted-foreground">Meta:</span>
+                                <span className="font-medium text-right">
+                                  {data.actualPlanned?.toFixed?.(1) || "0"}{" "}
+                                  {data.unit}
+                                </span>
+
+                                <span className="text-muted-foreground">
+                                  Meta:
+                                </span>
                                 <span className="font-medium text-right">
                                   {data.actualMeta} {data.unit}
                                 </span>
-                                
-                                <span className="text-muted-foreground">Atingido:</span>
+
+                                <span className="text-muted-foreground">
+                                  Atingido:
+                                </span>
                                 <span className="font-medium text-right">
                                   {data.achievedPercentageText}
                                 </span>
@@ -1320,10 +1358,10 @@ export function MealsTab() {
                         }
                         return null;
                       }}
-                      cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
+                      cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
                     />
                     <ChartLegend />
-                    <Bar 
+                    <Bar
                       dataKey="metaValueForBar" // Represents 100% of target as background
                       name="Meta de Referência"
                       fill="hsl(var(--muted))"
@@ -1331,7 +1369,7 @@ export function MealsTab() {
                       radius={[0, 4, 4, 0]}
                       stackId="a" // Ensure it's part of the same stack if overlaying
                     />
-                    <Bar 
+                    <Bar
                       dataKey="plannedValueForBar" // Represents % achieved of target
                       name="Planejado"
                       radius={[0, 4, 4, 0]}
@@ -1339,7 +1377,9 @@ export function MealsTab() {
                     >
                       {chartableMicronutrientData.map((entry, index) => (
                         <Cell
-                          key={`cell-planned-${entry.name.replace(/\s+/g, '-').toLowerCase()}-${index}`}
+                          key={`cell-planned-${entry.name
+                            .replace(/\s+/g, "-")
+                            .toLowerCase()}-${index}`}
                           fill={entry.fillPlanned} // Use individual nutrient color
                         />
                       ))}
