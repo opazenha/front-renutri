@@ -62,14 +62,16 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  Pie,
-  PieChart,
-  Legend as RechartsLegend,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
   XAxis,
   YAxis,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer,
+  TooltipProps,
+  PieChart,
+  Pie,
 } from "recharts";
+import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { PatientSummarySidebar } from "./patient-summary-sidebar";
 
 const mockSelectedPatient = {
@@ -423,9 +425,34 @@ const COLORS = {
   carbs: "hsl(var(--chart-2))",
   fat: "hsl(var(--chart-3))",
   fiber: "hsl(var(--chart-4))",
-  calcium: "hsl(var(--chart-1))",
-  iron: "hsl(var(--chart-2))",
-  vitC: "hsl(var(--chart-3))",
+  // Minerals
+  calcium: "hsl(200, 70%, 50%)",
+  iron: "hsl(0, 70%, 50%)",
+  magnesium: "hsl(100, 70%, 50%)",
+  phosphorus: "hsl(50, 70%, 50%)",
+  potassium: "hsl(150, 70%, 50%)",
+  sodium: "hsl(250, 70%, 50%)",
+  zinc: "hsl(300, 70%, 50%)",
+  iodine: "hsl(350, 70%, 50%)",
+  selenium: "hsl(30, 70%, 50%)",
+  copper: "hsl(180, 70%, 50%)",
+  manganese: "hsl(220, 70%, 50%)",
+  chromium: "hsl(280, 70%, 50%)",
+  // Vitamins
+  vitA: "hsl(20, 80%, 50%)",
+  vitC: "hsl(40, 80%, 50%)",
+  vitD: "hsl(60, 80%, 50%)",
+  vitE: "hsl(80, 80%, 50%)",
+  vitK: "hsl(120, 80%, 50%)",
+  thiamin: "hsl(140, 80%, 50%)",
+  riboflavin: "hsl(160, 80%, 50%)",
+  niacin: "hsl(200, 80%, 50%)",
+  vitB6: "hsl(240, 80%, 50%)",
+  folate: "hsl(260, 80%, 50%)",
+  vitB12: "hsl(320, 80%, 50%)",
+  pantothenic: "hsl(340, 80%, 50%)",
+  biotin: "hsl(10, 80%, 50%)",
+  choline: "hsl(90, 80%, 50%)",
 };
 
 const macroChartConfig = {
@@ -436,9 +463,9 @@ const macroChartConfig = {
 } satisfies ChartConfig;
 
 const micronutrientChartConfig = {
-  value: { label: "Valor" }, // Generic label for Y-axis
-  Planejado: { label: "Planejado", color: COLORS.calcium }, // Example color, can be different per nutrient
-  Meta: { label: "Meta", color: COLORS.iron }, // Example color
+  value: { label: "Quantidade" }, // Label for the horizontal axis
+  Planejado: { label: "Planejado", color: COLORS.calcium },
+  Meta: { label: "Meta", color: COLORS.iron },
 } satisfies ChartConfig;
 
 export function MealsTab() {
@@ -594,49 +621,237 @@ export function MealsTab() {
     ];
   }, [totals, currentPlan]);
 
-  const mockMicronutrientData = [
+  const micronutrientData = [
+    // Minerals
     {
       name: "Cálcio",
       planned: dietEntries.reduce(
-        (sum, item) =>
-          sum + (item.tacoItem.calcio_mg || 0) * (item.quantity / 100),
+        (sum, item) => sum + (item.tacoItem.calcio_mg || 0) * (item.quantity / 100),
         0
       ),
-      target: 1000,
+      target: 1000, // mg/day for adults
       unit: "mg",
       color: COLORS.calcium,
     },
     {
       name: "Ferro",
       planned: dietEntries.reduce(
-        (sum, item) =>
-          sum + (item.tacoItem.ferro_mg || 0) * (item.quantity / 100),
+        (sum, item) => sum + (item.tacoItem.ferro_mg || 0) * (item.quantity / 100),
         0
       ),
-      target: 18,
+      target: 18, // mg/day for adult women, 8mg for men
       unit: "mg",
       color: COLORS.iron,
     },
     {
-      name: "Vitamina C",
+      name: "Magnésio",
       planned: dietEntries.reduce(
-        (sum, item) =>
-          sum + (item.tacoItem.vitamina_c_mg || 0) * (item.quantity / 100),
+        (sum, item) => sum + (item.tacoItem.magnesio_mg || 0) * (item.quantity / 100),
         0
       ),
-      target: 90,
+      target: 400, // mg/day for adults
+      unit: "mg",
+      color: COLORS.magnesium,
+    },
+    {
+      name: "Fósforo",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.fosforo_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 700, // mg/day for adults
+      unit: "mg",
+      color: COLORS.phosphorus,
+    },
+    {
+      name: "Potássio",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.potassio_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 4700, // mg/day for adults
+      unit: "mg",
+      color: COLORS.potassium,
+    },
+    {
+      name: "Zinco",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.zinco_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 11, // mg/day for adult men, 8mg for women
+      unit: "mg",
+      color: COLORS.zinc,
+    },
+    // Vitamins
+    {
+      name: "Vitamina A",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.retinol_mcg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 900, // mcg RAE/day for men, 700mcg for women
+      unit: "mcg",
+      color: COLORS.vitA,
+    },
+    {
+      name: "Vitamina C",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.vitamina_c_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 90, // mg/day for men, 75mg for women
       unit: "mg",
       color: COLORS.vitC,
     },
+    // Note: vitamina_d_mcg and vitamina_e_mg are not available in TacoItem
+    // They are set to 0 as they're not in the data model
+    {
+      name: "Vitamina D",
+      planned: 0, // Not available in TacoItem
+      target: 15, // mcg/day (600 IU)
+      unit: "mcg",
+      color: COLORS.vitD,
+    },
+    {
+      name: "Vitamina E",
+      planned: 0, // Not available in TacoItem
+      target: 15, // mg/day for adults
+      unit: "mg",
+      color: COLORS.vitE,
+    },
+    {
+      name: "Tiamina (B1)",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.tiamina_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 1.2, // mg/day for men, 1.1mg for women
+      unit: "mg",
+      color: COLORS.thiamin,
+    },
+    {
+      name: "Riboflavina (B2)",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.riboflavina_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 1.3, // mg/day for men, 1.1mg for women
+      unit: "mg",
+      color: COLORS.riboflavin,
+    },
+    {
+      name: "Niacina (B3)",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.niacina_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 16, // mg NE/day for men, 14mg for women
+      unit: "mg",
+      color: COLORS.niacin,
+    },
+    {
+      name: "Vitamina B6",
+      planned: dietEntries.reduce(
+        (sum, item) => sum + (item.tacoItem.piridoxina_mg || 0) * (item.quantity / 100),
+        0
+      ),
+      target: 1.3, // mg/day for adults under 50
+      unit: "mg",
+      color: COLORS.vitB6,
+    },
+    // Note: acido_folico_mcg and cobalamina_mcg are not available in TacoItem
+    // They are set to 0 as they're not in the data model
+    {
+      name: "Folato",
+      planned: 0, // Not available in TacoItem
+      target: 400, // mcg DFE/day for adults
+      unit: "mcg",
+      color: COLORS.folate,
+    },
+    {
+      name: "Vitamina B12",
+      planned: 0, // Not available in TacoItem
+      target: 2.4, // mcg/day for adults
+      unit: "mcg",
+      color: COLORS.vitB12,
+    },
   ];
 
-  const chartableMicronutrientData = mockMicronutrientData.map((micro) => ({
-    name: `${micro.name} (${micro.unit})`,
-    Planejado: parseFloat(micro.planned.toFixed(1)),
-    Meta: micro.target,
-    fillPlanned: micro.color, // Color for 'Planejado' bar
-    fillTarget: "hsl(var(--muted))", // A neutral color for 'Meta' bar
-  }));
+  // Filter out nutrients with no data to keep the chart clean
+  const filteredMicronutrientData = micronutrientData.filter(
+    (item) => item.planned > 0
+  );
+  
+  // Sort by planned amount (descending)
+  const sortedMicronutrientData = [...filteredMicronutrientData].sort(
+    (a, b) => b.planned - a.planned
+  );
+  
+  // Take top 10 most significant nutrients for the chart
+  const topMicronutrients = sortedMicronutrientData.slice(0, 10);
+
+  // Transform data for horizontal bar chart: bars represent % of target
+  const chartableMicronutrientData = topMicronutrients.map((micro) => {
+    let pValue: number;
+    if (typeof micro.planned === 'number' && isFinite(micro.planned)) {
+      // micro.planned is a valid, finite number, so toFixed is safe.
+      pValue = parseFloat(micro.planned.toFixed(1));
+    } else {
+      // micro.planned is NaN, undefined, null, or not a finite number.
+      pValue = 0;
+    }
+    const actualPlannedValue = pValue;
+
+    let tValue: number;
+    if (typeof micro.target === 'number' && isFinite(micro.target)) {
+      tValue = micro.target;
+    } else {
+      tValue = 0;
+    }
+    const actualTargetValue = tValue;
+
+    // Now, actualPlannedValue and actualTargetValue are guaranteed to be finite numbers.
+
+    let achievedPercentage = 0;
+    // Case 1: Target is positive, calculate percentage
+    if (actualTargetValue > 0) {
+      achievedPercentage = (actualPlannedValue / actualTargetValue) * 100;
+    }
+    // Case 2: Target is zero (or non-positive), but planned is positive
+    // This means significantly exceeding a zero/negligible target. Visualize as 200% (our cap).
+    else if (actualPlannedValue > 0) {
+      achievedPercentage = 200;
+    }
+    // Case 3: Both planned and target are zero (or non-positive/non-numeric for planned)
+    // achievedPercentage remains 0.
+
+    // Sanitize achievedPercentage: if it's NaN or Infinity from division, default to 0.
+    if (!isFinite(achievedPercentage)) {
+      achievedPercentage = 0;
+    }
+
+    // For bar length, cap at 200% for visual clarity. This value MUST be a finite number.
+    const plannedBarLengthPercentage = Math.min(achievedPercentage, 200);
+    const metaBarLengthPercentage = 100; // Meta bar always represents 100% of its own target
+
+    return {
+      name: micro.name, // For Y-axis label
+      unit: micro.unit, // For tooltip
+
+      // Values for bar lengths (these are percentages and must be finite)
+      plannedValueForBar: plannedBarLengthPercentage,
+      metaValueForBar: metaBarLengthPercentage,
+
+      // Actual values and calculated/sanitized percentage for tooltip text
+      actualPlanned: actualPlannedValue,
+      actualMeta: actualTargetValue,
+      // Use the sanitized achievedPercentage for the text as well
+      achievedPercentageText: `${Math.round(achievedPercentage)}%`,
+
+      fillPlanned: micro.color, // Color for 'Planejado' bar
+    };
+  });
 
   const handleRequestAISuggestion = async (isRetry = false) => {
     if (!selectedPatient || !currentPlan) {
@@ -882,9 +1097,7 @@ export function MealsTab() {
           />
         </div>
       </div>
-
       <Separator className="my-4 sm:my-6" />
-
       <Card className="shadow-lg">
         <CardHeader className="py-3 px-4 sm:py-4 sm:px-6">
           <CardTitle className="text-lg sm:text-xl">
@@ -906,10 +1119,26 @@ export function MealsTab() {
                   >
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
-                        <ChartTooltip
-                          content={
-                            <ChartTooltipContent nameKey="name" hideLabel />
-                          }
+                        <RechartsTooltip
+                          content={({
+                            active,
+                            payload,
+                          }: TooltipProps<ValueType, NameType>) => {
+                            if (active && payload && payload.length) {
+                              const data = payload[0].payload as { name: string; kcal: number };
+                              return (
+                                <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-xs">
+                                  <p className="font-semibold text-sm mb-1">{data.name}</p>
+                                  <div className="grid grid-cols-2 gap-1">
+                                    <span className="text-muted-foreground">Kcal:</span>
+                                    <span className="font-medium text-right">{data.kcal}</span>
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                          cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
                         />
                         <Pie
                           data={macroCaloricDistribution}
@@ -931,7 +1160,7 @@ export function MealsTab() {
                             <Cell key={entry.name} fill={entry.fill} />
                           ))}
                         </Pie>
-                        <RechartsLegend
+                        <Legend
                           content={({ payload }) => (
                             <ChartLegendContent
                               payload={payload}
@@ -1025,53 +1254,99 @@ export function MealsTab() {
               Micronutrientes (Exemplos)
             </h3>
             {chartableMicronutrientData.length > 0 ? (
-              <ChartContainer
-                config={micronutrientChartConfig}
-                className="h-[250px] sm:h-[300px] w-full"
-              >
-                <BarChart
-                  data={chartableMicronutrientData}
-                  layout="horizontal"
-                  margin={{ left: 5, right: 5 }}
+              <div className="w-full h-[400px] overflow-x-auto">
+                <ChartContainer
+                  config={micronutrientChartConfig}
+                  className="min-w-[600px] h-full"
                 >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    angle={-20}
-                    textAnchor="end"
-                    height={50}
-                    interval={0}
-                    className="text-[10px] sm:text-xs"
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    className="text-[10px] sm:text-xs"
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Bar dataKey="Planejado" radius={4}>
-                    {chartableMicronutrientData.map((entry, index) => (
-                      <Cell
-                        key={`cell-planned-${index}`}
-                        fill={entry.fillPlanned}
-                      />
-                    ))}
-                  </Bar>
-                  <Bar dataKey="Meta" radius={4}>
-                    {chartableMicronutrientData.map((entry, index) => (
-                      <Cell
-                        key={`cell-target-${index}`}
-                        fill={entry.fillTarget}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ChartContainer>
+                  <BarChart
+                    data={chartableMicronutrientData}
+                    layout="horizontal"
+                    margin={{ top: 20, right: 30, left: 100, bottom: 60 }}
+                    barCategoryGap={20}
+                    barGap={4}
+                    barSize={20}
+                  >
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis 
+                      type="number"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      className="text-xs"
+                      domain={[0, 220]} // X-axis represents percentage, capped for visual clarity
+                      label={{ value: '% da Meta', position: 'insideBottom', dy: 10, fontSize: 10 }}
+                      tickFormatter={(value) => `${value}%`}
+                    />
+                    <YAxis 
+                      dataKey="name"
+                      type="category"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      width={90}
+                      className="text-xs"
+                    />
+                    <RechartsTooltip 
+                      content={({
+                        active,
+                        payload,
+                      }: TooltipProps<ValueType, NameType>) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload as any; // Accessing custom properties
+                          if (!data) return null;
+                          
+                          return (
+                            <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 text-xs">
+                              <p className="font-semibold text-sm mb-1">{data.name}</p>
+                              <div className="grid grid-cols-2 gap-1">
+                                <span className="text-muted-foreground">Planejado:</span>
+                                <span className="font-medium text-right">
+                                  {data.actualPlanned?.toFixed?.(1) || '0'} {data.unit}
+                                </span>
+                                
+                                <span className="text-muted-foreground">Meta:</span>
+                                <span className="font-medium text-right">
+                                  {data.actualMeta} {data.unit}
+                                </span>
+                                
+                                <span className="text-muted-foreground">Atingido:</span>
+                                <span className="font-medium text-right">
+                                  {data.achievedPercentageText}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                      cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
+                    />
+                    <ChartLegend />
+                    <Bar 
+                      dataKey="metaValueForBar" // Represents 100% of target as background
+                      name="Meta de Referência"
+                      fill="hsl(var(--muted))"
+                      fillOpacity={0.3}
+                      radius={[0, 4, 4, 0]}
+                      stackId="a" // Ensure it's part of the same stack if overlaying
+                    />
+                    <Bar 
+                      dataKey="plannedValueForBar" // Represents % achieved of target
+                      name="Planejado"
+                      radius={[0, 4, 4, 0]}
+                      stackId="a" // Stack on top or alongside metaValueForBar
+                    >
+                      {chartableMicronutrientData.map((entry, index) => (
+                        <Cell
+                          key={`cell-planned-${entry.name.replace(/\s+/g, '-').toLowerCase()}-${index}`}
+                          fill={entry.fillPlanned} // Use individual nutrient color
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ChartContainer>
+              </div>
             ) : (
               <p className="text-center text-muted-foreground py-10">
                 Dados de micronutrientes não disponíveis ou não planejados.
